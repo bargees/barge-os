@@ -1,0 +1,35 @@
+#!/bin/sh
+set -e
+
+if [ "$(id -u)" != "0" ]; then
+  echo "$(basename $0): Operation not permitted" >&2
+  exit 1
+fi
+
+CONTAINERS="$(docker ps -q)"
+CONTAINERS=$(echo ${CONTAINERS})
+if [ -n "${CONTAINERS}" ]; then
+  logger -s -p user.info -t "$(basename $0)[$$]" "Stopping containers"
+  docker stop -t 2 ${CONTAINERS}
+fi
+
+CMD=$(basename $0)
+ARGS="$@"
+if [ "${CMD}" == "shutdown" ]; then
+  CMD="poweroff"
+  ARGS=""
+  while getopts ":r" opt; do
+    case $opt in
+      r)
+        CMD="reboot"
+        ;;
+    esac
+  done
+fi
+logger -s -p user.info -t "$(basename $0)[$$]" "${CMD}"
+setsid busybox ${CMD} -f -d 1 ${ARGS} &
+
+sync;sync;sync
+
+#logger -s -p user.info -t "$(basename $0)[$$]" "Sending SIGTERM to all processes"
+killall5 -o $! -o $(cat /var/run/acpid.pid)

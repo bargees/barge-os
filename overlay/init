@@ -1,0 +1,194 @@
+#!/bin/sh
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+mount proc
+for p in $(cat /proc/cmdline); do
+  case $p in
+    docker-root.switch_root)
+      SWITCH_ROOT=true
+      ;;
+    docker-root.debug)
+      DEBUG=true
+      ;;
+  esac
+done
+umount proc
+
+if [ -n "${SWITCH_ROOT}" -a -z "$ROOT_SWITCHED" ]; then
+  if mount -t tmpfs -o size=90% tmpfs /mnt; then
+    if tar -C / --exclude=mnt -cf - . | tar -C /mnt/ -xf - ; then
+      mkdir /mnt/mnt
+      export ROOT_SWITCHED=true
+      exec switch_root /mnt /init
+    fi
+  fi
+fi
+
+[ -z "${DEBUG}" ] && set -e
+
+mount -t devtmpfs devtmpfs /dev
+
+mkdir -p /var/log
+syslogd
+sleep 1
+logger -s -p user.info -t "init[$$]" "Start init"
+
+trap 'logger -s -p user.info -t "init[$$]" "trapped at line $LINENO"' ERR
+
+mkdir -p /dev/pts
+
+logger -s -p user.info -t "init[$$]" "Mounting system"
+mount -t devpts devpts /dev/pts
+mount -t proc none /proc
+mount -t tmpfs none /run
+mount -t sysfs none /sys
+mount -t tmpfs none /sys/fs/cgroup
+
+for i in blkio cpu cpuacct cpuset devices freezer memory net_cls perf_event; do
+  mkdir -p /sys/fs/cgroup/$i
+  mount -t cgroup -o $i none /sys/fs/cgroup/$i
+done
+
+# Basic Configuration
+sed -i '/^root/s!/bin/sh!/bin/bash!' /etc/passwd
+passwd -l root
+cp -r /etc/skel/. /root
+cp -r /etc/skel/. /home/docker
+chown -R docker:docker /home/docker
+
+# Create /var/db/ntp-kod for sntp
+mkdir -p /var/db
+touch /var/db/ntp-kod
+
+# Setup consistent volumes
+mkdir -p /var/lib/docker
+mkdir -p /var/lib/docker-root
+
+DEVICE=$(blkid | grep -e 'LABEL="DOCKERROOT-DATA"' | head -n 1 | sed 's/:.*//')
+if [ -n "$DEVICE" ]; then
+  PARTNAME=$(echo "$DEVICE" | sed 's/.*\///')
+  logger -s -p user.info -t "init[$$]" "Mounting HDD /dev/$PARTNAME"
+  mkdir -p /mnt/$PARTNAME
+  if (! e2fsck -p /dev/$PARTNAME) || (! mount -t ext4 /dev/$PARTNAME /mnt/$PARTNAME); then
+    logger -s -p user.info -t "init[$$]" "Running from memory, this won't be good..."
+  else
+    rm -rf /var/lib/docker
+    mkdir -p /mnt/$PARTNAME/var/lib/docker
+    ln -s /mnt/$PARTNAME/var/lib/docker /var/lib/docker
+
+    rm -rf /var/lib/docker-root
+    mkdir -p /mnt/$PARTNAME/var/lib/docker-root
+    ln -s /mnt/$PARTNAME/var/lib/docker-root /var/lib/docker-root
+
+    if [ ! -d /mnt/$PARTNAME/home ]; then
+      mv /home /mnt/$PARTNAME/home
+    else
+      rm -rf /home
+    fi
+    ln -s /mnt/$PARTNAME/home /home
+
+    rm -rf /opt
+    mkdir -p /mnt/$PARTNAME/opt
+    ln -s /mnt/$PARTNAME/opt /opt
+  fi
+fi
+DEVICE=$(blkid | grep -e 'LABEL="DOCKERROOT-SWAP"' | head -n 1 | sed 's/:.*//')
+if [ -n "$DEVICE" ]; then
+  logger -s -p user.info -t "init[$$]" "Enabling SWAP $DEVICE"
+  if ! swapon $DEVICE; then
+    logger -s -p user.info -t "init[$$]" "Could not make swap on $DEVICE"
+  fi
+fi
+
+if [ -x /var/lib/docker-root/init.sh ]; then
+  logger -s -p user.info -t "init[$$]" "Executing custom configuration"
+  /var/lib/docker-root/init.sh || true
+fi
+
+logger -s -p user.info -t "init[$$]" "Configuring Network"
+cat <<EOF > /etc/hosts
+127.0.0.1 localhost
+127.0.1.1 $(hostname)
+EOF
+
+cat <<EOF > /etc/resolv.conf
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+options single-request-reopen
+EOF
+
+ifconfig lo 127.0.0.1
+dhcpcd eth0
+
+logger -s -p user.info -t "init[$$]" "Configuring SSH"
+mkdir -p /etc/ssh
+if [ ! -d /var/lib/docker-root/ssh ]; then
+  mv /etc/ssh /var/lib/docker-root/ssh
+else
+  rm -rf /etc/ssh
+fi
+ln -s /var/lib/docker-root/ssh /etc/ssh
+
+for i in rsa dsa ecdsa ed25519; do
+  output=/etc/ssh/ssh_host_${i}_key
+  if [ ! -f $output ]; then
+    ssh-keygen -t $i -f $output -N '' > /dev/null
+  fi
+done
+
+/usr/sbin/sshd
+
+/usr/sbin/acpid
+
+if [ -x /var/lib/docker-root/start.sh ]; then
+  logger -s -p user.info -t "init[$$]" "Executing custom script"
+  /var/lib/docker-root/start.sh || true
+fi
+
+sync
+
+logger -s -p user.info -t "init[$$]" "Starting console"
+respawn /sbin/getty 115200 tty0 &
+respawn /sbin/getty 115200 tty1 &
+respawn /sbin/getty 115200 ttyS0 &
+chvt 2
+
+if [ -f /var/lib/docker-root/profile ]; then
+  logger -s -p user.info -t "init[$$]" "Reloading /var/lib/docker-root/profile"
+  source /var/lib/docker-root/profile
+fi
+
+sysctl -p /etc/sysctl.conf
+
+if [ -z "$DOCKER_STORAGE" ]; then
+  DOCKER_STORAGE="overlay"
+fi
+if [ -z "$DOCKER_DIR" ]; then
+  DOCKER_DIR="/var/lib/docker"
+fi
+if [ -z "$DOCKER_HOST" ]; then
+  DOCKER_HOST="-H unix://"
+fi
+if [ -z "$DOCKER_EXTRA_ARGS" ]; then
+  DOCKER_EXTRA_ARGS="--userland-proxy=false"
+fi
+if [ -z "$DOCKER_ULIMITS" ]; then
+  DOCKER_ULIMITS=1048576
+fi
+
+if ! lsmod | grep -q br_netfilter; then
+  modprobe br_netfilter 2>/dev/null || true
+fi
+
+logger -s -p user.info -t "init[$$]" "Setting ulimit $DOCKER_ULIMITS"
+ulimit -n $DOCKER_ULIMITS
+ulimit -u $DOCKER_ULIMITS
+
+# Top secret option...
+if [ -z "$ROOT_SWITCHED" ]; then
+  export DOCKER_RAMDISK=true
+fi
+echo -n 1 > /sys/fs/cgroup/memory/memory.use_hierarchy
+
+logger -s -p user.info -t "init[$$]" "Starting Docker -d -D -s $DOCKER_STORAGE -g \"$DOCKER_DIR\" $DOCKER_HOST $DOCKER_EXTRA_ARGS"
+exec docker -d -D -s $DOCKER_STORAGE -g "$DOCKER_DIR" $DOCKER_HOST $DOCKER_EXTRA_ARGS

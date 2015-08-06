@@ -1,0 +1,13 @@
+.DS_Store
+*/.DS_Store
+
+.git/
+
+Makefile
+README.md
+Vagrantfile
+.vagrant/
+
+output/
+.ccache/
+.dl/
