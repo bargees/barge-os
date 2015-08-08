@@ -79,9 +79,8 @@ config: | output
 	mv output/.config output/kernel.config
 
 install:
-	cp output/bzImage ../rancheros-lite/iso/
-	cp output/rootfs.tar.xz ../rancheros-lite/iso/
-	cp output/kernel.config ../rancheros-lite/vboxguest/
-	cp output/docker-root.iso ../rancheros-lite/
+	cp output/bzImage ../docker-root-packer/iso/
+	cp output/rootfs.tar.xz ../docker-root-packer/iso/
+	cp output/kernel.config ../docker-root-packer/iso/
 
 .PHONY: vagrant config install
