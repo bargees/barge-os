@@ -103,19 +103,13 @@ if [ -x /var/lib/docker-root/init.sh ]; then
 fi
 
 logger -s -p user.info -t "init[$$]" "Configuring Network"
-cat <<EOF > /etc/hosts
-127.0.0.1 localhost
-127.0.1.1 $(hostname)
-EOF
-
 cat <<EOF > /etc/resolv.conf
 nameserver 8.8.8.8
 nameserver 8.8.4.4
 options single-request-reopen
 EOF
 
-ifconfig lo 127.0.0.1
-dhcpcd eth0
+/sbin/ifup -a
 
 logger -s -p user.info -t "init[$$]" "Configuring SSH"
 mkdir -p /etc/ssh
