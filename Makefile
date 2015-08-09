@@ -10,7 +10,6 @@ SOURCES := Dockerfile \
 	configs/isolinux.cfg \
 	overlay/etc/profile.d/optbin.sh \
 	overlay/etc/profile.d/version.sh \
-	overlay/etc/skel/.wgetrc \
 	overlay/etc/sudoers.d/docker \
 	overlay/etc/sysctl.conf \
 	overlay/init \

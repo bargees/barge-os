@@ -56,3 +56,8 @@ fi
 if ! grep -q "^noarp" ${ROOTFS}/etc/dhcpcd.conf; then
   echo "noarp" >> ${ROOTFS}/etc/dhcpcd.conf
 fi
+
+# Set CA certificate to global wgetrc
+if ! grep -q "^ca_certificate =" ${ROOTFS}/etc/wgetrc; then
+  echo "ca_certificate = /etc/ssl/certs/ca-certificates.crt" >> ${ROOTFS}/etc/wgetrc
+fi

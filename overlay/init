@@ -52,9 +52,6 @@ done
 # Basic Configuration
 sed -i '/^root/s!/bin/sh!/bin/bash!' /etc/passwd
 passwd -l root
-cp -r /etc/skel/. /root
-cp -r /etc/skel/. /home/docker
-chown -R docker:docker /home/docker
 
 # Create /var/db/ntp-kod for sntp
 mkdir -p /var/db
