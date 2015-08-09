@@ -1,7 +1,7 @@
 Vagrant.configure(2) do |config|
   config.vm.define "docker-root"
 
-  config.vm.box = "ailispaw/rancheros-lite"
+  config.vm.box = "ailispaw/docker-root"
 
   config.vm.provider :virtualbox do |vb|
     vb.memory = 2048
