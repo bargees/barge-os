@@ -53,10 +53,6 @@ done
 sed -i '/^root/s!/bin/sh!/bin/bash!' /etc/passwd
 passwd -l root
 
-# Create /var/db/ntp-kod for sntp
-mkdir -p /var/db
-touch /var/db/ntp-kod
-
 # Setup consistent volumes
 mkdir -p /var/lib/docker
 mkdir -p /var/lib/docker-root

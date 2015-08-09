@@ -15,6 +15,7 @@ SOURCES := Dockerfile \
 	overlay/init \
 	overlay/sbin/shutdown \
 	overlay/usr/bin/respawn \
+	overlay/var/db/ntp-kod \
 	scripts/build.sh \
 	scripts/post_build.sh \
 	scripts/post_image.sh
