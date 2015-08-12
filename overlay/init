@@ -177,5 +177,5 @@ if [ -z "$ROOT_SWITCHED" ]; then
 fi
 echo -n 1 > /sys/fs/cgroup/memory/memory.use_hierarchy
 
-logger -s -p user.info -t "init[$$]" "Starting Docker -d -D -s $DOCKER_STORAGE -g \"$DOCKER_DIR\" $DOCKER_HOST $DOCKER_EXTRA_ARGS"
-exec docker -d -D -s $DOCKER_STORAGE -g "$DOCKER_DIR" $DOCKER_HOST $DOCKER_EXTRA_ARGS
+logger -s -p user.info -t "init[$$]" "Starting Docker daemon -D -s $DOCKER_STORAGE -g \"$DOCKER_DIR\" $DOCKER_HOST $DOCKER_EXTRA_ARGS"
+exec docker daemon -D -s $DOCKER_STORAGE -g "$DOCKER_DIR" $DOCKER_HOST $DOCKER_EXTRA_ARGS
