@@ -39,14 +39,14 @@ mkdir -p /dev/pts
 
 logger -s -p user.info -t "init[$$]" "Mounting system"
 mount -t devpts devpts /dev/pts
-mount -t proc none /proc
-mount -t tmpfs none /run
-mount -t sysfs none /sys
-mount -t tmpfs none /sys/fs/cgroup
+mount -t proc proc /proc
+mount -t tmpfs tmpfs /run
+mount -t sysfs sysfs /sys
+mount -t tmpfs cgroup /sys/fs/cgroup
 
-for i in blkio cpu cpuacct cpuset devices freezer memory net_cls perf_event; do
+for i in blkio cpu cpuacct cpuset devices freezer memory net_cls perf_event net_prio; do
   mkdir -p /sys/fs/cgroup/$i
-  mount -t cgroup -o $i none /sys/fs/cgroup/$i
+  mount -t cgroup -o $i cgroup /sys/fs/cgroup/$i
 done
 
 # Basic Configuration
