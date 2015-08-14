@@ -1,5 +1,6 @@
 Vagrant.configure(2) do |config|
-  config.vm.define "docker-root"
+  config.vm.define "docker-root", primary: true
+  config.vm.define "docker-root-dev", autostart: false
 
   config.vm.box = "ailispaw/docker-root"
 

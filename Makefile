@@ -64,11 +64,18 @@ distclean: clean
 .PHONY: all build clean distclean
 
 vagrant:
-	-vagrant resume
-	-vagrant reload
-	vagrant up --no-provision
-	vagrant provision
-	vagrant ssh -c 'sudo mkdir -p $(CCACHE_DIR)'
+	-vagrant resume docker-root
+	-vagrant reload docker-root
+	vagrant up --no-provision docker-root
+	vagrant provision docker-root
+	vagrant ssh docker-root -c 'sudo mkdir -p $(CCACHE_DIR)'
+
+dev:
+	-vagrant resume docker-root-$@
+	-vagrant reload docker-root-$@
+	vagrant up --no-provision docker-root-$@
+	vagrant provision docker-root-$@
+	vagrant ssh docker-root-$@ -c 'sudo mkdir -p $(CCACHE_DIR)'
 
 config: | output
 	docker cp docker-root-built:/build/buildroot/.config output/
@@ -83,4 +90,4 @@ install:
 	cp output/rootfs.tar.xz ../docker-root-packer/iso/
 	cp output/kernel.config ../docker-root-packer/iso/
 
-.PHONY: vagrant config install
+.PHONY: vagrant dev config install
