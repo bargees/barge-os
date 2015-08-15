@@ -1,0 +1,4 @@
+01 * * * * /bin/run-parts /etc/cron/cron.hourly
+02 8 * * * /bin/run-parts /etc/cron/cron.daily
+22 8 * * 0 /bin/run-parts /etc/cron/cron.weekly
+42 8 1 * * /bin/run-parts /etc/cron/cron.monthly
