@@ -11,6 +11,7 @@ SOURCES := Dockerfile \
 	overlay/etc/profile.d/optbin.sh \
 	overlay/etc/profile.d/version.sh \
 	overlay/etc/sudoers.d/docker \
+	overlay/etc/resolv.conf.tail \
 	overlay/etc/sysctl.conf \
 	overlay/init \
 	overlay/sbin/shutdown \

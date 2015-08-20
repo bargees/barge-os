@@ -99,12 +99,6 @@ if [ -x /var/lib/docker-root/init.sh ]; then
 fi
 
 logger -s -p user.info -t "init[$$]" "Configuring Network"
-cat <<EOF > /etc/resolv.conf
-nameserver 8.8.8.8
-nameserver 8.8.4.4
-options single-request-reopen
-EOF
-
 /sbin/ifup -a
 
 logger -s -p user.info -t "init[$$]" "Configuring SSH"
