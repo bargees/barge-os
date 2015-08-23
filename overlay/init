@@ -83,6 +83,10 @@ if [ -n "$DEVICE" ]; then
     rm -rf /opt
     mkdir -p /mnt/$PARTNAME/opt
     ln -s /mnt/$PARTNAME/opt /opt
+
+    mkdir -p /mnt/$PARTNAME/etc
+    mkdir -p /mnt/$PARTNAME/work/etc
+    mount -t overlay overlay -o lowerdir=/etc,upperdir=/mnt/$PARTNAME/etc,workdir=/mnt/$PARTNAME/work/etc /etc
   fi
 fi
 DEVICE=$(blkid | grep -e 'LABEL="DOCKERROOT-SWAP"' | head -n 1 | sed 's/:.*//')
@@ -103,13 +107,6 @@ logger -s -p user.info -t "init[$$]" "Configuring Network"
 
 logger -s -p user.info -t "init[$$]" "Configuring SSH"
 mkdir -p /etc/ssh
-if [ ! -d /var/lib/docker-root/ssh ]; then
-  mv /etc/ssh /var/lib/docker-root/ssh
-else
-  rm -rf /etc/ssh
-fi
-ln -s /var/lib/docker-root/ssh /etc/ssh
-
 for i in rsa dsa ecdsa ed25519; do
   output=/etc/ssh/ssh_host_${i}_key
   if [ ! -f $output ]; then
