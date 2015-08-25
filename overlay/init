@@ -98,29 +98,23 @@ if [ -n "$DEVICE" ]; then
 fi
 
 if [ -x /var/lib/docker-root/init.sh ]; then
-  logger -s -p user.info -t "init[$$]" "Executing custom configuration"
+  logger -s -p user.info -t "init[$$]" "Executing custom configuration in init.sh"
   /var/lib/docker-root/init.sh || true
 fi
 
-logger -s -p user.info -t "init[$$]" "Configuring Network"
-/sbin/ifup -a
-
-logger -s -p user.info -t "init[$$]" "Configuring SSH"
-mkdir -p /etc/ssh
-for i in rsa dsa ecdsa ed25519; do
-  output=/etc/ssh/ssh_host_${i}_key
-  if [ ! -f $output ]; then
-    ssh-keygen -t $i -f $output -N '' > /dev/null
-  fi
-done
-
-/usr/sbin/sshd
-
+logger -s -p user.info -t "init[$$]" "Executing ACPId"
 /usr/sbin/acpid
 
+logger -s -p user.info -t "init[$$]" "Executing startup scripts in /etc/init.d"
+/etc/init.d/rcS
+
+logger -s -p user.info -t "init[$$]" "Executing SSHd"
+/usr/bin/ssh-keygen -A
+/usr/sbin/sshd
+
 if [ -x /var/lib/docker-root/start.sh ]; then
-  logger -s -p user.info -t "init[$$]" "Executing custom script"
-  /var/lib/docker-root/start.sh || true
+  logger -s -p user.info -t "init[$$]" "Starting custom script start.sh"
+  /var/lib/docker-root/start.sh &
 fi
 
 sync
@@ -133,12 +127,13 @@ if dmesg | grep 'ttyS0 at I/O'; then
 fi
 chvt 2
 
+logger -s -p user.info -t "init[$$]" "Configuring sysctl"
+sysctl -p /etc/sysctl.conf
+
 if [ -f /var/lib/docker-root/profile ]; then
-  logger -s -p user.info -t "init[$$]" "Reloading /var/lib/docker-root/profile"
+  logger -s -p user.info -t "init[$$]" "Loading /var/lib/docker-root/profile"
   source /var/lib/docker-root/profile
 fi
-
-sysctl -p /etc/sysctl.conf
 
 if [ -z "$DOCKER_STORAGE" ]; then
   DOCKER_STORAGE="overlay"

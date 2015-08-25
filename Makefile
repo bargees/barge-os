@@ -8,15 +8,16 @@ SOURCES := Dockerfile \
 	configs/kernel.config \
 	configs/user.config \
 	configs/isolinux.cfg \
+	overlay/etc/init.d/rcK \
 	overlay/etc/profile.d/optbin.sh \
 	overlay/etc/profile.d/version.sh \
 	overlay/etc/sudoers.d/docker \
 	overlay/etc/resolv.conf.tail \
 	overlay/etc/sysctl.conf \
-	overlay/init \
 	overlay/sbin/shutdown \
 	overlay/usr/bin/respawn \
 	overlay/var/db/ntp-kod \
+	overlay/init \
 	scripts/build.sh \
 	scripts/post_build.sh \
 	scripts/post_image.sh

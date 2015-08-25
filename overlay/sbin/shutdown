@@ -13,6 +13,9 @@ if [ -n "${CONTAINERS}" ]; then
   docker stop -t 2 ${CONTAINERS}
 fi
 
+logger -s -p user.info -t "$(basename $0)[$$]" "Executing shutdown scripts in /etc/init.d"
+/etc/init.d/rcK
+
 CMD=$(basename $0)
 ARGS="$@"
 if [ "${CMD}" == "shutdown" ]; then

@@ -1,3 +1,3 @@
 #!/bin/sh
 
-echo "DockerRoot version $(cat /etc/version), $(docker -v)"
+echo "Welcome to DockerRoot version $(cat /etc/version), $(docker -v)"
