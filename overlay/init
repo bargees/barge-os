@@ -159,10 +159,6 @@ if [ -z "$DOCKER_LOGFILE" ]; then
   DOCKER_LOGFILE="/var/lib/docker-root/docker.log"
 fi
 
-if ! lsmod | grep -q br_netfilter; then
-  modprobe br_netfilter 2>/dev/null || true
-fi
-
 logger -s -p user.info -t "init[$$]" "Setting ulimit $DOCKER_ULIMITS"
 ulimit -n $DOCKER_ULIMITS
 ulimit -u $DOCKER_ULIMITS
