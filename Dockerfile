@@ -5,7 +5,7 @@ ENV TERM xterm
 RUN apt-get update && \
     apt-get install -y ca-certificates curl git && \
     apt-get install -y unzip bc wget python xz-utils build-essential libncurses5-dev && \
-    apt-get install -y syslinux xorriso && \
+    apt-get install -y syslinux xorriso dosfstools && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Setup Buildroot

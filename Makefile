@@ -1,7 +1,7 @@
 KERNEL_VERSION  := 4.0.9
 BUSYBOX_VERSION := 1.23.2
 
-TARGETS := output/rootfs.tar.xz output/bzImage output/docker-root.iso
+TARGETS := output/rootfs.tar.xz output/bzImage output/docker-root.iso output/docker-root.img
 SOURCES := Dockerfile \
 	configs/buildroot.config \
 	configs/busybox.config \
@@ -46,7 +46,7 @@ build: $(SOURCES) | .dl
 	@if [ "$(BUILT)" == "" ]; then \
 		set -e; \
 		(docker rm -f $(BUILD_CONTAINER) || true); \
-		docker run -v $(CCACHE_DIR):/build/buildroot/ccache \
+		docker run --privileged -v $(CCACHE_DIR):/build/buildroot/ccache \
 			-v /vagrant/.dl:/build/buildroot/dl --name $(BUILD_CONTAINER) $(BUILD_IMAGE); \
 	fi
 
@@ -70,6 +70,7 @@ vagrant:
 	-vagrant reload docker-root
 	vagrant up --no-provision docker-root
 	vagrant provision docker-root
+	vagrant ssh docker-root -c 'sudo insmod /lib/modules/$(KERNEL_VERSION)-docker-root/kernel/drivers/block/loop.ko'
 	vagrant ssh docker-root -c 'sudo mkdir -p $(CCACHE_DIR)'
 
 dev:
@@ -77,6 +78,7 @@ dev:
 	-vagrant reload docker-root-$@
 	vagrant up --no-provision docker-root-$@
 	vagrant provision docker-root-$@
+	vagrant ssh docker-root-$@ -c 'sudo insmod /lib/modules/$(KERNEL_VERSION)-docker-root/kernel/drivers/block/loop.ko'
 	vagrant ssh docker-root-$@ -c 'sudo mkdir -p $(CCACHE_DIR)'
 
 config: | output
@@ -94,5 +96,7 @@ install:
 	cp output/bzImage ../docker-root-packer/iso/
 	cp output/rootfs.tar.xz ../docker-root-packer/iso/
 	cp output/kernel.config ../docker-root-packer/iso/
+	cp output/docker-root.iso ../docker-root-packer/box/
+	cp output/docker-root.img ../docker-root-packer/box/
 
 .PHONY: vagrant dev config install
