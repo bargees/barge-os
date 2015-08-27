@@ -98,5 +98,6 @@ install:
 	cp output/kernel.config ../docker-root-packer/iso/
 	cp output/docker-root.iso ../docker-root-packer/box/
 	cp output/docker-root.img ../docker-root-packer/box/
+	cp configs/isolinux.cfg ../docker-root-packer/iso/
 
 .PHONY: vagrant dev config install
