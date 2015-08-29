@@ -20,24 +20,25 @@ rm -rf ./*/kernel/net/bluetooth/*
 rm -rf ./*/kernel/net/mac80211/*
 rm -rf ./*/kernel/net/wireless/*
 
-# Remove unnecessary directories and files
+# Remove unnecessary files
 cd ${ROOTFS}
 rm -rf linuxrc
-rm -rf var/lib/misc
 
-# Initialize directories and files
+# Initialize directories without linking to /tmp
 rm -rf run
 rm -rf var/cache
 rm -rf var/lock
 rm -rf var/log
 rm -rf var/run
 rm -rf var/spool
+rm -rf var/lib/misc
 mkdir -p run
 mkdir -p var/cache
 mkdir -p var/lock
 mkdir -p var/log
 mkdir -p var/run
 mkdir -p var/spool
+mkdir -p var/lib/misc
 
 # Link shutdown scripts
 cd ${ROOTFS}/sbin/
