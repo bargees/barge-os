@@ -24,7 +24,6 @@ rm -rf ./*/kernel/net/wireless/*
 cd ${ROOTFS}
 rm -rf linuxrc
 rm -rf var/lib/misc
-rm -rf usr/share/locale
 
 # Initialize directories and files
 rm -rf run
