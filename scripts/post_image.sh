@@ -36,18 +36,21 @@ IMAGE=${IMAGES}/docker-root.img
 DISK=${IMAGES}/disk
 ISO=${IMAGES}/ISO
 
-dd if=/dev/zero of=${IMAGE} bs=1M count=12
-losetup /dev/loop0 ${IMAGE}
-(echo c; echo n; echo p; echo 1; echo; echo; echo t; echo 4; echo a; echo 1; echo w;) | fdisk /dev/loop0 || true
+mkdir -p ${ISO}
+losetup /dev/loop0 ${IMAGES}/docker-root.iso
+mount /dev/loop0 ${ISO}
 
-losetup -o 32256 /dev/loop1 ${IMAGE}
-mkfs -t vfat -F 16 /dev/loop1
+SIZE=$(du -s ${ISO} | awk '{print $1}')
+
+dd if=/dev/zero of=${IMAGE} bs=1024 count=$((${SIZE}+104+${SIZE}%2))
+losetup /dev/loop1 ${IMAGE}
+(echo c; echo n; echo p; echo 1; echo; echo; echo t; echo 4; echo a; echo 1; echo w;) | fdisk /dev/loop1 || true
+
+losetup -o 32256 /dev/loop2 ${IMAGE}
+mkfs -t vfat -F 16 /dev/loop2
 
 mkdir -p ${DISK}
-mount -t vfat /dev/loop1 ${DISK}
-
-mkdir -p ${ISO}
-mount -o loop ${IMAGES}/docker-root.iso ${ISO}
+mount -t vfat /dev/loop2 ${DISK}
 
 cp -a ${ISO}/* ${DISK}/
 mv ${DISK}/boot/isolinux ${DISK}/boot/syslinux
@@ -55,7 +58,8 @@ mv ${DISK}/boot/syslinux/isolinux.cfg ${DISK}/boot/syslinux/syslinux.cfg
 umount ${ISO}
 umount ${DISK}
 
-syslinux -i -d boot/syslinux /dev/loop1
+syslinux -i -d boot/syslinux /dev/loop2
+losetup -d /dev/loop2
+dd if=/usr/lib/syslinux/mbr.bin of=/dev/loop1 bs=440 count=1
 losetup -d /dev/loop1
-dd if=/usr/lib/syslinux/mbr.bin of=/dev/loop0 bs=440 count=1
 losetup -d /dev/loop0
