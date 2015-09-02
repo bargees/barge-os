@@ -16,3 +16,10 @@ This is inspired by the following projects.
 - Runs a Docker daemon as PID 1
 - Default username: docker
 - Default password: docker
+
+## License
+
+Copyright (c) 2015 A.I. &lt;ailis@paw.zone&gt;
+
+Licensed under the GNU General Public License, version 2 (GPL-2.0)  
+http://opensource.org/licenses/GPL-2.0

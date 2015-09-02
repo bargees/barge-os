@@ -3,6 +3,7 @@
 
 .git/
 
+LICENSE
 Makefile
 README.md
 Vagrantfile
