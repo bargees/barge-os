@@ -49,8 +49,7 @@ for i in $(awk '!/^#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
   mount -t cgroup -o $i cgroup /sys/fs/cgroup/$i
 done
 
-# Basic Configuration
-sed -i '/^root/s!/bin/sh!/bin/bash!' /etc/passwd
+# Lock the root account
 passwd -l root
 
 # Setup consistent volumes

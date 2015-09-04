@@ -40,6 +40,9 @@ mkdir -p var/run
 mkdir -p var/spool
 mkdir -p var/lib/misc
 
+# Change shell for root
+sed -i '/^root/s!/bin/sh!/bin/bash!' ${ROOTFS}/etc/passwd
+
 # Link shutdown scripts
 cd ${ROOTFS}/sbin/
 for i in halt reboot poweroff; do
