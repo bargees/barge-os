@@ -23,3 +23,8 @@ Copyright (c) 2015 A.I. &lt;ailis@paw.zone&gt;
 
 Licensed under the GNU General Public License, version 2 (GPL-2.0)  
 http://opensource.org/licenses/GPL-2.0
+
+## Related Projects
+
+- [DockerRoot Packer for VirtualBox and QEMU](https://github.com/ailispaw/docker-root-packer)
+- [DockerRoot running on xhyve hypervisor](https://github.com/ailispaw/docker-root-xhyve)
