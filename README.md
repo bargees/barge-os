@@ -25,6 +25,11 @@ It's inspired by the following projects.
 - Default username: docker
 - Default password: docker
 
+## Documentation
+
+- [How to build DockerRoot](https://github.com/ailispaw/docker-root/blob/master/docs/build.md)
+- [Customization of DockerRoot](https://github.com/ailispaw/docker-root/blob/master/docs/customization.md)
+
 ## License
 
 Copyright (c) 2015 A.I. &lt;ailis@paw.zone&gt;

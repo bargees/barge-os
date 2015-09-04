@@ -3,6 +3,7 @@
 
 .git/
 
+docs/
 LICENSE
 Makefile
 README.md
