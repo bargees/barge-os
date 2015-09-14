@@ -35,7 +35,9 @@ RUN mkdir -p etc && \
     echo "ID=docker-root" >> etc/os-release && \
     echo "ID_LIKE=busybox" >> etc/os-release && \
     echo "VERSION_ID=${VERSION}" >> etc/os-release && \
-    echo "PRETTY_NAME=\"DockerRoot v${VERSION}\"" >> etc/os-release
+    echo "PRETTY_NAME=\"DockerRoot v${VERSION}\"" >> etc/os-release && \
+    echo "HOME_URL=\"https://github.com/ailispaw/docker-root\"" >> etc/os-release && \
+    echo "BUG_REPORT_URL=\"https://github.com/ailispaw/docker-root/issues\"" >> etc/os-release
 
 # Add ca-certificates
 RUN mkdir -p etc/ssl/certs && \
