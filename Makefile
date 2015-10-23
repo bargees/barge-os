@@ -1,4 +1,4 @@
-KERNEL_VERSION  := 4.1.10
+KERNEL_VERSION  := 4.1.11
 BUSYBOX_VERSION := 1.23.2
 
 TARGETS := output/rootfs.tar.xz output/bzImage output/docker-root.iso output/docker-root.img
