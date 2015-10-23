@@ -37,7 +37,7 @@ $(TARGETS): build | output
 build: $(SOURCES) | .dl
 	$(eval SRC_UPDATED=$$(shell stat -f "%m" $^ | sort -gr | head -n1))
 	$(eval STR_CREATED=$$(shell docker inspect -f '{{.Created}}' $(BUILD_IMAGE) 2>/dev/null))
-	$(eval IMG_CREATED=`date -j -u -f "%F %T" "$$(STR_CREATED)" +"%s" 2>/dev/null || echo 0`)
+	$(eval IMG_CREATED=`date -j -u -f "%FT%T" "$$(STR_CREATED)" +"%s" 2>/dev/null || echo 0`)
 	@if [ "$(SRC_UPDATED)" -gt "$(IMG_CREATED)" ]; then \
 		set -e; \
 		docker build -t $(BUILD_IMAGE) .; \
