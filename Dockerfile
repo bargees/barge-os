@@ -46,7 +46,7 @@ RUN mkdir -p etc/ssl/certs && \
 # Add Docker
 ENV DOCKER_VERSION 1.8.3
 RUN mkdir -p bin && \
-    curl -L https://get.docker.io/builds/Linux/x86_64/docker-${DOCKER_VERSION} \
+    curl -L https://github.com/ailispaw/docker/releases/download/docker-root%2Fv${DOCKER_VERSION}/docker-${DOCKER_VERSION} \
        -o bin/docker && \
     chmod +x bin/docker
 
