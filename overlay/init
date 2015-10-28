@@ -129,39 +129,13 @@ chvt 2
 logger -s -p user.info -t "init[$$]" "Configuring sysctl"
 sysctl -p /etc/sysctl.conf
 
-if [ -f /var/lib/docker-root/profile ]; then
-  logger -s -p user.info -t "init[$$]" "Loading /var/lib/docker-root/profile"
-  source /var/lib/docker-root/profile
-fi
+logger -s -p user.info -t "init[$$]" "Starting Docker daemon"
+if [ -z "${DEBUG}" ]; then
+  exec /etc/init.d/docker start
+else
+  /etc/init.d/docker start &
 
-if [ -z "$DOCKER_STORAGE" ]; then
-  DOCKER_STORAGE="overlay"
+  set -mb
+  trap '' SIGCHLD
+  read
 fi
-if [ -z "$DOCKER_DIR" ]; then
-  DOCKER_DIR="/var/lib/docker"
-fi
-if [ -z "$DOCKER_HOST" ]; then
-  DOCKER_HOST="-H unix://"
-fi
-if [ -z "$DOCKER_EXTRA_ARGS" ]; then
-  DOCKER_EXTRA_ARGS="--userland-proxy=false"
-fi
-if [ -z "$DOCKER_ULIMITS" ]; then
-  DOCKER_ULIMITS=1048576
-fi
-if [ -z "$DOCKER_LOGFILE" ]; then
-  DOCKER_LOGFILE="/var/lib/docker-root/docker.log"
-fi
-
-logger -s -p user.info -t "init[$$]" "Setting ulimit $DOCKER_ULIMITS"
-ulimit -n $DOCKER_ULIMITS
-ulimit -u $DOCKER_ULIMITS
-
-# Top secret option...
-if [ -z "$ROOT_SWITCHED" ]; then
-  export DOCKER_RAMDISK=true
-fi
-echo -n 1 > /sys/fs/cgroup/memory/memory.use_hierarchy
-
-logger -s -p user.info -t "init[$$]" "Starting Docker daemon -D -s $DOCKER_STORAGE -g \"$DOCKER_DIR\" $DOCKER_HOST $DOCKER_EXTRA_ARGS" >> "$DOCKER_LOGFILE" 2>&1
-exec docker daemon -D -s $DOCKER_STORAGE -g "$DOCKER_DIR" $DOCKER_HOST $DOCKER_EXTRA_ARGS >> "$DOCKER_LOGFILE" 2>&1

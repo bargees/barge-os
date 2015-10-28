@@ -8,6 +8,7 @@ SOURCES := Dockerfile \
 	configs/kernel.config \
 	configs/user.config \
 	configs/isolinux.cfg \
+	overlay/etc/init.d/docker \
 	overlay/etc/init.d/rcK \
 	overlay/etc/profile.d/optbin.sh \
 	overlay/etc/profile.d/version.sh \

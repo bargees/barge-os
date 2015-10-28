@@ -1,0 +1,104 @@
+#!/bin/sh
+
+if [ "$(id -u)" != "0" ]; then
+  echo "$(basename $0): Operation not permitted, must be root." >&2
+  exit 1
+fi
+
+if grep -qw "tmpfs / tmpfs" /proc/mounts; then
+  ROOT_SWITCHED=true
+fi
+
+start() {
+  if check; then
+    echo 'Docker daemon is running' >&2
+    exit 1
+  fi
+
+  if [ -f /var/lib/docker-root/profile ]; then
+    logger -s -p user.info -t "docker[$$]" "Loading /var/lib/docker-root/profile"
+    source /var/lib/docker-root/profile
+  fi
+
+  : ${DOCKER_STORAGE:="overlay"}
+  : ${DOCKER_DIR:="/var/lib/docker"}
+  : ${DOCKER_HOST:="-H unix://"}
+  : ${DOCKER_EXTRA_ARGS="--userland-proxy=false"}
+  : ${DOCKER_ULIMITS:=1048576}
+  : ${DOCKER_LOGFILE:="/var/lib/docker-root/docker.log"}
+
+  logger -s -p user.info -t "docker[$$]" "Setting ulimit $DOCKER_ULIMITS"
+  ulimit -n $DOCKER_ULIMITS
+  ulimit -u $DOCKER_ULIMITS
+
+  # Top secret option...
+  if [ -z "$ROOT_SWITCHED" ]; then
+    export DOCKER_RAMDISK=true
+  fi
+  logger -s -p user.info -t "docker[$$]" "DOCKER_RAMDISK=$DOCKER_RAMDISK"
+
+  echo -n 1 > /sys/fs/cgroup/memory/memory.use_hierarchy
+
+  DOCKER_PARAMS="-D -s $DOCKER_STORAGE -g \"$DOCKER_DIR\" $DOCKER_HOST $DOCKER_EXTRA_ARGS"
+
+  logger -s -p user.info -t "docker[$$]" "Starting Docker daemon $DOCKER_PARAMS"
+  echo "Starting Docker daemon $DOCKER_PARAMS" >> "$DOCKER_LOGFILE"
+  if [ "$$" == "1" ]; then
+    eval "exec /bin/docker daemon $DOCKER_PARAMS" >> "$DOCKER_LOGFILE" 2>&1
+  else
+    eval "/bin/docker daemon $DOCKER_PARAMS" >> "$DOCKER_LOGFILE" 2>&1 &
+  fi
+}
+
+stop() {
+  if check; then
+    if [ "$(cat /var/run/docker.pid)" == "1" ]; then
+      echo "$(basename $0): Operation not permitted, can't kill PID 1." >&2
+      exit 1
+    else
+      logger -s -p user.info -t "docker[$$]" "Stopping Docker daemon"
+      kill $(cat /var/run/docker.pid)
+    fi
+  fi
+}
+
+restart() {
+  if check; then
+    stop && sleep 1 && start
+  else
+    start
+  fi
+}
+
+check() {
+  [ -f /var/run/docker.pid ] && ps -A -o pid | grep "^\s*$(cat /var/run/docker.pid)$" > /dev/null 2>&1
+}
+
+status() {
+  if check; then
+    echo 'Docker daemon is running'
+    exit 0
+  else
+    echo 'Docker daemon is not running'
+    exit 1
+  fi
+}
+
+case $1 in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  status)
+    status
+    ;;
+  *)
+    echo "Usage $0 {start|stop|restart|status}"
+    exit 1
+    ;;
+esac
