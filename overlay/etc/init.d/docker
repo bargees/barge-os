@@ -44,9 +44,9 @@ start() {
   logger -s -p user.info -t "docker[$$]" "Starting Docker daemon $DOCKER_PARAMS"
   echo "Starting Docker daemon $DOCKER_PARAMS" >> "$DOCKER_LOGFILE"
   if [ "$$" == "1" ]; then
-    eval "exec /bin/docker daemon $DOCKER_PARAMS" >> "$DOCKER_LOGFILE" 2>&1
+    eval "exec /bin/docker daemon $DOCKER_PARAMS >> \"$DOCKER_LOGFILE\" 2>&1"
   else
-    eval "/bin/docker daemon $DOCKER_PARAMS" >> "$DOCKER_LOGFILE" 2>&1 &
+    eval "/bin/docker daemon $DOCKER_PARAMS >> \"$DOCKER_LOGFILE\" 2>&1 &"
   fi
 }
 

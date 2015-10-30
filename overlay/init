@@ -130,7 +130,7 @@ logger -s -p user.info -t "init[$$]" "Configuring sysctl"
 sysctl -p /etc/sysctl.conf
 
 logger -s -p user.info -t "init[$$]" "Starting Docker daemon"
-/etc/init.d/docker start &
+/etc/init.d/docker start
 
 set -mb
 trap '' SIGCHLD
