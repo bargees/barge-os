@@ -1,6 +1,6 @@
 # DockerRoot
 
-DockerRoot (formerly [RancherOS Lite](https://github.com/ailispaw/rancheros-lite)) is a lightweight Linux distribution made with [Buildroot](http://buildroot.uclibc.org/) especially to run a [Docker](https://www.docker.com/) daemon as PID 1.
+DockerRoot (formerly [RancherOS Lite](https://github.com/ailispaw/rancheros-lite)) is a lightweight Linux distribution made with [Buildroot](http://buildroot.uclibc.org/) ~~especially to run a [Docker](https://www.docker.com/) daemon as PID 1~~.
 
 It's designed for a local development with Docker in a virtual machine.
 
@@ -15,7 +15,7 @@ It's inspired by the following projects.
 ## Features
 
 - Based on Buildroot 2015.08.1 with Linux kernel v4.1.12 and GLIBC.
-- Runs a Docker daemon as PID 1
+- ~~Runs a Docker daemon as PID 1~~
 - Strip down the Linux kernel modules and drivers
 - Busybox + the following utilities from Buildroot
 	- sudo, bash, wget, xz, sntp

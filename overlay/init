@@ -130,12 +130,8 @@ logger -s -p user.info -t "init[$$]" "Configuring sysctl"
 sysctl -p /etc/sysctl.conf
 
 logger -s -p user.info -t "init[$$]" "Starting Docker daemon"
-if [ -z "${DEBUG}" ]; then
-  exec /etc/init.d/docker start
-else
-  /etc/init.d/docker start &
+/etc/init.d/docker start &
 
-  set -mb
-  trap '' SIGCHLD
-  read
-fi
+set -mb
+trap '' SIGCHLD
+read
