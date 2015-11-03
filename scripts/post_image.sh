@@ -42,7 +42,7 @@ mount /dev/loop0 ${ISO}
 
 SIZE=$(du -s ${ISO} | awk '{print $1}')
 
-dd if=/dev/zero of=${IMAGE} bs=1024 count=$((${SIZE}+106+${SIZE}%2))
+dd if=/dev/zero of=${IMAGE} bs=1024 count=$((${SIZE}+110+${SIZE}%2))
 losetup /dev/loop1 ${IMAGE}
 (echo c; echo n; echo p; echo 1; echo; echo; echo t; echo 4; echo a; echo 1; echo w;) | fdisk /dev/loop1 || true
 

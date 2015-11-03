@@ -44,7 +44,7 @@ RUN mkdir -p etc/ssl/certs && \
     cp /etc/ssl/certs/ca-certificates.crt etc/ssl/certs/
 
 # Add Docker
-ENV DOCKER_VERSION 1.8.3
+ENV DOCKER_VERSION 1.9.0
 RUN mkdir -p bin && \
     curl -L https://get.docker.io/builds/Linux/x86_64/docker-${DOCKER_VERSION} \
        -o bin/docker && \
