@@ -71,7 +71,7 @@ vagrant:
 	-vagrant reload docker-root
 	vagrant up --no-provision docker-root
 	vagrant provision docker-root
-	vagrant ssh docker-root -c 'sudo insmod /lib/modules/`uname -r`/kernel/drivers/block/loop.ko'
+	vagrant ssh docker-root -c 'sudo modprobe loop'
 	vagrant ssh docker-root -c 'sudo mkdir -p $(CCACHE_DIR)'
 
 dev:
@@ -79,7 +79,7 @@ dev:
 	-vagrant reload docker-root-$@
 	vagrant up --no-provision docker-root-$@
 	vagrant provision docker-root-$@
-	vagrant ssh docker-root-$@ -c 'sudo insmod /lib/modules/`uname -r`/kernel/drivers/block/loop.ko'
+	vagrant ssh docker-root-$@ -c 'sudo modprobe loop'
 	vagrant ssh docker-root-$@ -c 'sudo mkdir -p $(CCACHE_DIR)'
 
 config: | output
