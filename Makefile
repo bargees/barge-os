@@ -1,5 +1,5 @@
-KERNEL_VERSION  := 4.1.13
-BUSYBOX_VERSION := 1.23.2
+KERNEL_VERSION  := 4.3
+BUSYBOX_VERSION := 1.24.1
 
 TARGETS := output/rootfs.tar.xz output/bzImage output/docker-root.iso output/docker-root.img
 SOURCES := Dockerfile \
