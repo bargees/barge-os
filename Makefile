@@ -71,7 +71,6 @@ vagrant:
 	-vagrant reload docker-root
 	vagrant up --no-provision docker-root
 	vagrant provision docker-root
-	vagrant ssh docker-root -c 'sudo modprobe loop'
 	vagrant ssh docker-root -c 'sudo mkdir -p $(CCACHE_DIR)'
 
 dev:
@@ -79,7 +78,6 @@ dev:
 	-vagrant reload docker-root-$@
 	vagrant up --no-provision docker-root-$@
 	vagrant provision docker-root-$@
-	vagrant ssh docker-root-$@ -c 'sudo modprobe loop'
 	vagrant ssh docker-root-$@ -c 'sudo mkdir -p $(CCACHE_DIR)'
 
 config: | output
