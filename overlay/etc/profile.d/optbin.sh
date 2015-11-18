@@ -1,1 +1,1 @@
-PATH=/bin:/sbin:/usr/bin:/usr/sbin:/opt/bin
+PATH=$PATH:/opt/bin

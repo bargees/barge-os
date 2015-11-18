@@ -10,6 +10,8 @@ SOURCES := Dockerfile \
 	configs/isolinux.cfg \
 	overlay/etc/init.d/docker \
 	overlay/etc/init.d/rcK \
+	overlay/etc/profile.d/bashrc.sh \
+	overlay/etc/profile.d/colorls.sh \
 	overlay/etc/profile.d/optbin.sh \
 	overlay/etc/profile.d/version.sh \
 	overlay/etc/sudoers.d/docker \
