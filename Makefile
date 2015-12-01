@@ -1,5 +1,5 @@
-KERNEL_VERSION  := 4.1.13
-BUSYBOX_VERSION := 1.23.2
+KERNEL_VERSION  := 4.3
+BUSYBOX_VERSION := 1.24.1
 
 TARGETS := output/rootfs.tar.xz output/bzImage output/docker-root.iso output/docker-root.img
 SOURCES := Dockerfile \
@@ -10,6 +10,8 @@ SOURCES := Dockerfile \
 	configs/isolinux.cfg \
 	overlay/etc/init.d/docker \
 	overlay/etc/init.d/rcK \
+	overlay/etc/profile.d/bashrc.sh \
+	overlay/etc/profile.d/colorls.sh \
 	overlay/etc/profile.d/optbin.sh \
 	overlay/etc/profile.d/version.sh \
 	overlay/etc/sudoers.d/docker \

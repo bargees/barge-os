@@ -12,7 +12,7 @@ RUN apt-get update && \
 ENV SRCDIR /build
 RUN mkdir -p ${SRCDIR}
 
-ENV BUILDROOT_VERSION 2015.08.1
+ENV BUILDROOT_VERSION 2015.11
 ENV BUILDROOT ${SRCDIR}/buildroot
 RUN cd ${SRCDIR} && \
     curl -OL http://buildroot.uclibc.org/downloads/buildroot-${BUILDROOT_VERSION}.tar.bz2 && \
@@ -27,7 +27,7 @@ WORKDIR ${OVERLAY}
 
 COPY overlay ${OVERLAY}
 
-ENV VERSION 1.1.4
+ENV VERSION 1.2.0
 RUN mkdir -p etc && \
     echo ${VERSION} > etc/version && \
     echo "NAME=\"DockerRoot\"" > etc/os-release && \
