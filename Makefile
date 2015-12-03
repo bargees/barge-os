@@ -21,6 +21,7 @@ SOURCES := Dockerfile \
 	overlay/usr/bin/respawn \
 	overlay/var/db/ntp-kod \
 	overlay/init \
+	package/busybox/0003-g-unzip-fix-recent-breakage.patch \
 	scripts/build.sh \
 	scripts/post_build.sh \
 	scripts/post_image.sh
