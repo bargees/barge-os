@@ -58,8 +58,6 @@ RUN cd ${SRCDIR} && \
 
 COPY scripts ${SRCDIR}/scripts
 
-COPY package ${BUILDROOT}/package/
-
 VOLUME ${BUILDROOT}/ccache
 VOLUME ${BUILDROOT}/dl
 
