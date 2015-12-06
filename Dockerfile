@@ -27,7 +27,7 @@ WORKDIR ${OVERLAY}
 
 COPY overlay ${OVERLAY}
 
-ENV VERSION 1.2.1
+ENV VERSION 1.2.2
 RUN mkdir -p etc && \
     echo ${VERSION} > etc/version && \
     echo "NAME=\"DockerRoot\"" > etc/os-release && \
