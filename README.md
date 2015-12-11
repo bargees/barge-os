@@ -41,3 +41,4 @@ http://opensource.org/licenses/GPL-2.0
 
 - [DockerRoot Packer for VirtualBox and QEMU](https://github.com/ailispaw/docker-root-packer)
 - [DockerRoot running on xhyve hypervisor](https://github.com/ailispaw/docker-root-xhyve)
+- [Package Installer for DockerRoot](https://github.com/ailispaw/docker-root-pkg)
