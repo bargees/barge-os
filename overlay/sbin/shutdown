@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ "$(id -u)" != "0" ]; then
-  echo "$(basename $0): Operation not permitted" >&2
+  echo "$(basename $0): Operation not permitted, must be root." >&2
   exit 1
 fi
 
