@@ -56,6 +56,11 @@ RUN mkdir -p etc && \
     echo "HOME_URL=\"https://github.com/ailispaw/docker-root\"" >> etc/os-release && \
     echo "BUG_REPORT_URL=\"https://github.com/ailispaw/docker-root/issues\"" >> etc/os-release
 
+# Add Package Installer
+RUN mkdir -p usr/bin && \
+    wget -qO usr/bin/pkg https://raw.githubusercontent.com/ailispaw/docker-root-pkg/master/pkg && \
+    chmod +x usr/bin/pkg
+
 # Copy config files
 COPY configs ${SRC_DIR}/configs
 RUN cp ${SRC_DIR}/configs/buildroot.config ${BR_ROOT}/.config && \
