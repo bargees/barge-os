@@ -45,10 +45,10 @@ RUN mkdir -p etc/ssl/certs && \
 
 # Add Docker
 ENV DOCKER_VERSION 1.9.1
-RUN mkdir -p bin && \
+RUN mkdir -p usr/bin && \
     curl -L https://get.docker.io/builds/Linux/x86_64/docker-${DOCKER_VERSION} \
-       -o bin/docker && \
-    chmod +x bin/docker
+      -o usr/bin/docker && \
+    chmod +x usr/bin/docker
 
 # Copy config files
 COPY configs ${SRCDIR}/configs
