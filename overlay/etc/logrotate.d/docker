@@ -1,0 +1,8 @@
+/var/lib/docker-root/docker.log {
+  rotate 7
+  daily
+  maxsize 1M
+  delaycompress
+  missingok
+  copytruncate
+}
