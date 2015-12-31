@@ -1,1 +1,1 @@
-PATH=$PATH:/opt/bin
+PATH=/opt/bin:$PATH
