@@ -21,8 +21,8 @@ SOURCES := Dockerfile \
 	overlay/etc/sudoers.d/docker \
 	overlay/etc/resolv.conf.tail \
 	overlay/etc/sysctl.conf \
+	overlay/sbin/respawn \
 	overlay/sbin/shutdown \
-	overlay/usr/bin/respawn \
 	overlay/var/db/ntp-kod \
 	overlay/init \
 	scripts/build.sh \
