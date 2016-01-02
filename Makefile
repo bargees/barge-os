@@ -87,13 +87,13 @@ dev:
 	vagrant ssh docker-root-$@ -c 'sudo mkdir -p $(CCACHE_DIR)'
 
 config: | output
-	docker cp docker-root-built:/build/buildroot/.config output/
+	docker cp $(BUILD_CONTAINER):/build/buildroot/.config output/
 	mv output/.config output/buildroot.config
 	-diff configs/buildroot.config output/buildroot.config
-	docker cp docker-root-built:/build/buildroot/output/build/busybox-$(BUSYBOX_VERSION)/.config output/
+	docker cp $(BUILD_CONTAINER):/build/buildroot/output/build/busybox-$(BUSYBOX_VERSION)/.config output/
 	mv output/.config output/busybox.config
 	-diff configs/busybox.config output/busybox.config
-	docker cp docker-root-built:/build/buildroot/output/build/linux-$(KERNEL_VERSION)/.config output/
+	docker cp $(BUILD_CONTAINER):/build/buildroot/output/build/linux-$(KERNEL_VERSION)/.config output/
 	mv output/.config output/kernel.config
 	-diff configs/kernel.config output/kernel.config
 
