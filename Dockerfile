@@ -38,7 +38,7 @@ RUN mkdir -p usr/bin && \
       -o usr/bin/docker && \
     chmod +x usr/bin/docker
 
-ENV VERSION 1.2.5
+ENV VERSION 1.2.6
 RUN mkdir -p etc && \
     echo "Welcome to DockerRoot version ${VERSION}, $(usr/bin/docker -v)" > etc/motd && \
     echo "NAME=\"DockerRoot\"" > etc/os-release && \
