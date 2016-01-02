@@ -47,6 +47,7 @@ build: $(SOURCES) | .dl
 	$(eval IMG_CREATED=`date -j -u -f "%FT%T" "$$(STR_CREATED)" +"%s" 2>/dev/null || echo 0`)
 	@if [ "$(SRC_UPDATED)" -gt "$(IMG_CREATED)" ]; then \
 		set -e; \
+		find . -type f -name '.DS_Store' | xargs rm; \
 		docker build -t $(BUILD_IMAGE) .; \
 		(docker rm -f $(BUILD_CONTAINER) || true); \
 	fi
