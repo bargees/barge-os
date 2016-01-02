@@ -27,18 +27,6 @@ WORKDIR ${OVERLAY}
 
 COPY overlay ${OVERLAY}
 
-ENV VERSION 1.2.5
-RUN mkdir -p etc && \
-    echo ${VERSION} > etc/version && \
-    echo "NAME=\"DockerRoot\"" > etc/os-release && \
-    echo "VERSION=${VERSION}" >> etc/os-release && \
-    echo "ID=docker-root" >> etc/os-release && \
-    echo "ID_LIKE=busybox" >> etc/os-release && \
-    echo "VERSION_ID=${VERSION}" >> etc/os-release && \
-    echo "PRETTY_NAME=\"DockerRoot v${VERSION}\"" >> etc/os-release && \
-    echo "HOME_URL=\"https://github.com/ailispaw/docker-root\"" >> etc/os-release && \
-    echo "BUG_REPORT_URL=\"https://github.com/ailispaw/docker-root/issues\"" >> etc/os-release
-
 # Add ca-certificates
 RUN mkdir -p etc/ssl/certs && \
     cp /etc/ssl/certs/ca-certificates.crt etc/ssl/certs/
@@ -49,6 +37,18 @@ RUN mkdir -p usr/bin && \
     curl -L https://get.docker.io/builds/Linux/x86_64/docker-${DOCKER_VERSION} \
       -o usr/bin/docker && \
     chmod +x usr/bin/docker
+
+ENV VERSION 1.2.5
+RUN mkdir -p etc && \
+    echo "Welcome to DockerRoot version ${VERSION}, $(usr/bin/docker -v)" > etc/motd && \
+    echo "NAME=\"DockerRoot\"" > etc/os-release && \
+    echo "VERSION=${VERSION}" >> etc/os-release && \
+    echo "ID=docker-root" >> etc/os-release && \
+    echo "ID_LIKE=busybox" >> etc/os-release && \
+    echo "VERSION_ID=${VERSION}" >> etc/os-release && \
+    echo "PRETTY_NAME=\"DockerRoot v${VERSION}\"" >> etc/os-release && \
+    echo "HOME_URL=\"https://github.com/ailispaw/docker-root\"" >> etc/os-release && \
+    echo "BUG_REPORT_URL=\"https://github.com/ailispaw/docker-root/issues\"" >> etc/os-release
 
 # Copy config files
 COPY configs ${SRCDIR}/configs
