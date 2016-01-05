@@ -2,30 +2,25 @@ FROM ubuntu-debootstrap:14.04.3
 
 ENV TERM xterm
 
-RUN apt-get update && \
-    apt-get install -y ca-certificates curl git && \
-    apt-get install -y unzip bc wget python xz-utils build-essential libncurses5-dev && \
-    apt-get install -y syslinux xorriso dosfstools && \
+RUN apt-get -q update && \
+    apt-get -q -y install ca-certificates \
+      bc build-essential python unzip rsync wget \
+      syslinux xorriso dosfstools && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Setup Buildroot
-ENV SRCDIR /build
-RUN mkdir -p ${SRCDIR}
+# Setup environment
+ENV SRC_DIR=/build \
+    OVERLAY=/overlay \
+    BR_ROOT=/build/buildroot
+RUN mkdir -p ${SRC_DIR} ${OVERLAY}
 
-ENV BUILDROOT_VERSION 2015.11.1
-ENV BUILDROOT ${SRCDIR}/buildroot
-RUN cd ${SRCDIR} && \
-    curl -OL http://buildroot.uclibc.org/downloads/buildroot-${BUILDROOT_VERSION}.tar.bz2 && \
-    tar xf buildroot-${BUILDROOT_VERSION}.tar.bz2 && \
-    mv buildroot-${BUILDROOT_VERSION} buildroot && \
-    rm -f buildroot-${BUILDROOT_VERSION}.tar.bz2
+ENV BR_VERSION 2015.11.1
+RUN wget -qO- http://buildroot.uclibc.org/downloads/buildroot-${BR_VERSION}.tar.bz2 | tar xj && \
+    mv buildroot-${BR_VERSION} ${BR_ROOT}
 
 # Setup overlay
-ENV OVERLAY /overlay
-RUN mkdir -p ${OVERLAY}
-WORKDIR ${OVERLAY}
-
 COPY overlay ${OVERLAY}
+WORKDIR ${OVERLAY}
 
 # Add ca-certificates
 RUN mkdir -p etc/ssl/certs && \
@@ -34,8 +29,7 @@ RUN mkdir -p etc/ssl/certs && \
 # Add Docker
 ENV DOCKER_VERSION 1.9.1
 RUN mkdir -p usr/bin && \
-    curl -L https://get.docker.io/builds/Linux/x86_64/docker-${DOCKER_VERSION} \
-      -o usr/bin/docker && \
+    wget -qO usr/bin/docker https://get.docker.io/builds/Linux/x86_64/docker-${DOCKER_VERSION} && \
     chmod +x usr/bin/docker
 
 ENV VERSION 1.2.6
@@ -51,15 +45,13 @@ RUN mkdir -p etc && \
     echo "BUG_REPORT_URL=\"https://github.com/ailispaw/docker-root/issues\"" >> etc/os-release
 
 # Copy config files
-COPY configs ${SRCDIR}/configs
-RUN cd ${SRCDIR} && \
-    cp configs/buildroot.config ${BUILDROOT}/.config && \
-    cp configs/busybox.config ${BUILDROOT}/package/busybox/busybox.config
+COPY configs ${SRC_DIR}/configs
+RUN cp ${SRC_DIR}/configs/buildroot.config ${BR_ROOT}/.config && \
+    cp ${SRC_DIR}/configs/busybox.config ${BR_ROOT}/package/busybox/busybox.config
 
-COPY scripts ${SRCDIR}/scripts
+COPY scripts ${SRC_DIR}/scripts
 
-VOLUME ${BUILDROOT}/ccache
-VOLUME ${BUILDROOT}/dl
+VOLUME ${BR_ROOT}/ccache ${BR_ROOT}/dl
 
-WORKDIR ${BUILDROOT}
-CMD ["/build/scripts/build.sh"]
+WORKDIR ${BR_ROOT}
+CMD ["../scripts/build.sh"]
