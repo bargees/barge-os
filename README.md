@@ -18,8 +18,8 @@ It's inspired by the following projects.
 - ~~Runs a Docker daemon as PID 1~~
 - Strip down the Linux kernel modules and drivers
 - Busybox + the following utilities from Buildroot
-	- sudo, bash, wget, xz, sntp
-	- ssh, scp, sftp
+	- sudo, bash, wget, xz, sntp, logrotate
+	- ssh, scp, sftp, rsync
 	- acpid, sshd, dhcpcd, xtables-multi
 	- e2fsck, mke2fs, resize2fs, tune2fs
 - Default username: docker
@@ -32,7 +32,7 @@ It's inspired by the following projects.
 
 ## License
 
-Copyright (c) 2015 A.I. &lt;ailis@paw.zone&gt;
+Copyright (c) 2015-2016 A.I. &lt;ailis@paw.zone&gt;
 
 Licensed under the GNU General Public License, version 2 (GPL-2.0)  
 http://opensource.org/licenses/GPL-2.0
@@ -42,3 +42,4 @@ http://opensource.org/licenses/GPL-2.0
 - [DockerRoot Packer for VirtualBox and QEMU](https://github.com/ailispaw/docker-root-packer)
 - [DockerRoot running on xhyve hypervisor](https://github.com/ailispaw/docker-root-xhyve)
 - [Package Installer for DockerRoot](https://github.com/ailispaw/docker-root-pkg)
+- [DockerRoot docker image](https://github.com/ailispaw/docker-root-docker-image)
