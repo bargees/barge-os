@@ -32,7 +32,7 @@ RUN mkdir -p usr/bin && \
     wget -qO usr/bin/docker https://get.docker.io/builds/Linux/x86_64/docker-${DOCKER_VERSION} && \
     chmod +x usr/bin/docker
 
-ENV VERSION 1.2.6
+ENV VERSION 1.2.7
 RUN mkdir -p etc && \
     echo "Welcome to DockerRoot version ${VERSION}, $(usr/bin/docker -v)" > etc/motd && \
     echo "NAME=\"DockerRoot\"" > etc/os-release && \
