@@ -32,6 +32,12 @@ RUN mkdir -p usr/bin && \
     wget -qO usr/bin/docker https://get.docker.io/builds/Linux/x86_64/docker-${DOCKER_VERSION} && \
     chmod +x usr/bin/docker
 
+# Add dumb-init
+ENV DINIT_VERSION 1.0.0
+RUN mkdir -p usr/bin && \
+    wget -qO usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DINIT_VERSION}/dumb-init_${DINIT_VERSION}_amd64 && \
+    chmod +x usr/bin/dumb-init
+
 ENV VERSION 1.2.7
 RUN mkdir -p etc && \
     echo "Welcome to DockerRoot version ${VERSION}, $(usr/bin/docker -v)" > etc/motd && \
