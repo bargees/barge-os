@@ -24,6 +24,7 @@ It's inspired by the following projects.
 	- e2fsck, mke2fs, resize2fs, tune2fs
 - Default username: docker
 - Default password: docker
+- Install [dumb-init](https://github.com/Yelp/dumb-init) into /usr/bin
 
 ## Documentation
 
