@@ -21,7 +21,8 @@ RUN wget -qO- http://buildroot.uclibc.org/downloads/buildroot-${BR_VERSION}.tar.
 # Apply patches
 RUN mkdir -p ${SRC_DIR}/patches && \
     wget -qO ${SRC_DIR}/patches/openssh.patch https://git.busybox.net/buildroot/patch/package/openssh?id=2ff0e32e254e3ee6d96f6b13b7bf182b4e1def73 && \
-    patch -p1 -d ${BR_ROOT} < ${SRC_DIR}/patches/openssh.patch
+    patch -p1 -d ${BR_ROOT} < ${SRC_DIR}/patches/openssh.patch && \
+    wget -qO ${BR_ROOT}/linux/0001-fix-keyring-ref-leak-in-join_session_keyring.patch https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/patch/?id=23567fd052a9abb6d67fe8e7a9ccdd9800a540f2
 
 # Setup overlay
 COPY overlay ${OVERLAY}
