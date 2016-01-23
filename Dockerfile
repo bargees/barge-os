@@ -19,9 +19,8 @@ RUN wget -qO- http://buildroot.uclibc.org/downloads/buildroot-${BR_VERSION}.tar.
     mv buildroot-${BR_VERSION} ${BR_ROOT}
 
 # Apply patches
-RUN mkdir -p ${SRC_DIR}/patches && \
-    wget -qO ${SRC_DIR}/patches/openssh.patch https://git.busybox.net/buildroot/patch/package/openssh?id=2ff0e32e254e3ee6d96f6b13b7bf182b4e1def73 && \
-    patch -p1 -d ${BR_ROOT} < ${SRC_DIR}/patches/openssh.patch
+COPY patches ${SRC_DIR}/patches
+RUN patch -p1 -d ${BR_ROOT} < ${SRC_DIR}/patches/openssh.patch
 
 # Setup overlay
 COPY overlay ${OVERLAY}
