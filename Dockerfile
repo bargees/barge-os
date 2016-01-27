@@ -1,10 +1,10 @@
-FROM ubuntu-debootstrap:14.04.3
+FROM ailispaw/ubuntu-essential
 
 ENV TERM xterm
 
 RUN apt-get -q update && \
     apt-get -q -y install ca-certificates \
-      bc build-essential python unzip rsync wget \
+      bc build-essential cpio python unzip rsync wget \
       syslinux xorriso dosfstools && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
