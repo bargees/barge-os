@@ -1,4 +1,4 @@
-KERNEL_VERSION  := 4.3.5
+KERNEL_VERSION  := 4.4.1
 BUSYBOX_VERSION := 1.24.1
 
 TARGETS := output/rootfs.tar.xz output/bzImage output/docker-root.iso output/docker-root.img
@@ -24,7 +24,6 @@ SOURCES := Dockerfile \
 	overlay/sbin/shutdown \
 	overlay/var/db/ntp-kod \
 	overlay/init \
-	patches/openssh.patch \
 	scripts/build.sh \
 	scripts/post_build.sh \
 	scripts/post_image.sh
