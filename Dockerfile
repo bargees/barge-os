@@ -3,9 +3,9 @@ FROM ailispaw/ubuntu-essential
 ENV TERM xterm
 
 RUN apt-get -q update && \
-    apt-get -q -y install ca-certificates \
+    apt-get -q -y install --no-install-recommends ca-certificates \
       bc build-essential cpio python unzip rsync wget \
-      syslinux xorriso dosfstools && \
+      syslinux xorriso dosfstools mtools && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Setup environment
