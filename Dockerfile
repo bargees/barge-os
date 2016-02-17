@@ -20,7 +20,9 @@ RUN wget -qO- http://buildroot.uclibc.org/downloads/buildroot-${BR_VERSION}.tar.
 
 # Apply patches
 COPY patches ${SRC_DIR}/patches
-RUN patch -p1 -d ${BR_ROOT} < ${SRC_DIR}/patches/openssh.patch
+RUN cd ${SRC_DIR}/patches && \
+    patch -p1 -d ${BR_ROOT} < openssh.patch && \
+    cp -R glibc ${BR_ROOT}/package/
 
 # Setup overlay
 COPY overlay ${OVERLAY}

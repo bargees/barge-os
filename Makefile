@@ -24,6 +24,7 @@ SOURCES := Dockerfile \
 	overlay/sbin/shutdown \
 	overlay/var/db/ntp-kod \
 	overlay/init \
+	patches/glibc/2.21/0001-fix-CVE-2015-7547.patch \
 	patches/openssh.patch \
 	scripts/build.sh \
 	scripts/post_build.sh \
