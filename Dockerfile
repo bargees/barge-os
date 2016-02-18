@@ -26,11 +26,17 @@ WORKDIR ${OVERLAY}
 RUN mkdir -p etc/ssl/certs && \
     cp /etc/ssl/certs/ca-certificates.crt etc/ssl/certs/
 
+# Add bash-completion
+RUN mkdir -p usr/share/bash-completion/completions && \
+    wget -qO usr/share/bash-completion/bash_completion https://raw.githubusercontent.com/scop/bash-completion/master/bash_completion && \
+    chmod +x usr/share/bash-completion/bash_completion
+
 # Add Docker
 ENV DOCKER_VERSION 1.9.1
 RUN mkdir -p usr/bin && \
     wget -qO usr/bin/docker https://github.com/ailispaw/docker/releases/download/v${DOCKER_VERSION}-stripped/docker-${DOCKER_VERSION} && \
-    chmod +x usr/bin/docker
+    chmod +x usr/bin/docker && \
+    wget -qO usr/share/bash-completion/completions/docker https://raw.githubusercontent.com/docker/docker/v${DOCKER_VERSION}/contrib/completion/bash/docker
 
 # Add dumb-init
 ENV DINIT_VERSION 1.0.0
