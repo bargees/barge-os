@@ -14,7 +14,7 @@ It's inspired by the following projects.
 
 ## Features
 
-- Based on Buildroot 2015.11.1 with Linux kernel v4.3.5 and GLIBC.
+- Based on Buildroot 2016.02 with Linux kernel v4.4.2 and GLIBC.
 - ~~Runs a Docker daemon as PID 1~~
 - Strip down the Linux kernel modules and drivers
 - Busybox + the following utilities from Buildroot
