@@ -14,6 +14,7 @@ SOURCES := Dockerfile \
 	overlay/etc/init.d/rcK \
 	overlay/etc/init.d/S90crond \
 	overlay/etc/logrotate.d/docker \
+	overlay/etc/profile.d/bash_completion.sh \
 	overlay/etc/profile.d/bashrc.sh \
 	overlay/etc/profile.d/colorls.sh \
 	overlay/etc/profile.d/optbin.sh \
