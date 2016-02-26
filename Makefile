@@ -53,7 +53,7 @@ build: $(SOURCES) | .dl
 			(docker rm -f $(BUILD_CONTAINER) || true); \
 		fi; \
 	fi
-	@if [ "$(BUILT)" == "" ]; then \
+	@if [ "$(BUILT)" = "" ]; then \
 		set -e; \
 		(docker rm -f $(BUILD_CONTAINER) || true); \
 		docker run --privileged -v $(CCACHE_DIR):/build/buildroot/ccache \
