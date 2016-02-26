@@ -103,7 +103,7 @@ config: | output
 install:
 	cp output/bzImage ../docker-root-packer/iso/
 	cp output/rootfs.tar.xz ../docker-root-packer/iso/
-	cp output/kernel.config ../docker-root-packer/iso/
+	cp configs/kernel.config ../docker-root-packer/iso/
 	cp output/docker-root.iso ../docker-root-packer/box/
 	cp output/docker-root.img ../docker-root-packer/box/
 	cp configs/isolinux.cfg ../docker-root-packer/iso/
