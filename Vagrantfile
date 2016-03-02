@@ -27,7 +27,7 @@ Vagrant.configure(2) do |config|
   config.vm.synced_folder ".", "/vagrant", type: "nfs", mount_options: ["nolock", "vers=3", "udp"]
 
   # Adjusting datetime before provisioning.
-  config.vm.provision :shell, run: "always" do |sh|
+  config.vm.provision "timesync", type: "shell", run: "always" do |sh|
     sh.inline = "sntp -4sSc pool.ntp.org; date"
   end
 end
