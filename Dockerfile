@@ -14,15 +14,9 @@ ENV SRC_DIR=/build \
     BR_ROOT=/build/buildroot
 RUN mkdir -p ${SRC_DIR} ${OVERLAY}
 
-ENV BR_VERSION 2015.11.1
-RUN wget -qO- http://buildroot.uclibc.org/downloads/buildroot-${BR_VERSION}.tar.bz2 | tar xj && \
+ENV BR_VERSION 2016.02
+RUN wget -qO- https://buildroot.org/downloads/buildroot-${BR_VERSION}.tar.bz2 | tar xj && \
     mv buildroot-${BR_VERSION} ${BR_ROOT}
-
-# Apply patches
-COPY patches ${SRC_DIR}/patches
-RUN cd ${SRC_DIR}/patches && \
-    patch -p1 -d ${BR_ROOT} < openssh.patch && \
-    cp -R glibc ${BR_ROOT}/package/
 
 # Setup overlay
 COPY overlay ${OVERLAY}
@@ -50,7 +44,7 @@ RUN mkdir -p usr/bin && \
     wget -qO usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DINIT_VERSION}/dumb-init_${DINIT_VERSION}_amd64 && \
     chmod +x usr/bin/dumb-init
 
-ENV VERSION 1.2.13
+ENV VERSION 1.3.0
 RUN mkdir -p etc && \
     echo "Welcome to DockerRoot version ${VERSION}, $(usr/bin/docker -v)" > etc/motd && \
     echo "NAME=\"DockerRoot\"" > etc/os-release && \
