@@ -47,7 +47,7 @@ build: $(SOURCES) | .dl
 	$(eval SRC_UPDATED=$$(shell stat -f "%m" $^ | sort -gr | head -n1))
 	@if [ "$(SRC_UPDATED)" -gt "$(IMG_CREATED)" ]; then \
 		set -e; \
-		find . -type f -name '.DS_Store' | xargs rm; \
+		find . -type f -name '.DS_Store' | xargs rm -f; \
 		docker build -t $(BUILD_IMAGE) .; \
 		if [ "$(IMG_CREATED)" -gt "$(SRC_UPDATED)" ]; then \
 			(docker rm -f $(BUILD_CONTAINER) || true); \
