@@ -47,13 +47,13 @@ build: $(SOURCES) | .dl
 	$(eval SRC_UPDATED=$$(shell stat -f "%m" $^ | sort -gr | head -n1))
 	@if [ "$(SRC_UPDATED)" -gt "$(IMG_CREATED)" ]; then \
 		set -e; \
-		find . -type f -name '.DS_Store' | xargs rm; \
+		find . -type f -name '.DS_Store' | xargs rm -f; \
 		docker build -t $(BUILD_IMAGE) .; \
 		if [ "$(IMG_CREATED)" -gt "$(SRC_UPDATED)" ]; then \
 			(docker rm -f $(BUILD_CONTAINER) || true); \
 		fi; \
 	fi
-	@if [ "$(BUILT)" == "" ]; then \
+	@if [ "$(BUILT)" = "" ]; then \
 		set -e; \
 		(docker rm -f $(BUILD_CONTAINER) || true); \
 		docker run --privileged -v $(CCACHE_DIR):/build/buildroot/ccache \
@@ -103,7 +103,7 @@ config: | output
 install:
 	cp output/bzImage ../docker-root-packer/iso/
 	cp output/rootfs.tar.xz ../docker-root-packer/iso/
-	cp output/kernel.config ../docker-root-packer/iso/
+	cp configs/kernel.config ../docker-root-packer/iso/
 	cp output/docker-root.iso ../docker-root-packer/box/
 	cp output/docker-root.img ../docker-root-packer/box/
 	cp configs/isolinux.cfg ../docker-root-packer/iso/
