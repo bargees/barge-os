@@ -11,7 +11,7 @@ fi
 
 start() {
   if check; then
-    echo 'Docker daemon is running' >&2
+    echo "$(${DOCKER} -v) is running." >&2
     exit 1
   fi
 
@@ -44,9 +44,9 @@ start() {
   logger -s -p user.info -t "docker[$$]" "Starting Docker daemon $DOCKER_PARAMS"
   echo "Starting Docker daemon $DOCKER_PARAMS" >> "$DOCKER_LOGFILE"
   if [ "$$" == "1" ]; then
-    eval "exec /usr/bin/docker daemon $DOCKER_PARAMS >> \"$DOCKER_LOGFILE\" 2>&1"
+    eval "exec ${DOCKER} daemon $DOCKER_PARAMS >> \"$DOCKER_LOGFILE\" 2>&1"
   else
-    eval "/usr/bin/docker daemon $DOCKER_PARAMS >> \"$DOCKER_LOGFILE\" 2>&1 &"
+    eval "${DOCKER} daemon $DOCKER_PARAMS >> \"$DOCKER_LOGFILE\" 2>&1 &"
   fi
 }
 
@@ -81,13 +81,47 @@ check() {
 
 status() {
   if check; then
-    echo 'Docker daemon is running'
+    echo "$(${DOCKER} -v) is running."
     exit 0
   else
-    echo 'Docker daemon is not running'
+    echo "$(${DOCKER} -v) is not running."
     exit 1
   fi
 }
+
+download() {
+  local version="${1/#v/}"
+
+  DOCKER_BIN="${DOCKER}-${version}"
+
+  if [ ! -f ${DOCKER_BIN} ]; then
+    echo -n "Downloading v${version} ..."
+    trap "rm -f ${DOCKER_BIN}" ERR
+    wget -qO ${DOCKER_BIN} https://get.docker.io/builds/Linux/x86_64/docker-${version}
+    [ -f ${DOCKER_BIN} ] \
+      && chmod +x ${DOCKER_BIN} \
+      || echo -n " not found."
+    echo
+  fi
+}
+
+readonly DOCKER="/opt/bin/docker"
+DOCKER_BIN="/usr/bin/docker"
+if [ ! -f ${DOCKER} ]; then
+  mkdir -p /opt/bin
+  ln -s ${DOCKER_BIN} ${DOCKER}
+fi
+if [ -n "$2" ]; then
+  if [ "$2" = "default" ]; then
+    DOCKER_BIN="/usr/bin/docker"
+  else
+    download $2
+    [ ! -f ${DOCKER_BIN} ] && exit 1
+  fi
+  rm -f ${DOCKER}
+  ln -s ${DOCKER_BIN} ${DOCKER}
+  sed -i "s/Docker version.*/$(${DOCKER} -v)/" /etc/motd
+fi
 
 case $1 in
   start)
@@ -103,7 +137,7 @@ case $1 in
     status
     ;;
   *)
-    echo "Usage $0 {start|stop|restart|status}"
+    echo "Usage $0 {start|stop|restart|status} [<version>|default]"
     exit 1
     ;;
 esac
