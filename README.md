@@ -24,7 +24,12 @@ It's inspired by the following projects.
 	- e2fsck, mke2fs, resize2fs, tune2fs
 - Default username: docker
 - Default password: docker
-- Install [dumb-init](https://github.com/Yelp/dumb-init) into /usr/bin
+- [dumb-init](https://github.com/Yelp/dumb-init) binary is built-in /usr/bin.
+- [pkg](https://github.com/ailispaw/docker-root-pkg) command is built-in. You can install individual packages from Buildroot + &alpha;.
+- Enable to switch between Docker versions.  
+	```bash
+    $ sudo /etc/init.d/docker {start|restart} [<version>|latest|default]
+    ```
 
 ## Documentation
 
