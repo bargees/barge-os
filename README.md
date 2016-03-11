@@ -25,6 +25,9 @@ It's inspired by the following projects.
 - Default username: docker
 - Default password: docker
 - [dumb-init](https://github.com/Yelp/dumb-init) binary is built-in /usr/bin.
+
+	e.g., `docker run -d -v /usr/bin/dumb-init:/dumb-init:ro --entrypoint=/dumb-init <image> <command>`
+
 - [pkg](https://github.com/ailispaw/docker-root-pkg) command is built-in. You can install individual packages from Buildroot + &alpha;.
 
 	```bash
@@ -33,12 +36,17 @@ It's inspired by the following projects.
 	       pkg show <package-name>
 	       pkg list
 	```
+
+	e.g., `sudo pkg install vim`
+
 - Enable to switch between Docker versions.
 
 	```bash
 	[docker@docker-root ~]$ sudo /etc/init.d/docker
 	Usage /etc/init.d/docker {start|stop|restart|status} [<version>|latest|default]
 	```
+
+	e.g., `sudo /etc/init.d/docker restart latest`
 
 ## Documentation
 
