@@ -26,10 +26,19 @@ It's inspired by the following projects.
 - Default password: docker
 - [dumb-init](https://github.com/Yelp/dumb-init) binary is built-in /usr/bin.
 - [pkg](https://github.com/ailispaw/docker-root-pkg) command is built-in. You can install individual packages from Buildroot + &alpha;.
-- Enable to switch between Docker versions.  
+
 	```bash
-    $ sudo /etc/init.d/docker {start|restart} [<version>|latest|default]
-    ```
+	[docker@docker-root ~]$ pkg
+	Usage: pkg {build|install} [-f] <package-name> [build options]
+	       pkg show <package-name>
+	       pkg list
+	```
+- Enable to switch between Docker versions.
+
+	```bash
+	[docker@docker-root ~]$ sudo /etc/init.d/docker
+	Usage /etc/init.d/docker {start|stop|restart|status} [<version>|latest|default]
+	```
 
 ## Documentation
 
