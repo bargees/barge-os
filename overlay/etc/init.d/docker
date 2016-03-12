@@ -5,6 +5,7 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
+ROOT_SWITCHED=false
 if grep -qw "tmpfs / tmpfs" /proc/mounts; then
   ROOT_SWITCHED=true
 fi
@@ -27,34 +28,34 @@ start() {
   : ${DOCKER_ULIMITS:=1048576}
   : ${DOCKER_LOGFILE:="/var/lib/docker-root/docker.log"}
 
-  logger -s -p user.info -t "docker[$$]" "Setting ulimit $DOCKER_ULIMITS"
-  ulimit -n $DOCKER_ULIMITS
-  ulimit -u $DOCKER_ULIMITS
+  logger -s -p user.info -t "docker[$$]" "Setting ulimit ${DOCKER_ULIMITS}"
+  ulimit -n ${DOCKER_ULIMITS}
+  ulimit -u ${DOCKER_ULIMITS}
 
   # Top secret option...
-  if [ -z "$ROOT_SWITCHED" ]; then
+  if ! ${ROOT_SWITCHED} ; then
     export DOCKER_RAMDISK=true
   fi
-  logger -s -p user.info -t "docker[$$]" "DOCKER_RAMDISK=$DOCKER_RAMDISK"
+  logger -s -p user.info -t "docker[$$]" "DOCKER_RAMDISK=${DOCKER_RAMDISK}"
 
   echo -n 1 > /sys/fs/cgroup/memory/memory.use_hierarchy
 
-  DOCKER_PARAMS="-D -s $DOCKER_STORAGE -g \"$DOCKER_DIR\" $DOCKER_HOST $DOCKER_EXTRA_ARGS"
+  DOCKER_PARAMS="-D -s ${DOCKER_STORAGE} -g \"${DOCKER_DIR}\" ${DOCKER_HOST} ${DOCKER_EXTRA_ARGS}"
 
-  if ${DOCKER_SWITCHED} ; then
+  if ${DOCKER_SWITCHING} ; then
     rm -f ${DOCKER}
     ln -s ${DOCKER_BIN} ${DOCKER}
     sed -i "s/Docker version.*/$(${DOCKER} -v)/" /etc/motd
   fi
   logger -s -p user.info -t "docker[$$]" "$(${DOCKER} -v)"
-  echo "----- $(${DOCKER} -v) -----" >> "$DOCKER_LOGFILE"
+  echo "----- $(${DOCKER} -v) -----" >> "${DOCKER_LOGFILE}"
 
-  logger -s -p user.info -t "docker[$$]" "Starting Docker daemon $DOCKER_PARAMS"
-  echo "Starting Docker daemon $DOCKER_PARAMS" >> "$DOCKER_LOGFILE"
+  logger -s -p user.info -t "docker[$$]" "Starting Docker daemon ${DOCKER_PARAMS}"
+  echo "Starting Docker daemon ${DOCKER_PARAMS}" >> "${DOCKER_LOGFILE}"
   if [ "$$" == "1" ]; then
-    eval "exec ${DOCKER} daemon $DOCKER_PARAMS >> \"$DOCKER_LOGFILE\" 2>&1"
+    eval "exec ${DOCKER} daemon ${DOCKER_PARAMS} >> \"${DOCKER_LOGFILE}\" 2>&1"
   else
-    eval "${DOCKER} daemon $DOCKER_PARAMS >> \"$DOCKER_LOGFILE\" 2>&1 &"
+    eval "${DOCKER} daemon ${DOCKER_PARAMS} >> \"${DOCKER_LOGFILE}\" 2>&1 &"
   fi
 }
 
@@ -79,8 +80,8 @@ stop() {
 restart() {
   if check; then
     stop
-    local TIMEOUT=11
-    while [ $(( TIMEOUT-- )) -gt 0 ] && check; do
+    local timeout=11
+    while [ $(( timeout-- )) -gt 0 ] && check; do
       sleep 1
     done
     start
@@ -125,7 +126,7 @@ if [ ! -f ${DOCKER} ]; then
   mkdir -p /opt/bin
   ln -s ${DOCKER_BIN} ${DOCKER}
 fi
-DOCKER_SWITCHED=false
+DOCKER_SWITCHING=false
 if [ -n "$2" ]; then
   if [ "$2" = "default" ]; then
     DOCKER_BIN="/usr/bin/docker"
@@ -138,7 +139,7 @@ if [ -n "$2" ]; then
     download ${version}
     [ ! -f ${DOCKER_BIN} ] && exit 1
   fi
-  DOCKER_SWITCHED=true
+  DOCKER_SWITCHING=true
 fi
 
 case $1 in
