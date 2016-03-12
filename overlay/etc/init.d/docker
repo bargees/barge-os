@@ -41,6 +41,14 @@ start() {
 
   DOCKER_PARAMS="-D -s $DOCKER_STORAGE -g \"$DOCKER_DIR\" $DOCKER_HOST $DOCKER_EXTRA_ARGS"
 
+  if ${DOCKER_SWITCHED} ; then
+    rm -f ${DOCKER}
+    ln -s ${DOCKER_BIN} ${DOCKER}
+    sed -i "s/Docker version.*/$(${DOCKER} -v)/" /etc/motd
+  fi
+  logger -s -p user.info -t "docker[$$]" "$(${DOCKER} -v)"
+  echo "----- $(${DOCKER} -v) -----" >> "$DOCKER_LOGFILE"
+
   logger -s -p user.info -t "docker[$$]" "Starting Docker daemon $DOCKER_PARAMS"
   echo "Starting Docker daemon $DOCKER_PARAMS" >> "$DOCKER_LOGFILE"
   if [ "$$" == "1" ]; then
@@ -117,6 +125,7 @@ if [ ! -f ${DOCKER} ]; then
   mkdir -p /opt/bin
   ln -s ${DOCKER_BIN} ${DOCKER}
 fi
+DOCKER_SWITCHED=false
 if [ -n "$2" ]; then
   if [ "$2" = "default" ]; then
     DOCKER_BIN="/usr/bin/docker"
@@ -129,9 +138,7 @@ if [ -n "$2" ]; then
     download ${version}
     [ ! -f ${DOCKER_BIN} ] && exit 1
   fi
-  rm -f ${DOCKER}
-  ln -s ${DOCKER_BIN} ${DOCKER}
-  sed -i "s/Docker version.*/$(${DOCKER} -v)/" /etc/motd
+  DOCKER_SWITCHED=true
 fi
 
 case $1 in
