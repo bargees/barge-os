@@ -5,13 +5,6 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
-CONTAINERS="$(docker ps -q)"
-CONTAINERS=$(echo ${CONTAINERS})
-if [ -n "${CONTAINERS}" ]; then
-  logger -s -p user.info -t "$(basename $0)[$$]" "Stopping containers"
-  docker stop -t 2 ${CONTAINERS}
-fi
-
 logger -s -p user.info -t "$(basename $0)[$$]" "Stopping Docker daemon"
 /etc/init.d/docker stop
 

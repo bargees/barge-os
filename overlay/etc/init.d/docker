@@ -56,6 +56,12 @@ stop() {
       echo "$(basename $0): Operation not permitted, can't kill PID 1." >&2
       exit 1
     else
+      CONTAINERS="$(${DOCKER} ps -q)"
+      CONTAINERS=$(echo ${CONTAINERS})
+      if [ -n "${CONTAINERS}" ]; then
+        logger -s -p user.info -t "docker[$$]" "Stopping containers"
+        ${DOCKER} stop -t 2 ${CONTAINERS}
+      fi
       logger -s -p user.info -t "docker[$$]" "Stopping Docker daemon"
       kill $(cat /var/run/docker.pid)
     fi
