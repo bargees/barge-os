@@ -5,6 +5,19 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
+if [ -f /var/lib/docker-root/profile ]; then
+  logger -s -p user.info -t "docker[$$]" "Loading /var/lib/docker-root/profile"
+  source /var/lib/docker-root/profile
+fi
+
+: ${DOCKER_STORAGE:="overlay"}
+: ${DOCKER_DIR:="/var/lib/docker"}
+: ${DOCKER_HOST:="-H unix://"}
+: ${DOCKER_EXTRA_ARGS="--userland-proxy=false"}
+: ${DOCKER_ULIMITS:=1048576}
+: ${DOCKER_LOGFILE:="/var/lib/docker-root/docker.log"}
+: ${DOCKER_TIMEOUT:=2}
+
 ROOT_SWITCHED=false
 if grep -qw "tmpfs / tmpfs" /proc/mounts; then
   ROOT_SWITCHED=true
@@ -15,18 +28,6 @@ start() {
     echo "$(${DOCKER} -v) is running." >&2
     exit 1
   fi
-
-  if [ -f /var/lib/docker-root/profile ]; then
-    logger -s -p user.info -t "docker[$$]" "Loading /var/lib/docker-root/profile"
-    source /var/lib/docker-root/profile
-  fi
-
-  : ${DOCKER_STORAGE:="overlay"}
-  : ${DOCKER_DIR:="/var/lib/docker"}
-  : ${DOCKER_HOST:="-H unix://"}
-  : ${DOCKER_EXTRA_ARGS="--userland-proxy=false"}
-  : ${DOCKER_ULIMITS:=1048576}
-  : ${DOCKER_LOGFILE:="/var/lib/docker-root/docker.log"}
 
   logger -s -p user.info -t "docker[$$]" "Setting ulimit ${DOCKER_ULIMITS}"
   ulimit -n ${DOCKER_ULIMITS}
@@ -69,7 +70,10 @@ stop() {
       CONTAINERS=$(echo ${CONTAINERS})
       if [ -n "${CONTAINERS}" ]; then
         logger -s -p user.info -t "docker[$$]" "Stopping containers"
-        ${DOCKER} stop -t 2 ${CONTAINERS}
+        if [ -n "${DOCKER_TIMEOUT}" ]; then
+          DOCKER_TIMEOUT="-t ${DOCKER_TIMEOUT}"
+        fi
+        ${DOCKER} stop ${DOCKER_TIMEOUT} ${CONTAINERS}
       fi
       logger -s -p user.info -t "docker[$$]" "Stopping Docker daemon"
       kill $(cat /var/run/docker.pid)
