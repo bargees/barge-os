@@ -16,7 +16,7 @@ fi
 : ${DOCKER_EXTRA_ARGS="--userland-proxy=false"}
 : ${DOCKER_ULIMITS:=1048576}
 : ${DOCKER_LOGFILE:="/var/lib/docker-root/docker.log"}
-: ${DOCKER_TIMEOUT:=2}
+: ${DOCKER_TIMEOUT:=5}
 
 ROOT_SWITCHED=false
 if grep -qw "tmpfs / tmpfs" /proc/mounts; then
