@@ -113,10 +113,15 @@ download() {
 
   DOCKER_BIN="${DOCKER}-${version}"
 
+  local base_url="https://get.docker.io/builds/Linux/x86_64"
+  if [[ "${version}" == *"-rc"* ]]; then
+    base_url="https://test.docker.com/builds/Linux/x86_64"
+  fi
+
   if [ ! -f ${DOCKER_BIN} ]; then
     echo -n "Downloading v${version} ..."
     trap "rm -f ${DOCKER_BIN}" ERR
-    wget -qO ${DOCKER_BIN} https://get.docker.io/builds/Linux/x86_64/docker-${version}
+    wget -qO ${DOCKER_BIN} ${base_url}/docker-${version}
     [ -f ${DOCKER_BIN} ] \
       && chmod +x ${DOCKER_BIN} \
       || echo -n " not found."
