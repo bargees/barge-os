@@ -41,7 +41,7 @@ start() {
 
   echo -n 1 > /sys/fs/cgroup/memory/memory.use_hierarchy
 
-  DOCKER_PARAMS="-D -s ${DOCKER_STORAGE} -g \"${DOCKER_DIR}\" ${DOCKER_HOST} ${DOCKER_EXTRA_ARGS}"
+  local params="-D -s ${DOCKER_STORAGE} -g \"${DOCKER_DIR}\" ${DOCKER_HOST} ${DOCKER_EXTRA_ARGS}"
 
   if ${DOCKER_SWITCHING} ; then
     rm -f ${DOCKER}
@@ -51,12 +51,12 @@ start() {
   logger -s -p user.info -t "docker[$$]" "$(${DOCKER} -v)"
   echo "----- $(${DOCKER} -v) -----" >> "${DOCKER_LOGFILE}"
 
-  logger -s -p user.info -t "docker[$$]" "Starting Docker daemon ${DOCKER_PARAMS}"
-  echo "Starting Docker daemon ${DOCKER_PARAMS}" >> "${DOCKER_LOGFILE}"
+  logger -s -p user.info -t "docker[$$]" "Starting Docker daemon ${params}"
+  echo "Starting Docker daemon ${params}" >> "${DOCKER_LOGFILE}"
   if [ "$$" == "1" ]; then
-    eval "exec ${DOCKER} daemon ${DOCKER_PARAMS} >> \"${DOCKER_LOGFILE}\" 2>&1"
+    eval "exec ${DOCKER} daemon ${params} >> \"${DOCKER_LOGFILE}\" 2>&1"
   else
-    eval "${DOCKER} daemon ${DOCKER_PARAMS} >> \"${DOCKER_LOGFILE}\" 2>&1 &"
+    eval "${DOCKER} daemon ${params} >> \"${DOCKER_LOGFILE}\" 2>&1 &"
   fi
 }
 
@@ -66,14 +66,14 @@ stop() {
       echo "$(basename $0): Operation not permitted, can't kill PID 1." >&2
       exit 1
     else
-      CONTAINERS="$(${DOCKER} ps -q)"
-      CONTAINERS=$(echo ${CONTAINERS})
-      if [ -n "${CONTAINERS}" ]; then
+      local containers="$(${DOCKER} ps -q)"
+      containers=$(echo ${containers})
+      if [ -n "${containers}" ]; then
         logger -s -p user.info -t "docker[$$]" "Stopping containers"
         if [ -n "${DOCKER_TIMEOUT}" ]; then
           DOCKER_TIMEOUT="-t ${DOCKER_TIMEOUT}"
         fi
-        ${DOCKER} stop ${DOCKER_TIMEOUT} ${CONTAINERS}
+        ${DOCKER} stop ${DOCKER_TIMEOUT} ${containers}
       fi
       logger -s -p user.info -t "docker[$$]" "Stopping Docker daemon"
       kill $(cat /var/run/docker.pid)
