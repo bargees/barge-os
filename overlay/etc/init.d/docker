@@ -6,23 +6,35 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
-if [ -f /var/lib/docker-root/profile ]; then
-  logger -s -p user.info -t "docker[$$]" "Loading /var/lib/docker-root/profile"
-  source /var/lib/docker-root/profile
+DOCKER_DAEMON="docker"
+DOCKER_DAEMON_COMMAND="daemon"
+DOCKER="/opt/bin/${DOCKER_DAEMON}"
+DOCKER_BIN_DIR="/usr/bin"
+if [ ! -f "${DOCKER}" ]; then
+  mkdir -p /opt/bin
+  ln -s "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" "${DOCKER}"
 fi
-
-: ${DOCKER_STORAGE:="overlay"}
-: ${DOCKER_DIR:="/var/lib/docker"}
-: ${DOCKER_HOST:="-H unix://"}
-: ${DOCKER_EXTRA_ARGS="--userland-proxy=false"}
-: ${DOCKER_ULIMITS:=1048576}
-: ${DOCKER_LOGFILE:="/var/lib/docker-root/docker.log"}
-: ${DOCKER_TIMEOUT:=5}
+DOCKER_SWITCHING=false
 
 ROOT_SWITCHED=false
 if grep -qw "tmpfs / tmpfs" /proc/mounts; then
   ROOT_SWITCHED=true
 fi
+
+configure() {
+  if [ -f /var/lib/docker-root/profile ]; then
+    logger -s -p user.info -t "docker[$$]" "Loading /var/lib/docker-root/profile"
+    source /var/lib/docker-root/profile
+  fi
+
+  : ${DOCKER_STORAGE:="overlay"}
+  : ${DOCKER_DIR:="/var/lib/docker"}
+  : ${DOCKER_HOST:="-H unix://"}
+  : ${DOCKER_EXTRA_ARGS="--userland-proxy=false"}
+  : ${DOCKER_ULIMITS:=1048576}
+  : ${DOCKER_LOGFILE:="/var/lib/docker-root/docker.log"}
+  : ${DOCKER_TIMEOUT:=5}
+}
 
 start() {
   if check; then
@@ -113,8 +125,19 @@ status() {
   fi
 }
 
-download() {
-  local version="${1/#v/}"
+switch() {
+  local version="$1"
+
+  if [ "${version}" = "default" ]; then
+    DOCKER_BIN_DIR="/usr/bin"
+    DOCKER_SWITCHING=true
+    return
+  elif [ "${version}" = "latest" ]; then
+    version=$(wget -qO- https://api.github.com/repos/docker/docker/releases/latest \
+      | awk -F'"' '/tag_name/ { print $4 }')
+  fi
+
+  version="${version/#v/}"
 
   DOCKER_BIN_DIR="/opt/docker/v${version}"
 
@@ -139,43 +162,29 @@ download() {
       mv -f "${DOCKER_BIN_DIR}/usr/local/bin"/* "${DOCKER_BIN_DIR}"
       rm -rf "${DOCKER_BIN_DIR}/usr"
     fi
-    [ -f "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" ] || echo -n " not found."
+    if [ ! -f "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" ]; then
+      echo " not found."
+      exit 1
+    fi
     echo
   fi
-}
 
-DOCKER_DAEMON="docker"
-DOCKER_DAEMON_COMMAND="daemon"
-DOCKER="/opt/bin/${DOCKER_DAEMON}"
-DOCKER_BIN_DIR="/usr/bin"
-if [ ! -f "${DOCKER}" ]; then
-  mkdir -p /opt/bin
-  ln -s "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" "${DOCKER}"
-fi
-DOCKER_SWITCHING=false
-if [ -n "$2" ]; then
-  if [ "$2" = "default" ]; then
-    DOCKER_BIN_DIR="/usr/bin"
-  else
-    version=$2
-    if [ "${version}" = "latest" ]; then
-      version=$(wget -qO- https://api.github.com/repos/docker/docker/releases/latest \
-        | awk -F'"' '/tag_name/ { print $4 }')
-    fi
-    download ${version}
-    [ ! -f "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" ] && exit 1
-  fi
   DOCKER_SWITCHING=true
-fi
+}
 
 case $1 in
   start)
+    [ -n "$2" ] && switch $2
+    configure
     start
     ;;
   stop)
+    configure
     stop
     ;;
   restart)
+    [ -n "$2" ] && switch $2
+    configure
     restart
     ;;
   status)
