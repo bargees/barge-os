@@ -101,6 +101,9 @@ if [ -x /var/lib/docker-root/init.sh ]; then
   /var/lib/docker-root/init.sh || true
 fi
 
+logger -s -p user.info -t "init[$$]" "Set hostname with /etc/hostname"
+/bin/hostname -F /etc/hostname
+
 logger -s -p user.info -t "init[$$]" "Executing ACPId"
 /usr/sbin/acpid
 
