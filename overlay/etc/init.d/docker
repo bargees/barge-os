@@ -1,4 +1,5 @@
 #!/bin/sh
+export PATH=/opt/bin:$PATH
 
 if [ "$(id -u)" != "0" ]; then
   echo "$(basename $0): Operation not permitted, must be root." >&2
@@ -44,8 +45,12 @@ start() {
   local params="-D -s ${DOCKER_STORAGE} -g \"${DOCKER_DIR}\" ${DOCKER_HOST} ${DOCKER_EXTRA_ARGS}"
 
   if ${DOCKER_SWITCHING} ; then
-    rm -f ${DOCKER}
-    ln -s ${DOCKER_BIN} ${DOCKER}
+    for i in docker docker-containerd docker-containerd-ctr docker-containerd-shim docker-runc; do
+      rm -f /opt/bin/$i
+      if [ -f ${DOCKER_BIN_DIR}/$i ]; then
+        ln -s ${DOCKER_BIN_DIR}/$i /opt/bin/$i
+      fi
+    done
     sed -i "s/Docker version.*/$(${DOCKER} -v)/" /etc/motd
   fi
   logger -s -p user.info -t "docker[$$]" "$(${DOCKER} -v)"
@@ -111,7 +116,18 @@ status() {
 download() {
   local version="${1/#v/}"
 
-  DOCKER_BIN="${DOCKER}-${version}"
+  DOCKER_BIN_DIR="${DOCKER}-v${version}"
+  DOCKER_BIN="${DOCKER_BIN_DIR}/docker"
+
+  local multi_binaries=true
+  local versions=($(echo ${version} | tr -s '.' ' '))
+  if [[ ${versions[0]} -lt 1 ]]; then
+    echo "Docker v${version} is too old." >&2 && exit 1
+  elif [[ (${versions[0]} -eq 1) && (${versions[1]} -lt 8) ]]; then
+    echo "Docker v${version} is too old." >&2 && exit 1
+  elif [[ (${versions[0]} -eq 1) && (${versions[1]} -lt 11) ]]; then
+    multi_binaries=false
+  fi
 
   local base_url="https://get.docker.io/builds/Linux/x86_64"
   if [[ "${version}" == *"-rc"* ]]; then
@@ -120,17 +136,28 @@ download() {
 
   if [ ! -f ${DOCKER_BIN} ]; then
     echo -n "Downloading v${version} ..."
-    trap "rm -f ${DOCKER_BIN}" ERR
-    wget -qO ${DOCKER_BIN} ${base_url}/docker-${version}
-    [ -f ${DOCKER_BIN} ] \
-      && chmod +x ${DOCKER_BIN} \
-      || echo -n " not found."
+    trap "rm -rf ${DOCKER_BIN_DIR}" ERR
+    mkdir -p ${DOCKER_BIN_DIR}
+
+    if ${multi_binaries} ; then
+      wget -qO- ${base_url}/docker-${version}.tgz | tar zxf - -C ${DOCKER_BIN_DIR} 2>/dev/null
+      if [ -d ${DOCKER_BIN_DIR}/usr ]; then
+        mv -f ${DOCKER_BIN_DIR}/usr/local/bin/* ${DOCKER_BIN_DIR}
+        rm -rf ${DOCKER_BIN_DIR}/usr
+      fi
+    else
+      wget -qO ${DOCKER_BIN} ${base_url}/docker-${version}
+      [ -f ${DOCKER_BIN} ] && chmod +x ${DOCKER_BIN}
+    fi
+
+    [ -f ${DOCKER_BIN} ] || echo -n " not found."
     echo
   fi
 }
 
 readonly DOCKER="/opt/bin/docker"
-DOCKER_BIN="/usr/bin/docker"
+DOCKER_BIN_DIR="/usr/bin"
+DOCKER_BIN="${DOCKER_BIN_DIR}/docker"
 if [ ! -f ${DOCKER} ]; then
   mkdir -p /opt/bin
   ln -s ${DOCKER_BIN} ${DOCKER}
@@ -138,7 +165,8 @@ fi
 DOCKER_SWITCHING=false
 if [ -n "$2" ]; then
   if [ "$2" = "default" ]; then
-    DOCKER_BIN="/usr/bin/docker"
+    DOCKER_BIN_DIR="/usr/bin"
+    DOCKER_BIN="${DOCKER_BIN_DIR}/docker"
   else
     version=$2
     if [ "${version}" = "latest" ]; then
