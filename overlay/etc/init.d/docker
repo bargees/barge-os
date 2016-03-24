@@ -1,27 +1,40 @@
 #!/bin/sh
+export PATH=/opt/bin:$PATH
 
 if [ "$(id -u)" != "0" ]; then
   echo "$(basename $0): Operation not permitted, must be root." >&2
   exit 1
 fi
 
-if [ -f /var/lib/docker-root/profile ]; then
-  logger -s -p user.info -t "docker[$$]" "Loading /var/lib/docker-root/profile"
-  source /var/lib/docker-root/profile
+DOCKER_DAEMON="docker"
+DOCKER_DAEMON_COMMAND="daemon"
+DOCKER="/opt/bin/${DOCKER_DAEMON}"
+DOCKER_BIN_DIR="/usr/bin"
+if [ ! -f "${DOCKER}" ]; then
+  mkdir -p /opt/bin
+  ln -s "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" "${DOCKER}"
 fi
-
-: ${DOCKER_STORAGE:="overlay"}
-: ${DOCKER_DIR:="/var/lib/docker"}
-: ${DOCKER_HOST:="-H unix://"}
-: ${DOCKER_EXTRA_ARGS="--userland-proxy=false"}
-: ${DOCKER_ULIMITS:=1048576}
-: ${DOCKER_LOGFILE:="/var/lib/docker-root/docker.log"}
-: ${DOCKER_TIMEOUT:=5}
+DOCKER_SWITCHING=false
 
 ROOT_SWITCHED=false
 if grep -qw "tmpfs / tmpfs" /proc/mounts; then
   ROOT_SWITCHED=true
 fi
+
+configure() {
+  if [ -f /var/lib/docker-root/profile ]; then
+    logger -s -p user.info -t "docker[$$]" "Loading /var/lib/docker-root/profile"
+    source /var/lib/docker-root/profile
+  fi
+
+  : ${DOCKER_STORAGE:="overlay"}
+  : ${DOCKER_DIR:="/var/lib/docker"}
+  : ${DOCKER_HOST:="-H unix://"}
+  : ${DOCKER_EXTRA_ARGS="--userland-proxy=false"}
+  : ${DOCKER_ULIMITS:=1048576}
+  : ${DOCKER_LOGFILE:="/var/lib/docker-root/docker.log"}
+  : ${DOCKER_TIMEOUT:=5}
+}
 
 start() {
   if check; then
@@ -44,8 +57,12 @@ start() {
   local params="-D -s ${DOCKER_STORAGE} -g \"${DOCKER_DIR}\" ${DOCKER_HOST} ${DOCKER_EXTRA_ARGS}"
 
   if ${DOCKER_SWITCHING} ; then
-    rm -f ${DOCKER}
-    ln -s ${DOCKER_BIN} ${DOCKER}
+    for i in docker docker-containerd docker-containerd-ctr docker-containerd-shim docker-runc; do
+      rm -f "/opt/bin/$i"
+      if [ -f "${DOCKER_BIN_DIR}/$i" ]; then
+        ln -s "${DOCKER_BIN_DIR}/$i" "/opt/bin/$i"
+      fi
+    done
     sed -i "s/Docker version.*/$(${DOCKER} -v)/" /etc/motd
   fi
   logger -s -p user.info -t "docker[$$]" "$(${DOCKER} -v)"
@@ -54,9 +71,9 @@ start() {
   logger -s -p user.info -t "docker[$$]" "Starting Docker daemon ${params}"
   echo "Starting Docker daemon ${params}" >> "${DOCKER_LOGFILE}"
   if [ "$$" == "1" ]; then
-    eval "exec ${DOCKER} daemon ${params} >> \"${DOCKER_LOGFILE}\" 2>&1"
+    eval "exec ${DOCKER} ${DOCKER_DAEMON_COMMAND} ${params} >> \"${DOCKER_LOGFILE}\" 2>&1"
   else
-    eval "${DOCKER} daemon ${params} >> \"${DOCKER_LOGFILE}\" 2>&1 &"
+    eval "${DOCKER} ${DOCKER_DAEMON_COMMAND} ${params} >> \"${DOCKER_LOGFILE}\" 2>&1 &"
   fi
 }
 
@@ -108,57 +125,66 @@ status() {
   fi
 }
 
-download() {
-  local version="${1/#v/}"
+switch() {
+  local version="$1"
 
-  DOCKER_BIN="${DOCKER}-${version}"
+  if [ "${version}" = "default" ]; then
+    DOCKER_BIN_DIR="/usr/bin"
+    DOCKER_SWITCHING=true
+    return
+  elif [ "${version}" = "latest" ]; then
+    version=$(wget -qO- https://api.github.com/repos/docker/docker/releases/latest \
+      | awk -F'"' '/tag_name/ { print $4 }')
+  fi
+
+  version="${version/#v/}"
+
+  DOCKER_BIN_DIR="/opt/docker/v${version}"
+
+  local versions=($(echo ${version} | tr -s '.' ' '))
+  if [[ ${versions[0]} -lt 1 ]]; then
+    echo "Docker v${version} is too old." >&2 && exit 1
+  elif [[ (${versions[0]} -eq 1) && (${versions[1]} -lt 8) ]]; then
+    echo "Docker v${version} is too old." >&2 && exit 1
+  fi
 
   local base_url="https://get.docker.io/builds/Linux/x86_64"
   if [[ "${version}" == *"-rc"* ]]; then
     base_url="https://test.docker.com/builds/Linux/x86_64"
   fi
 
-  if [ ! -f ${DOCKER_BIN} ]; then
+  if [ ! -f "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" ]; then
     echo -n "Downloading v${version} ..."
-    trap "rm -f ${DOCKER_BIN}" ERR
-    wget -qO ${DOCKER_BIN} ${base_url}/docker-${version}
-    [ -f ${DOCKER_BIN} ] \
-      && chmod +x ${DOCKER_BIN} \
-      || echo -n " not found."
+    trap "rm -rf \"${DOCKER_BIN_DIR}\"" ERR
+    mkdir -p "${DOCKER_BIN_DIR}"
+    wget -qO- "${base_url}/docker-${version}.tgz" | tar zxf - -C "${DOCKER_BIN_DIR}" 2>/dev/null
+    if [ -d "${DOCKER_BIN_DIR}/usr/local/bin" ]; then
+      mv -f "${DOCKER_BIN_DIR}/usr/local/bin"/* "${DOCKER_BIN_DIR}"
+      rm -rf "${DOCKER_BIN_DIR}/usr"
+    fi
+    if [ ! -f "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" ]; then
+      echo " not found."
+      exit 1
+    fi
     echo
   fi
-}
 
-readonly DOCKER="/opt/bin/docker"
-DOCKER_BIN="/usr/bin/docker"
-if [ ! -f ${DOCKER} ]; then
-  mkdir -p /opt/bin
-  ln -s ${DOCKER_BIN} ${DOCKER}
-fi
-DOCKER_SWITCHING=false
-if [ -n "$2" ]; then
-  if [ "$2" = "default" ]; then
-    DOCKER_BIN="/usr/bin/docker"
-  else
-    version=$2
-    if [ "${version}" = "latest" ]; then
-      version=$(wget -qO- https://api.github.com/repos/docker/docker/releases/latest \
-        | awk -F'"' '/tag_name/ { print $4 }')
-    fi
-    download ${version}
-    [ ! -f ${DOCKER_BIN} ] && exit 1
-  fi
   DOCKER_SWITCHING=true
-fi
+}
 
 case $1 in
   start)
+    [ -n "$2" ] && switch $2
+    configure
     start
     ;;
   stop)
+    configure
     stop
     ;;
   restart)
+    [ -n "$2" ] && switch $2
+    configure
     restart
     ;;
   status)
