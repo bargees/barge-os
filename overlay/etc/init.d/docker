@@ -161,6 +161,10 @@ switch() {
     if [ -d "${DOCKER_BIN_DIR}/usr/local/bin" ]; then
       mv -f "${DOCKER_BIN_DIR}/usr/local/bin"/* "${DOCKER_BIN_DIR}"
       rm -rf "${DOCKER_BIN_DIR}/usr"
+    elif [ -d "${DOCKER_BIN_DIR}/docker" ]; then
+      mv -f "${DOCKER_BIN_DIR}/docker" "${DOCKER_BIN_DIR}/bin"
+      mv -f "${DOCKER_BIN_DIR}/bin"/* "${DOCKER_BIN_DIR}"
+      rm -rf "${DOCKER_BIN_DIR}/bin"
     fi
     if [ ! -f "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" ]; then
       echo " not found."
