@@ -110,10 +110,6 @@ logger -s -p user.info -t "init[$$]" "Executing ACPId"
 logger -s -p user.info -t "init[$$]" "Executing startup scripts in /etc/init.d"
 /etc/init.d/rcS
 
-logger -s -p user.info -t "init[$$]" "Executing SSHd"
-/usr/bin/ssh-keygen -A
-/usr/sbin/sshd
-
 if [ -x /var/lib/docker-root/start.sh ]; then
   logger -s -p user.info -t "init[$$]" "Starting custom script start.sh"
   /var/lib/docker-root/start.sh &

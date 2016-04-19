@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Make sure the ssh-keygen progam exists
+[ -f /usr/bin/ssh-keygen ] || exit 0
+
+# Create any missing keys
+/usr/bin/ssh-keygen -A
+
+case "$1" in
+  start)
+    echo -n "Starting sshd... "
+    start-stop-daemon -S -q -m -b -p /var/run/sshd.pid --exec /usr/sbin/sshd
+    [ $? -eq 0 ] && echo "OK" || echo "FAIL"
+    ;;
+  stop)
+    echo -n "Stopping sshd... "
+    start-stop-daemon -K -q -p /var/run/sshd.pid
+    [ $? -eq 0 ] && echo "OK" || echo "FAIL"
+    ;;
+  restart)
+    "$0" stop
+    "$0" start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    ;;
+esac
