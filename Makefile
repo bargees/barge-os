@@ -5,6 +5,7 @@ TARGETS := output/rootfs.tar.xz output/bzImage output/docker-root.iso output/doc
 SOURCES := Dockerfile \
 	configs/buildroot.config \
 	configs/busybox.config \
+	configs/device_table.config \
 	configs/kernel.config \
 	configs/user.config \
 	configs/isolinux.cfg \
