@@ -1,4 +1,4 @@
-FROM ailispaw/ubuntu-essential
+FROM ailispaw/ubuntu-essential:14.04
 
 ENV TERM xterm
 
