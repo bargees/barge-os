@@ -44,7 +44,7 @@ RUN mkdir -p usr/bin && \
     wget -qO usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DINIT_VERSION}/dumb-init_${DINIT_VERSION}_amd64 && \
     chmod +x usr/bin/dumb-init
 
-ENV VERSION 1.3.10
+ENV VERSION 2.0.0
 RUN mkdir -p etc && \
     echo "Welcome to Barge ${VERSION}, $(usr/bin/docker -v)" > etc/motd && \
     echo "NAME=\"Barge\"" > etc/os-release && \
