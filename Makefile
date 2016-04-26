@@ -1,7 +1,7 @@
 KERNEL_VERSION  := 4.4.8
 BUSYBOX_VERSION := 1.24.1
 
-TARGETS := output/rootfs.tar.xz output/bzImage output/docker-root.iso output/docker-root.img
+TARGETS := output/rootfs.tar.xz output/bzImage output/barge.iso output/barge.img
 SOURCES := Dockerfile \
 	configs/buildroot.config \
 	configs/busybox.config \
@@ -11,15 +11,15 @@ SOURCES := Dockerfile \
 	configs/isolinux.cfg \
 	overlay/etc/cron/cron.hourly/logrotate \
 	overlay/etc/cron/crontabs/root \
+	overlay/etc/init.d/docker \
 	overlay/etc/init.d/rcK \
 	overlay/etc/init.d/S50sshd \
-	overlay/etc/init.d/S60docker \
 	overlay/etc/init.d/S90crond \
 	overlay/etc/profile.d/bash_completion.sh \
 	overlay/etc/profile.d/bashrc.sh \
 	overlay/etc/profile.d/colorls.sh \
 	overlay/etc/profile.d/optbin.sh \
-	overlay/etc/sudoers.d/docker \
+	overlay/etc/sudoers.d/bargees \
 	overlay/etc/resolv.conf.tail \
 	overlay/etc/sysctl.conf \
 	overlay/sbin/respawn \
@@ -30,8 +30,8 @@ SOURCES := Dockerfile \
 	scripts/post_build.sh \
 	scripts/post_image.sh
 
-BUILD_IMAGE     := docker-root-builder
-BUILD_CONTAINER := docker-root-built
+BUILD_IMAGE     := barge-builder
+BUILD_CONTAINER := barge-built
 
 BUILT := `docker ps -aq -f name=$(BUILD_CONTAINER) -f exited=0`
 STR_CREATED := $$(docker inspect -f '{{.Created}}' $(BUILD_IMAGE) 2>/dev/null)
@@ -77,18 +77,18 @@ distclean: clean
 .PHONY: all build clean distclean
 
 vagrant:
-	-vagrant resume docker-root
-	-vagrant reload docker-root
-	vagrant up --no-provision docker-root
-	vagrant provision docker-root
-	vagrant ssh docker-root -c 'sudo mkdir -p $(CCACHE_DIR)'
+	-vagrant resume barge
+	-vagrant reload barge
+	vagrant up --no-provision barge
+	vagrant provision barge
+	vagrant ssh barge -c 'sudo mkdir -p $(CCACHE_DIR)'
 
 dev:
-	-vagrant resume docker-root-$@
-	-vagrant reload docker-root-$@
-	vagrant up --no-provision docker-root-$@
-	vagrant provision docker-root-$@
-	vagrant ssh docker-root-$@ -c 'sudo mkdir -p $(CCACHE_DIR)'
+	-vagrant resume barge-$@
+	-vagrant reload barge-$@
+	vagrant up --no-provision barge-$@
+	vagrant provision barge-$@
+	vagrant ssh barge-$@ -c 'sudo mkdir -p $(CCACHE_DIR)'
 
 config: | output
 	docker cp $(BUILD_CONTAINER):/build/buildroot/.config output/
@@ -102,11 +102,11 @@ config: | output
 	-diff configs/kernel.config output/kernel.config
 
 install:
-	cp output/bzImage ../docker-root-packer/iso/
-	cp output/rootfs.tar.xz ../docker-root-packer/iso/
-	cp configs/kernel.config ../docker-root-packer/iso/
-	cp output/docker-root.iso ../docker-root-packer/box/
-	cp output/docker-root.img ../docker-root-packer/box/
-	cp configs/isolinux.cfg ../docker-root-packer/iso/
+	cp output/bzImage ../barge-packer/iso/
+	cp output/rootfs.tar.xz ../barge-packer/iso/
+	cp configs/kernel.config ../barge-packer/iso/
+	cp output/barge.iso ../barge-packer/box/
+	cp output/barge.img ../barge-packer/box/
+	cp configs/isolinux.cfg ../barge-packer/iso/
 
 .PHONY: vagrant dev config install

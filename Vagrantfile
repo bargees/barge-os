@@ -1,4 +1,4 @@
-# A dummy plugin for DockerRoot to set hostname and network correctly at the very first `vagrant up`
+# A dummy plugin for Barge to set hostname and network correctly at the very first `vagrant up`
 module VagrantPlugins
   module GuestLinux
     class Plugin < Vagrant.plugin("2")
@@ -9,8 +9,8 @@ module VagrantPlugins
 end
 
 Vagrant.configure(2) do |config|
-  config.vm.define "docker-root", primary: true
-  config.vm.define "docker-root-dev", autostart: false
+  config.vm.define "barge", primary: true
+  config.vm.define "barge-dev", autostart: false
 
   config.vm.box = "ailispaw/docker-root"
 
@@ -20,7 +20,7 @@ Vagrant.configure(2) do |config|
     vb.memory = 2048
   end
 
-  config.vm.hostname = "docker-root"
+  config.vm.hostname = "barge"
 
   config.vm.network "private_network", ip: "192.168.33.10"
 

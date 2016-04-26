@@ -50,6 +50,10 @@ for i in halt reboot poweroff; do
   ln -s shutdown $i
 done
 
+# Link the docker script for SysV init
+cd ${ROOTFS}/etc/init.d/
+ln -s docker S60docker
+
 # Disable SSH Use DNS
 if ! grep -q "^UseDNS no" ${ROOTFS}/etc/ssh/sshd_config; then
   echo "UseDNS no" >> ${ROOTFS}/etc/ssh/sshd_config

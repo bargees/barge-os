@@ -44,7 +44,7 @@ start() {
 
   mkdir -p /var/lib/docker
   mkdir -p /var/log/docker
-  DEVICE=$(blkid | grep -e 'LABEL="DOCKERROOT-DATA"' | head -n 1 | sed 's/:.*//')
+  DEVICE=$(blkid | grep -e 'LABEL="BARGE-DATA"' | head -n 1 | sed 's/:.*//')
   if [ -n "${DEVICE}" ]; then
     PARTNAME=$(echo "${DEVICE}" | sed 's/.*\///')
     if mountpoint -q /mnt/${PARTNAME}; then

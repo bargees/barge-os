@@ -1,8 +1,8 @@
-![DockerRoot](https://cloud.githubusercontent.com/assets/10327896/14595021/c3dd4bf4-04f0-11e6-878d-90c897462280.png)
+# Barge
 
-DockerRoot (formerly [RancherOS Lite](https://github.com/ailispaw/rancheros-lite)) is a lightweight Linux distribution made with [Buildroot](http://buildroot.uclibc.org/) ~~especially to run a [Docker](https://www.docker.com/) daemon as PID 1~~.
+Barge is a lightweight Linux distribution for containers made with [Buildroot](http://buildroot.uclibc.org/).
 
-It's designed for a local development with Docker in a virtual machine.
+It's designed for a local development in a virtual machine.
 
 It's inspired by the following projects.
 
@@ -15,23 +15,22 @@ It's inspired by the following projects.
 ## Features
 
 - Based on Buildroot 2016.02 with Linux kernel v4.4.8 and GLIBC.
-- ~~Runs a Docker daemon as PID 1~~
 - Strip down the Linux kernel modules and drivers
 - Busybox + the following utilities from Buildroot
 	- sudo, bash, wget, xz, sntp, logrotate
 	- ssh, scp, sftp, rsync
 	- acpid, sshd, dhcpcd, xtables-multi
 	- e2fsck, mke2fs, resize2fs, tune2fs
-- Default username: docker
-- Default password: docker
+- Default username: bargee
+- Default password: bargee
 - [dumb-init](https://github.com/Yelp/dumb-init) binary is built-in /usr/bin.
 
 	e.g., `docker run -d -v /usr/bin/dumb-init:/dumb-init:ro --entrypoint=/dumb-init <image> <command>`
 
-- [pkg](https://github.com/ailispaw/docker-root-pkg) command is built-in. You can install individual packages from Buildroot + &alpha;.
+- [pkg](https://github.com/bargees/barge-pkg) command is built-in. You can install individual packages from Buildroot + &alpha;.
 
 	```bash
-	[docker@docker-root ~]$ pkg
+	[bargee@barge ~]$ pkg
 	Usage: pkg {build|install} [-f] <package-name> [build options]
 	       pkg show <package-name>
 	       pkg list
@@ -42,16 +41,16 @@ It's inspired by the following projects.
 - Enable to switch between Docker versions.
 
 	```bash
-	[docker@docker-root ~]$ sudo /etc/init.d/S60docker
-	Usage /etc/init.d/S60docker {start|stop|restart|status} [<version>|latest|default]
+	[bargee@barge ~]$ sudo /etc/init.d/docker
+	Usage /etc/init.d/docker {start|stop|restart|status} [<version>|latest|default]
 	```
 
-	e.g., `sudo /etc/init.d/S60docker restart latest`
+	e.g., `sudo /etc/init.d/docker restart latest`
 
 ## Documentation
 
-- [How to build DockerRoot](https://github.com/ailispaw/docker-root/blob/master/docs/build.md)
-- [Customization of DockerRoot](https://github.com/ailispaw/docker-root/blob/master/docs/customization.md)
+- [How to build Barge](https://github.com/bargees/barge/blob/master/docs/build.md)
+- [Customization of Barge](https://github.com/bargees/barge/blob/master/docs/customization.md)
 
 ## License
 
@@ -62,7 +61,7 @@ http://opensource.org/licenses/GPL-2.0
 
 ## Related Projects
 
-- [DockerRoot Packer for VirtualBox and QEMU](https://github.com/ailispaw/docker-root-packer)
-- [DockerRoot running on xhyve hypervisor](https://github.com/ailispaw/docker-root-xhyve)
-- [Package Installer for DockerRoot](https://github.com/ailispaw/docker-root-pkg)
-- [DockerRoot docker image](https://github.com/ailispaw/docker-root-docker-image)
+- [Barge Packer for VirtualBox and QEMU](https://github.com/bargees/barge-packer)
+- [Barge running on xhyve hypervisor](https://github.com/bargees/barge-xhyve)
+- [Package Installer for Barge](https://github.com/bargees/barge-pkg)
+- [Barge docker image](https://github.com/bargees/barge-docker-image)

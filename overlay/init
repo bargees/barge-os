@@ -4,10 +4,10 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 mount proc
 for p in $(cat /proc/cmdline); do
   case $p in
-    docker-root.switch_root)
+    barge.switch_root)
       SWITCH_ROOT=true
       ;;
-    docker-root.debug)
+    barge.debug)
       DEBUG=true
       ;;
   esac
@@ -52,7 +52,7 @@ done
 # Lock the root account
 passwd -l root
 
-DEVICE=$(blkid | grep -e 'LABEL="DOCKERROOT-DATA"' | head -n 1 | sed 's/:.*//')
+DEVICE=$(blkid | grep -e 'LABEL="BARGE-DATA"' | head -n 1 | sed 's/:.*//')
 if [ -n "$DEVICE" ]; then
   PARTNAME=$(echo "$DEVICE" | sed 's/.*\///')
   logger -s -p user.info -t "init[$$]" "Mounting HDD /dev/$PARTNAME"
@@ -76,7 +76,7 @@ if [ -n "$DEVICE" ]; then
     mount -t overlay overlay -o lowerdir=/etc,upperdir=/mnt/$PARTNAME/etc,workdir=/mnt/$PARTNAME/work/etc /etc
   fi
 fi
-DEVICE=$(blkid | grep -e 'LABEL="DOCKERROOT-SWAP"' | head -n 1 | sed 's/:.*//')
+DEVICE=$(blkid | grep -e 'LABEL="BARGE-SWAP"' | head -n 1 | sed 's/:.*//')
 if [ -n "$DEVICE" ]; then
   logger -s -p user.info -t "init[$$]" "Enabling SWAP $DEVICE"
   if ! swapon $DEVICE; then

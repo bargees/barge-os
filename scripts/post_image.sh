@@ -25,19 +25,19 @@ cd ${ISO}
 xorriso \
   -publisher "A.I. <ailis@paw.zone>" \
   -as mkisofs \
-  -l -J -R -V "DOCKER_ROOT" \
+  -l -J -R -V "BARGE" \
   -no-emul-boot -boot-load-size 4 -boot-info-table \
   -b boot/isolinux/isolinux.bin -c boot/isolinux/boot.cat \
   -isohybrid-mbr /usr/lib/syslinux/isohdpfx.bin \
-  -no-pad -o ${IMAGES}/docker-root.iso $(pwd)
+  -no-pad -o ${IMAGES}/barge.iso $(pwd)
 
 # Make a bootable disk image
-IMAGE=${IMAGES}/docker-root.img
+IMAGE=${IMAGES}/barge.img
 DISK=${IMAGES}/disk
 ISO=${IMAGES}/ISO
 
 mkdir -p ${ISO}
-losetup /dev/loop0 ${IMAGES}/docker-root.iso
+losetup /dev/loop0 ${IMAGES}/barge.iso
 mount /dev/loop0 ${ISO}
 
 SIZE=$(du -s ${ISO} | awk '{print $1}')

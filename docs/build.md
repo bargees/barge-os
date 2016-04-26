@@ -1,4 +1,4 @@
-# How to build DockerRoot
+# How to build Barge
 
 ## Requirements
 
@@ -8,15 +8,15 @@
 ## Building
 
 ```
-$ git clone https://github.com/ailispaw/docker-root
-$ cd docker-root
+$ git clone https://github.com/bargees/barge
+$ cd barge
 $ make vagrant
 $ make
 ```
 
 It will create the following images at `./output/` directory.
 
-- docker-root.iso: LiveCD image
-- docker-root.img: Bootable disk image
+- barge.iso: LiveCD image
+- barge.img: Bootable disk image
 - bzImage: Raw Linux kernel image
 - rootfs.tar.xz: Raw Root filesystem including Linux kernel modules and drivers

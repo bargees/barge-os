@@ -46,19 +46,19 @@ RUN mkdir -p usr/bin && \
 
 ENV VERSION 1.3.10
 RUN mkdir -p etc && \
-    echo "Welcome to DockerRoot version ${VERSION}, $(usr/bin/docker -v)" > etc/motd && \
-    echo "NAME=\"DockerRoot\"" > etc/os-release && \
+    echo "Welcome to Barge ${VERSION}, $(usr/bin/docker -v)" > etc/motd && \
+    echo "NAME=\"Barge\"" > etc/os-release && \
     echo "VERSION=${VERSION}" >> etc/os-release && \
-    echo "ID=docker-root" >> etc/os-release && \
+    echo "ID=barge" >> etc/os-release && \
     echo "ID_LIKE=busybox" >> etc/os-release && \
     echo "VERSION_ID=${VERSION}" >> etc/os-release && \
-    echo "PRETTY_NAME=\"DockerRoot v${VERSION}\"" >> etc/os-release && \
-    echo "HOME_URL=\"https://github.com/ailispaw/docker-root\"" >> etc/os-release && \
-    echo "BUG_REPORT_URL=\"https://github.com/ailispaw/docker-root/issues\"" >> etc/os-release
+    echo "PRETTY_NAME=\"Barge ${VERSION}\"" >> etc/os-release && \
+    echo "HOME_URL=\"https://github.com/bargees/barge\"" >> etc/os-release && \
+    echo "BUG_REPORT_URL=\"https://github.com/bargees/barge/issues\"" >> etc/os-release
 
 # Add Package Installer
 RUN mkdir -p usr/bin && \
-    wget -qO usr/bin/pkg https://raw.githubusercontent.com/ailispaw/docker-root-pkg/master/pkg && \
+    wget -qO usr/bin/pkg https://raw.githubusercontent.com/bargees/barge-pkg/master/pkg && \
     chmod +x usr/bin/pkg
 
 # Copy config files
