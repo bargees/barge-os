@@ -1,4 +1,4 @@
-# Barge
+# Barge 2.0
 
 Barge is a lightweight Linux distribution for containers made with [Buildroot](http://buildroot.uclibc.org/).
 
