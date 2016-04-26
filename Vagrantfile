@@ -12,9 +12,7 @@ Vagrant.configure(2) do |config|
   config.vm.define "barge", primary: true
   config.vm.define "barge-dev", autostart: false
 
-  config.vm.box = "ailispaw/docker-root"
-
-  config.vm.box_version = ">= 1.3.9"
+  config.vm.box = "ailispaw/barge"
 
   config.vm.provider :virtualbox do |vb|
     vb.memory = 2048
