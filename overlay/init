@@ -52,10 +52,6 @@ done
 # Lock the root account
 passwd -l root
 
-# Setup consistent volumes
-mkdir -p /var/lib/docker
-mkdir -p /var/lib/docker-root
-
 DEVICE=$(blkid | grep -e 'LABEL="DOCKERROOT-DATA"' | head -n 1 | sed 's/:.*//')
 if [ -n "$DEVICE" ]; then
   PARTNAME=$(echo "$DEVICE" | sed 's/.*\///')
@@ -64,14 +60,6 @@ if [ -n "$DEVICE" ]; then
   if (! e2fsck -p /dev/$PARTNAME) || (! mount -t ext4 /dev/$PARTNAME /mnt/$PARTNAME); then
     logger -s -p user.info -t "init[$$]" "Running from memory, this won't be good..."
   else
-    rm -rf /var/lib/docker
-    mkdir -p /mnt/$PARTNAME/var/lib/docker
-    ln -s /mnt/$PARTNAME/var/lib/docker /var/lib/docker
-
-    rm -rf /var/lib/docker-root
-    mkdir -p /mnt/$PARTNAME/var/lib/docker-root
-    ln -s /mnt/$PARTNAME/var/lib/docker-root /var/lib/docker-root
-
     if [ ! -d /mnt/$PARTNAME/home ]; then
       mv /home /mnt/$PARTNAME/home
     else
@@ -96,9 +84,9 @@ if [ -n "$DEVICE" ]; then
   fi
 fi
 
-if [ -x /var/lib/docker-root/init.sh ]; then
+if [ -x /etc/init.d/init.sh ]; then
   logger -s -p user.info -t "init[$$]" "Executing custom configuration in init.sh"
-  /var/lib/docker-root/init.sh || true
+  /etc/init.d/init.sh || true
 fi
 
 logger -s -p user.info -t "init[$$]" "Set hostname with /etc/hostname"
@@ -107,12 +95,15 @@ logger -s -p user.info -t "init[$$]" "Set hostname with /etc/hostname"
 logger -s -p user.info -t "init[$$]" "Executing ACPId"
 /usr/sbin/acpid
 
+logger -s -p user.info -t "init[$$]" "Configuring sysctl"
+sysctl -p /etc/sysctl.conf
+
 logger -s -p user.info -t "init[$$]" "Executing startup scripts in /etc/init.d"
 /etc/init.d/rcS
 
-if [ -x /var/lib/docker-root/start.sh ]; then
+if [ -x /etc/init.d/start.sh ]; then
   logger -s -p user.info -t "init[$$]" "Starting custom script start.sh"
-  /var/lib/docker-root/start.sh &
+  /etc/init.d/start.sh &
 fi
 
 sync
@@ -124,12 +115,6 @@ if dmesg | grep 'ttyS0 at I/O'; then
   respawn /sbin/getty -L 9600 ttyS0 vt100 &
 fi
 chvt 2
-
-logger -s -p user.info -t "init[$$]" "Configuring sysctl"
-sysctl -p /etc/sysctl.conf
-
-logger -s -p user.info -t "init[$$]" "Starting Docker daemon"
-/etc/init.d/docker start
 
 set -mb
 trap '' SIGCHLD

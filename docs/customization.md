@@ -23,7 +23,7 @@ Ex.) `$ sudo mkswap -L DOCKERROOT-SWAP /dev/xxx`
 
 ## Customizing the behavior of the Docker daemon
 
-You can customize the behavior of the Docker daemon through `/var/lib/docker-root/profile`.
+You can customize the behavior of the Docker daemon through `/etc/default/docker`.
 
 ### Defaults
 
@@ -32,7 +32,7 @@ You can customize the behavior of the Docker daemon through `/var/lib/docker-roo
 - DOCKER_HOST="-H unix://"
 - DOCKER_EXTRA_ARGS="--userland-proxy=false"
 - DOCKER_ULIMITS=1048576
-- DOCKER_LOGFILE="/var/lib/docker-root/docker.log"
+- DOCKER_LOGFILE="/var/log/docker/docker.log"
 - DOCKER_TIMEOUT=5
 
 You can override these defaults by puting the above variables into profile.
@@ -48,7 +48,7 @@ ulimit -u ${DOCKER_ULIMITS}
 Ex.) To expose the Docker post 2375,
 
 ```
-$ cat /var/lib/docker-root/profile
+$ cat /etc/default/docker
 DOCKER_HOST="-H unix:// -H tcp://0.0.0.0:2375"
 ```
 
@@ -62,8 +62,8 @@ Cf.)
 You can customize init scripts in three ways as below.
 
 - Putting any scripts in the `/etc/init.d/S*` in the SysV manner.
-- DockerRoot's init executes `/var/lib/docker-root/init.sh` right after mounting the disk and before `init.d` scripts including networking.
-- DockerRoot's init executes `/var/lib/docker-root/start.sh` asynchronously right before executing Docker.
+- DockerRoot's init executes `/etc/init.d/init.sh` right after mounting the disk and before `/etc/init.d` scripts including networking.
+- DockerRoot's init executes `/etc/init.d/start.sh` asynchronously right after executing `/etc/init.d` scripts.
 
 Cf.)  
 - https://github.com/ailispaw/docker-root/blob/master/overlay/init

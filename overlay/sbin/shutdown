@@ -5,9 +5,6 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
-logger -s -p user.info -t "$(basename $0)[$$]" "Stopping Docker daemon"
-/etc/init.d/docker stop
-
 logger -s -p user.info -t "$(basename $0)[$$]" "Executing shutdown scripts in /etc/init.d"
 /etc/init.d/rcK
 

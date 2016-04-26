@@ -42,11 +42,11 @@ It's inspired by the following projects.
 - Enable to switch between Docker versions.
 
 	```bash
-	[docker@docker-root ~]$ sudo /etc/init.d/docker
-	Usage /etc/init.d/docker {start|stop|restart|status} [<version>|latest|default]
+	[docker@docker-root ~]$ sudo /etc/init.d/S60docker
+	Usage /etc/init.d/S60docker {start|stop|restart|status} [<version>|latest|default]
 	```
 
-	e.g., `sudo /etc/init.d/docker restart latest`
+	e.g., `sudo /etc/init.d/S60docker restart latest`
 
 ## Documentation
 

@@ -11,11 +11,10 @@ SOURCES := Dockerfile \
 	configs/isolinux.cfg \
 	overlay/etc/cron/cron.hourly/logrotate \
 	overlay/etc/cron/crontabs/root \
-	overlay/etc/init.d/docker \
 	overlay/etc/init.d/rcK \
 	overlay/etc/init.d/S50sshd \
+	overlay/etc/init.d/S60docker \
 	overlay/etc/init.d/S90crond \
-	overlay/etc/logrotate.d/docker \
 	overlay/etc/profile.d/bash_completion.sh \
 	overlay/etc/profile.d/bashrc.sh \
 	overlay/etc/profile.d/colorls.sh \
