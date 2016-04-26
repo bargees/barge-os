@@ -33,15 +33,16 @@ You can customize the behavior of the Docker daemon through `/var/lib/docker-roo
 - DOCKER_EXTRA_ARGS="--userland-proxy=false"
 - DOCKER_ULIMITS=1048576
 - DOCKER_LOGFILE="/var/lib/docker-root/docker.log"
+- DOCKER_TIMEOUT=5
 
 You can override these defaults by puting the above variables into profile.
-Then DockerRoot uses them to execute Docker daemon in `/init` as below.
+Then DockerRoot uses them to execute Docker daemon in `/etc/init.d/docker` as below.
 
 ```
-ulimit -n $DOCKER_ULIMITS
-ulimit -u $DOCKER_ULIMITS
+ulimit -n ${DOCKER_ULIMITS}
+ulimit -u ${DOCKER_ULIMITS}
 
-exec docker daemon -D -s $DOCKER_STORAGE -g "$DOCKER_DIR" $DOCKER_HOST $DOCKER_EXTRA_ARGS >> "$DOCKER_LOGFILE" 2>&1
+/opt/bin/docker daemon -D -s ${DOCKER_STORAGE} -g "${DOCKER_DIR}" ${DOCKER_HOST} ${DOCKER_EXTRA_ARGS} >> "${DOCKER_LOGFILE}" 2>&1
 ```
 
 Ex.) To expose the Docker post 2375,
