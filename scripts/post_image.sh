@@ -42,7 +42,7 @@ mount /dev/loop0 ${ISO}
 
 SIZE=$(du -s ${ISO} | awk '{print $1}')
 
-dd if=/dev/zero of=${IMAGE} bs=1024 count=$((${SIZE}+66+${SIZE}%2))
+dd if=/dev/zero of=${IMAGE} bs=1024 count=$((${SIZE}+68+${SIZE}%2))
 losetup /dev/loop1 ${IMAGE}
 (echo c; echo n; echo p; echo 1; echo; echo; echo t; echo 4; echo a; echo 1; echo w;) | fdisk /dev/loop1 || true
 
@@ -59,8 +59,13 @@ cp ${ISO}/boot/isolinux/isolinux.cfg ${DISK}/boot/syslinux/syslinux.cfg
 umount ${ISO}
 umount ${DISK}
 
-syslinux -i -d /boot/syslinux /dev/loop2
+syslinux -i -d /boot/syslinux /dev/loop2 2> ${IMAGES}/error.log
+cat ${IMAGES}/error.log >&2
 losetup -d /dev/loop2
 dd if=/usr/lib/syslinux/mbr.bin of=/dev/loop1 bs=440 count=1
 losetup -d /dev/loop1
 losetup -d /dev/loop0
+
+if [ -s ${IMAGES}/error.log ]; then
+  exit 1
+fi
