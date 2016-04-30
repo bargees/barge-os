@@ -53,8 +53,8 @@ RUN mkdir -p etc && \
     echo "ID_LIKE=busybox" >> etc/os-release && \
     echo "VERSION_ID=${VERSION}" >> etc/os-release && \
     echo "PRETTY_NAME=\"Barge ${VERSION}\"" >> etc/os-release && \
-    echo "HOME_URL=\"https://github.com/bargees/barge\"" >> etc/os-release && \
-    echo "BUG_REPORT_URL=\"https://github.com/bargees/barge/issues\"" >> etc/os-release
+    echo "HOME_URL=\"https://github.com/bargees/barge-os\"" >> etc/os-release && \
+    echo "BUG_REPORT_URL=\"https://github.com/bargees/barge-os/issues\"" >> etc/os-release
 
 # Add Package Installer
 RUN mkdir -p usr/bin && \

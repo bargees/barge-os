@@ -49,8 +49,8 @@ It's inspired by the following projects.
 
 ## Documentation
 
-- [How to build Barge](https://github.com/bargees/barge/blob/master/docs/build.md)
-- [Customization of Barge](https://github.com/bargees/barge/blob/master/docs/customization.md)
+- [How to build Barge](./docs/build.md)
+- [Customization of Barge](./docs/customization.md)
 
 ## License
 

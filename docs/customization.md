@@ -53,7 +53,7 @@ DOCKER_HOST="-H unix:// -H tcp://0.0.0.0:2375"
 ```
 
 Cf.)  
-- https://github.com/bargees/barge/blob/master/overlay/init
+- https://github.com/bargees/barge-os/blob/master/overlay/init
 - https://github.com/bargees/barge-packer/blob/master/box/assets/profile
 - https://github.com/bargees/barge-xhyve/blob/master/contrib/makehdd/makehdd.sh
 
@@ -66,7 +66,7 @@ You can customize init scripts in three ways as below.
 - Barge's init executes `/etc/init.d/start.sh` asynchronously right after executing `/etc/init.d` scripts.
 
 Cf.)  
-- https://github.com/bargees/barge/blob/master/overlay/init
+- https://github.com/bargees/barge-os/blob/master/overlay/init
 - https://github.com/bargees/barge-packer/blob/master/box/assets/init.sh
 - https://github.com/bargees/barge-xhyve/blob/master/contrib/makehdd/makehdd.sh
 
