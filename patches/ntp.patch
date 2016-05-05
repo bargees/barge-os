@@ -1,0 +1,71 @@
+From ee18216d47e3d1eb5e9f666a5f30d61d5e4bbd97 Mon Sep 17 00:00:00 2001
+From: Gustavo Zacarias <gustavo@zacarias.com.ar>
+Date: Mon, 2 May 2016 09:21:22 -0300
+Subject: ntp: security bump to version 4.2.8p7
+
+Fixes:
+
+CVE-2016-1551 - Refclock impersonation vulnerability, AKA:
+refclock-peering
+
+CVE-2016-1549 - Sybil vulnerability: ephemeral association attack, AKA:
+ntp-sybil - MITIGATION ONLY
+
+CVE-2016-2516 - Duplicate IPs on unconfig directives will cause an
+assertion botch
+
+CVE-2016-2517 - Remote configuration trustedkey/requestkey values are not
+properly validated
+
+CVE-2016-2518 - Crafted addpeer with hmode > 7 causes array wraparound
+with MATCH_ASSOC
+
+CVE-2016-2519 - ctl_getitem() return value not always checked
+
+CVE-2016-1547 - Validate crypto-NAKs, AKA: nak-dos
+
+CVE-2016-1548 - Interleave-pivot - MITIGATION ONLY
+
+CVE-2015-7704 - KoD fix: peer associations were broken by the fix for
+NtpBug2901, AKA: Symmetric active/passive mode is broken
+
+CVE-2015-8138 - Zero Origin Timestamp Bypass, AKA: Additional KoD Checks
+
+CVE-2016-1550 - Improve NTP security against buffer comparison timing
+attacks, authdecrypt-timing, AKA: authdecrypt-timing
+
+Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ package/ntp/ntp.hash | 6 +++---
+ package/ntp/ntp.mk   | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/package/ntp/ntp.hash b/package/ntp/ntp.hash
+index 0c2c29d..6be52aa 100644
+--- a/package/ntp/ntp.hash
++++ b/package/ntp/ntp.hash
+@@ -1,4 +1,4 @@
+-# From http://www.eecis.udel.edu/~ntp/ntp_spool/ntp4/ntp-4.2/ntp-4.2.8p6.tar.gz.md5
+-md5	60049f51e9c8305afe30eb22b711c5c6	ntp-4.2.8p6.tar.gz
++# From http://www.eecis.udel.edu/~ntp/ntp_spool/ntp4/ntp-4.2/ntp-4.2.8p7.tar.gz.md5
++md5	46dfba933c3e4bc924d8e55068797578	ntp-4.2.8p7.tar.gz
+ # Calculated based on the hash above
+-sha256	583d0e1c573ace30a9c6afbea0fc52cae9c8c916dbc15c026e485a0dda4ba048	ntp-4.2.8p6.tar.gz
++sha256	81d20c06a0b01abe3b84fac092185bf014252d38fe5e7b2758f604680a0220dc	ntp-4.2.8p7.tar.gz
+diff --git a/package/ntp/ntp.mk b/package/ntp/ntp.mk
+index 2b99ef2..d8ac534 100644
+--- a/package/ntp/ntp.mk
++++ b/package/ntp/ntp.mk
+@@ -5,7 +5,7 @@
+ ################################################################################
+ 
+ NTP_VERSION_MAJOR = 4.2
+-NTP_VERSION = $(NTP_VERSION_MAJOR).8p6
++NTP_VERSION = $(NTP_VERSION_MAJOR).8p7
+ NTP_SITE = http://www.eecis.udel.edu/~ntp/ntp_spool/ntp4/ntp-$(NTP_VERSION_MAJOR)
+ NTP_DEPENDENCIES = host-pkgconf libevent $(if $(BR2_PACKAGE_BUSYBOX),busybox)
+ NTP_LICENSE = ntp license
+-- 
+cgit v0.12
+
