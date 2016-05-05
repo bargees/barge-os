@@ -103,11 +103,11 @@ config: | output
 	-diff configs/kernel.config output/kernel.config
 
 install:
-	cp output/bzImage ../barge-packer/iso/
-	cp output/rootfs.tar.xz ../barge-packer/iso/
-	cp configs/kernel.config ../barge-packer/iso/
-	cp output/barge.iso ../barge-packer/box/
-	cp output/barge.img ../barge-packer/box/
-	cp configs/isolinux.cfg ../barge-packer/iso/
+	cp output/bzImage ../barge-packer/virtualbox/iso/
+	cp output/rootfs.tar.xz ../barge-packer/virtualbox/iso/
+	cp configs/kernel.config ../barge-packer/virtualbox/iso/
+	cp configs/isolinux.cfg ../barge-packer/virtualbox/iso/
+	cp output/barge.iso ../barge-packer/qemu/
+	cp output/barge.img ../barge-packer/qemu/
 
 .PHONY: vagrant dev config install
