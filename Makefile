@@ -26,6 +26,8 @@ SOURCES := Dockerfile \
 	overlay/sbin/shutdown \
 	overlay/var/db/ntp-kod \
 	overlay/init \
+	patches/openssh-01.patch \
+	patches/openssh-02.patch \
 	patches/openssl.patch \
 	scripts/build.sh \
 	scripts/post_build.sh \
