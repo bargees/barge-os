@@ -20,10 +20,9 @@ RUN wget -qO- https://buildroot.org/downloads/buildroot-${BR_VERSION}.tar.bz2 | 
 
 # Apply patches
 COPY patches ${SRC_DIR}/patches
-RUN patch -p1 -d ${BR_ROOT} < ${SRC_DIR}/patches/ntp.patch && \
-    patch -p1 -d ${BR_ROOT} < ${SRC_DIR}/patches/openssh-01.patch && \
-    patch -p1 -d ${BR_ROOT} < ${SRC_DIR}/patches/openssh-02.patch && \
-    patch -p1 -d ${BR_ROOT} < ${SRC_DIR}/patches/openssl.patch
+RUN for patch in ${SRC_DIR}/patches/*.patch; do \
+      patch -p1 -d ${BR_ROOT} < ${patch}; \
+    done
 
 # Setup overlay
 COPY overlay ${OVERLAY}
