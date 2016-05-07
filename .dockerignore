@@ -1,12 +1,10 @@
 .git/
+.vagrant/
 
+dl/
 docs/
+output/
 LICENSE
 Makefile
 README.md
 Vagrantfile
-.vagrant/
-
-output/
-.ccache/
-.dl/

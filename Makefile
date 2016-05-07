@@ -1,38 +1,12 @@
 KERNEL_VERSION  := 4.4.9
 BUSYBOX_VERSION := 1.24.1
 
-TARGETS := output/rootfs.tar.xz output/bzImage output/barge.iso output/barge.img
-SOURCES := Dockerfile \
-	configs/buildroot.config \
-	configs/busybox.config \
-	configs/device_table.config \
-	configs/kernel.config \
-	configs/user.config \
-	configs/isolinux.cfg \
-	overlay/etc/cron/cron.hourly/logrotate \
-	overlay/etc/cron/crontabs/root \
-	overlay/etc/init.d/docker \
-	overlay/etc/init.d/rcK \
-	overlay/etc/init.d/S50sshd \
-	overlay/etc/init.d/S90crond \
-	overlay/etc/profile.d/bash_completion.sh \
-	overlay/etc/profile.d/bashrc.sh \
-	overlay/etc/profile.d/colorls.sh \
-	overlay/etc/profile.d/optbin.sh \
-	overlay/etc/sudoers.d/bargees \
-	overlay/etc/resolv.conf.tail \
-	overlay/etc/sysctl.conf \
-	overlay/sbin/respawn \
-	overlay/sbin/shutdown \
-	overlay/var/db/ntp-kod \
-	overlay/init \
-	patches/ntp.patch \
-	patches/openssh-01.patch \
-	patches/openssh-02.patch \
-	patches/openssl.patch \
-	scripts/build.sh \
-	scripts/post_build.sh \
-	scripts/post_image.sh
+OUTPUTS := output/rootfs.tar.xz output/bzImage output/barge.iso output/barge.img
+SOURCES := Dockerfile .dockerignore \
+	$(shell find configs -type f) \
+	$(shell find overlay -type f) \
+	$(shell find patches -type f) \
+	$(shell find scripts -type f)
 
 BUILD_IMAGE     := barge-builder
 BUILD_CONTAINER := barge-built
@@ -43,12 +17,12 @@ IMG_CREATED := `date -j -u -f "%FT%T" "$(STR_CREATED)" +"%s" 2>/dev/null || echo
 
 CCACHE_DIR := /mnt/sda1/ccache
 
-all: $(TARGETS)
+all: $(OUTPUTS)
 
-$(TARGETS): build | output
+$(OUTPUTS): build | output
 	docker cp $(BUILD_CONTAINER):/build/buildroot/output/images/$(@F) output/
 
-build: $(SOURCES) | .dl
+build: $(SOURCES) | dl
 	$(eval SRC_UPDATED=$$(shell stat -f "%m" $^ | sort -gr | head -n1))
 	@if [ "$(SRC_UPDATED)" -gt "$(IMG_CREATED)" ]; then \
 		set -e; \
@@ -62,18 +36,18 @@ build: $(SOURCES) | .dl
 		set -e; \
 		(docker rm -f $(BUILD_CONTAINER) || true); \
 		docker run --privileged -v $(CCACHE_DIR):/build/buildroot/ccache \
-			-v /vagrant/.dl:/build/buildroot/dl --name $(BUILD_CONTAINER) $(BUILD_IMAGE); \
+			-v /vagrant/dl:/build/buildroot/dl --name $(BUILD_CONTAINER) $(BUILD_IMAGE); \
 	fi
 
-output .ccache .dl:
-	mkdir -p $@
+output dl:
+	@mkdir -p $@
 
 clean:
 	$(RM) -r output
 	-docker rm -f $(BUILD_CONTAINER)
 
 distclean: clean
-	$(RM) -r .ccache .dl
+	$(RM) -r dl
 	-docker rmi $(BUILD_IMAGE)
 	vagrant destroy -f
 	$(RM) -r .vagrant
