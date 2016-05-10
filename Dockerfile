@@ -14,15 +14,15 @@ ENV SRC_DIR=/build \
     BR_ROOT=/build/buildroot
 RUN mkdir -p ${SRC_DIR} ${OVERLAY}
 
-ENV BR_VERSION 2016.02
+ENV BR_VERSION 2016.05-rc1
 RUN wget -qO- https://buildroot.org/downloads/buildroot-${BR_VERSION}.tar.bz2 | tar xj && \
     mv buildroot-${BR_VERSION} ${BR_ROOT}
 
 # Apply patches
-COPY patches ${SRC_DIR}/patches
-RUN for patch in ${SRC_DIR}/patches/*.patch; do \
-      patch -p1 -d ${BR_ROOT} < ${patch}; \
-    done
+# COPY patches ${SRC_DIR}/patches
+# RUN for patch in ${SRC_DIR}/patches/*.patch; do \
+#       patch -p1 -d ${BR_ROOT} < ${patch}; \
+#     done
 
 # Setup overlay
 COPY overlay ${OVERLAY}
