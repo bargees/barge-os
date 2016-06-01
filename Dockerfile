@@ -14,15 +14,15 @@ ENV SRC_DIR=/build \
     BR_ROOT=/build/buildroot
 RUN mkdir -p ${SRC_DIR} ${OVERLAY}
 
-ENV BR_VERSION 2016.02
+ENV BR_VERSION 2016.05
 RUN wget -qO- https://buildroot.org/downloads/buildroot-${BR_VERSION}.tar.bz2 | tar xj && \
     mv buildroot-${BR_VERSION} ${BR_ROOT}
 
 # Apply patches
-COPY patches ${SRC_DIR}/patches
-RUN for patch in ${SRC_DIR}/patches/*.patch; do \
-      patch -p1 -d ${BR_ROOT} < ${patch}; \
-    done
+# COPY patches ${SRC_DIR}/patches
+# RUN for patch in ${SRC_DIR}/patches/*.patch; do \
+#       patch -p1 -d ${BR_ROOT} < ${patch}; \
+#     done
 
 # Setup overlay
 COPY overlay ${OVERLAY}
@@ -50,7 +50,7 @@ RUN mkdir -p usr/bin && \
     wget -qO usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DINIT_VERSION}/dumb-init_${DINIT_VERSION}_amd64 && \
     chmod +x usr/bin/dumb-init
 
-ENV VERSION 2.0.3
+ENV VERSION 2.1.0
 RUN mkdir -p etc && \
     echo "Welcome to Barge ${VERSION}, $(usr/bin/docker -v)" > etc/motd && \
     echo "NAME=\"Barge\"" > etc/os-release && \

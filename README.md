@@ -1,6 +1,6 @@
 # Barge 2.0
 
-Barge is a lightweight Linux distribution for containers made with [Buildroot](http://buildroot.uclibc.org/).
+Barge is a lightweight Linux distribution built with [Buildroot](http://buildroot.uclibc.org/) specifically to run [Docker](https://www.docker.com/) containers.
 
 It's designed for a local development in a virtual machine.
 
@@ -14,7 +14,7 @@ It's inspired by the following projects.
 
 ## Features
 
-- Based on Buildroot 2016.02 with Linux kernel v4.4.11 and GLIBC.
+- Built with Buildroot 2016.05 with Linux kernel v4.4.11 and glibc.
 - Strip down the Linux kernel modules and drivers
 - Busybox + the following utilities from Buildroot
 	- sudo, bash, wget, xz, sntp, logrotate

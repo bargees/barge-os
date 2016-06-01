@@ -30,7 +30,7 @@ mount -t devtmpfs devtmpfs /dev
 
 mkdir -p /var/log
 syslogd
-sleep 1
+usleep 1000
 logger -s -p user.info -t "init[$$]" "Start init"
 
 trap 'logger -s -p user.info -t "init[$$]" "trapped at line $LINENO"' ERR
