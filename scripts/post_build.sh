@@ -71,3 +71,15 @@ fi
 if ! grep -q "^ca_certificate =" ${ROOTFS}/etc/wgetrc; then
   echo "ca_certificate = /etc/ssl/certs/ca-certificates.crt" >> ${ROOTFS}/etc/wgetrc
 fi
+
+STAGING_DIR=${ROOTFS}/../staging
+
+# Install locale command
+install -m 0755 -D ${STAGING_DIR}/usr/bin/locale ${ROOTFS}/usr/bin/locale
+
+# Install C.UTF-8 locale
+mkdir -p ${ROOTFS}/usr/lib/locale
+I18NPATH=${STAGING_DIR}/usr/share/i18n:/usr/share/i18n \
+  ${STAGING_DIR}/usr/bin/localedef --force --quiet --no-archive --little-endian --prefix=${ROOTFS} \
+    -i POSIX -f UTF-8 C.UTF-8
+mv ${ROOTFS}/usr/lib/locale/C.utf8 ${ROOTFS}/usr/lib/locale/C.UTF-8
