@@ -8,11 +8,16 @@ fi
 
 DOCKER_DAEMON="docker"
 DOCKER_DAEMON_COMMAND="daemon"
-DOCKER="/opt/bin/${DOCKER_DAEMON}"
+if [ -f "/opt/bin/dockerd" ]; then
+  DOCKER_DAEMON="dockerd"
+  DOCKER_DAEMON_COMMAND=""
+fi
+DOCKER="/opt/bin/docker"
+DOCKERD="/opt/bin/${DOCKER_DAEMON}"
 DOCKER_BIN_DIR="/usr/bin"
-if [ ! -f "${DOCKER}" ]; then
+if [ ! -f "${DOCKERD}" ]; then
   mkdir -p /opt/bin
-  ln -s "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" "${DOCKER}"
+  ln -s "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" "${DOCKERD}"
 fi
 DOCKER_SWITCHING=false
 
@@ -38,7 +43,7 @@ configure() {
 
 start() {
   if check; then
-    echo "$(${DOCKER} -v) is running." >&2
+    echo "$(${DOCKERD} -v) is running." >&2
     exit 1
   fi
 
@@ -96,23 +101,24 @@ EOF
   local params="-D -s ${DOCKER_STORAGE} -g \"${DOCKER_DIR}\" ${DOCKER_HOST} ${DOCKER_EXTRA_ARGS}"
 
   if ${DOCKER_SWITCHING} ; then
-    for i in docker docker-containerd docker-containerd-ctr docker-containerd-shim docker-runc; do
+    for i in docker docker-containerd docker-containerd-ctr docker-containerd-shim docker-runc \
+      dockerd ; do
       rm -f "/opt/bin/$i"
       if [ -f "${DOCKER_BIN_DIR}/$i" ]; then
         ln -s "${DOCKER_BIN_DIR}/$i" "/opt/bin/$i"
       fi
     done
-    sed -i "s/Docker version.*/$(${DOCKER} -v)/" /etc/motd
+    sed -i "s/Docker version.*/$(${DOCKERD} -v)/" /etc/motd
   fi
-  logger -s -p user.info -t "docker[$$]" "$(${DOCKER} -v)"
-  echo "----- $(${DOCKER} -v) -----" >> "${DOCKER_LOGFILE}"
+  logger -s -p user.info -t "docker[$$]" "$(${DOCKERD} -v)"
+  echo "----- $(${DOCKERD} -v) -----" >> "${DOCKER_LOGFILE}"
 
   logger -s -p user.info -t "docker[$$]" "Starting Docker daemon ${params}"
   echo "Starting Docker daemon ${params}" >> "${DOCKER_LOGFILE}"
   if [ "$$" == "1" ]; then
-    eval "exec ${DOCKER} ${DOCKER_DAEMON_COMMAND} ${params} >> \"${DOCKER_LOGFILE}\" 2>&1"
+    eval "exec ${DOCKERD} ${DOCKER_DAEMON_COMMAND} ${params} >> \"${DOCKER_LOGFILE}\" 2>&1"
   else
-    eval "${DOCKER} ${DOCKER_DAEMON_COMMAND} ${params} >> \"${DOCKER_LOGFILE}\" 2>&1 &"
+    eval "${DOCKERD} ${DOCKER_DAEMON_COMMAND} ${params} >> \"${DOCKER_LOGFILE}\" 2>&1 &"
   fi
 }
 
@@ -156,16 +162,20 @@ check() {
 
 status() {
   if check; then
-    echo "$(${DOCKER} -v) is running."
+    echo "$(${DOCKERD} -v) is running."
     exit 0
   else
-    echo "$(${DOCKER} -v) is not running."
+    echo "$(${DOCKERD} -v) is not running."
     exit 1
   fi
 }
 
 switch() {
   local version="$1"
+
+  DOCKER_DAEMON="docker"
+  DOCKER_DAEMON_COMMAND="daemon"
+  DOCKERD="/opt/bin/${DOCKER_DAEMON}"
 
   if [ "${version}" = "default" ]; then
     DOCKER_BIN_DIR="/usr/bin"
@@ -185,6 +195,12 @@ switch() {
     echo "Docker v${version} is too old." >&2 && exit 1
   elif [[ (${versions[0]} -eq 1) && (${versions[1]} -lt 8) ]]; then
     echo "Docker v${version} is too old." >&2 && exit 1
+  elif [[ (${versions[0]} -eq 1) && (${versions[1]} -lt 12) ]]; then
+    :
+  else
+    DOCKER_DAEMON="dockerd"
+    DOCKER_DAEMON_COMMAND=""
+    DOCKERD="/opt/bin/${DOCKER_DAEMON}"
   fi
 
   local base_url="https://get.docker.io/builds/Linux/x86_64"
