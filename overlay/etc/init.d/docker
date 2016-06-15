@@ -198,6 +198,8 @@ switch() {
   elif [[ (${versions[0]} -eq 1) && (${versions[1]} -lt 12) ]]; then
     :
   else
+    echo "You can't go back to v1.11 or older due to libnetwork incompatibility." >&2
+    echo "You will need to initialize /var/lib/docker/network/files/local-kv.db." >&2
     DOCKER_DAEMON="dockerd"
     DOCKER_DAEMON_COMMAND=""
     DOCKERD="/opt/bin/${DOCKER_DAEMON}"
