@@ -108,6 +108,10 @@ EOF
         ln -s "${DOCKER_BIN_DIR}/$i" "/opt/bin/$i"
       fi
     done
+    rm -f "/etc/bash_completion.d/docker"
+    if [ -f "${DOCKER_BIN_DIR}/docker.bash-completion" ]; then
+      ln -s "${DOCKER_BIN_DIR}/docker.bash-completion" "/etc/bash_completion.d/docker"
+    fi
     sed -i "s/Docker version.*/$(${DOCKERD} -v)/" /etc/motd
   fi
   logger -s -p user.info -t "docker[$$]" "$(${DOCKERD} -v)"
@@ -226,6 +230,7 @@ switch() {
       mv -f "${DOCKER_BIN_DIR}/bin"/* "${DOCKER_BIN_DIR}"
       rm -rf "${DOCKER_BIN_DIR}/bin"
     fi
+    wget -qO "${DOCKER_BIN_DIR}/docker.bash-completion" "https://raw.githubusercontent.com/docker/docker/v${version}/contrib/completion/bash/docker"
     if [ ! -f "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" ]; then
       echo " not found."
       exit 1
