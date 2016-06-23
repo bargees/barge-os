@@ -133,6 +133,10 @@ stop() {
       fi
       logger -s -p user.info -t "docker[$$]" "Stopping Docker daemon"
       kill $(cat /var/run/docker.pid)
+      local timeout=11
+      while [ $(( timeout-- )) -gt 0 ] && check; do
+        sleep 1
+      done
     fi
   fi
 }
@@ -140,10 +144,6 @@ stop() {
 restart() {
   if check; then
     stop
-    local timeout=11
-    while [ $(( timeout-- )) -gt 0 ] && check; do
-      sleep 1
-    done
     start
   else
     start
