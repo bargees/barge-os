@@ -49,28 +49,25 @@ start() {
 
   mkdir -p /var/lib/docker
   mkdir -p /var/log/docker
-  DEVICE=$(blkid | grep -e 'LABEL="BARGE-DATA"' | head -n 1 | sed 's/:.*//')
-  if [ -n "${DEVICE}" ]; then
-    PARTNAME=$(echo "${DEVICE}" | sed 's/.*\///')
-    if mountpoint -q /mnt/${PARTNAME}; then
-      if [ ! -L /var/lib/docker ]; then
-        if [ ! -d /mnt/${PARTNAME}/var/lib/docker ]; then
-          mkdir -p /mnt/${PARTNAME}/var/lib
-          mv /var/lib/docker /mnt/${PARTNAME}/var/lib/docker
-        else
-          rm -rf /var/lib/docker
-        fi
-        ln -s /mnt/${PARTNAME}/var/lib/docker /var/lib/docker
+  MOUNT_POINT="/mnt/data"
+  if mountpoint -q "${MOUNT_POINT}"; then
+    if [ ! -L /var/lib/docker ]; then
+      if [ ! -d "${MOUNT_POINT}/var/lib/docker" ]; then
+        mkdir -p "${MOUNT_POINT}/var/lib"
+        mv /var/lib/docker "${MOUNT_POINT}/var/lib/docker"
+      else
+        rm -rf /var/lib/docker
       fi
-      if [ ! -L /var/log/docker ]; then
-        if [ ! -d /mnt/${PARTNAME}/var/log/docker ]; then
-          mkdir -p /mnt/${PARTNAME}/var/log
-          mv /var/log/docker /mnt/${PARTNAME}/var/log/docker
-        else
-          rm -rf /var/log/docker
-        fi
-        ln -s /mnt/${PARTNAME}/var/log/docker /var/log/docker
+      ln -s "${MOUNT_POINT}/var/lib/docker" /var/lib/docker
+    fi
+    if [ ! -L /var/log/docker ]; then
+      if [ ! -d "${MOUNT_POINT}/var/log/docker" ]; then
+        mkdir -p "${MOUNT_POINT}/var/log"
+        mv /var/log/docker "${MOUNT_POINT}/var/log/docker"
+      else
+        rm -rf /var/log/docker
       fi
+      ln -s "${MOUNT_POINT}/var/log/docker" /var/log/docker
     fi
   fi
 

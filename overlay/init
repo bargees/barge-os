@@ -14,7 +14,7 @@ for p in $(cat /proc/cmdline); do
 done
 umount proc
 
-if [ -n "${SWITCH_ROOT}" -a -z "$ROOT_SWITCHED" ]; then
+if [ -n "${SWITCH_ROOT}" -a -z "${ROOT_SWITCHED}" ]; then
   if mount -t tmpfs -o size=90% tmpfs /mnt; then
     if tar -C / --exclude=mnt -cf - . | tar -C /mnt/ -xf - ; then
       mkdir /mnt/mnt
@@ -33,7 +33,7 @@ syslogd
 usleep 1000
 logger -s -p user.info -t "init[$$]" "Start init"
 
-trap 'logger -s -p user.info -t "init[$$]" "trapped at line $LINENO"' ERR
+trap 'logger -s -p user.info -t "init[$$]" "trapped at line ${LINENO}"' ERR
 
 mkdir -p /dev/pts
 
@@ -52,36 +52,36 @@ done
 # Lock the root account
 passwd -l root
 
-DEVICE=$(blkid | grep -e 'LABEL="BARGE-DATA"' | head -n 1 | sed 's/:.*//')
-if [ -n "$DEVICE" ]; then
-  PARTNAME=$(echo "$DEVICE" | sed 's/.*\///')
-  logger -s -p user.info -t "init[$$]" "Mounting HDD /dev/$PARTNAME"
-  mkdir -p /mnt/$PARTNAME
-  if (! e2fsck -p /dev/$PARTNAME) || (! mount -t ext4 /dev/$PARTNAME /mnt/$PARTNAME); then
-    logger -s -p user.info -t "init[$$]" "Running from memory, this won't be good..."
+MOUNT_POINT="/mnt/data"
+logger -s -p user.info -t "init[$$]" "Mounting HDD LABEL=BARGE-DATA"
+mkdir -p "${MOUNT_POINT}"
+if ! mount -t ext4 'LABEL=BARGE-DATA' "${MOUNT_POINT}"; then
+  logger -s -p user.info -t "init[$$]" "Running from memory, this won't be good..."
+else
+  if [ ! -d "${MOUNT_POINT}/home" ]; then
+    mv /home "${MOUNT_POINT}/home"
   else
-    if [ ! -d /mnt/$PARTNAME/home ]; then
-      mv /home /mnt/$PARTNAME/home
-    else
-      rm -rf /home
-    fi
-    ln -s /mnt/$PARTNAME/home /home
-
-    rm -rf /opt
-    mkdir -p /mnt/$PARTNAME/opt
-    ln -s /mnt/$PARTNAME/opt /opt
-
-    mkdir -p /mnt/$PARTNAME/etc
-    mkdir -p /mnt/$PARTNAME/work/etc
-    mount -t overlay overlay -o lowerdir=/etc,upperdir=/mnt/$PARTNAME/etc,workdir=/mnt/$PARTNAME/work/etc /etc
+    rm -rf /home
   fi
+  ln -s "${MOUNT_POINT}/home" /home
+
+  rm -rf /opt
+  mkdir -p "${MOUNT_POINT}/opt"
+  ln -s "${MOUNT_POINT}/opt" /opt
+
+  mkdir -p "${MOUNT_POINT}/etc"
+  mkdir -p "${MOUNT_POINT}/work/etc"
+  mount -t overlay overlay -o lowerdir=/etc,upperdir="${MOUNT_POINT}/etc",workdir="${MOUNT_POINT}/work/etc" /etc
+
+  # for backward compatibility
+  OLD_ONE="/mnt/$(grep "${MOUNT_POINT} ext4" /etc/mtab | sed -E 's/^\/dev\/([^ ]*) .*$/\1/g')"
+  mkdir -p "${OLD_ONE}"
+  mount --bind "${MOUNT_POINT}" "${OLD_ONE}"
 fi
-DEVICE=$(blkid | grep -e 'LABEL="BARGE-SWAP"' | head -n 1 | sed 's/:.*//')
-if [ -n "$DEVICE" ]; then
-  logger -s -p user.info -t "init[$$]" "Enabling SWAP $DEVICE"
-  if ! swapon $DEVICE; then
-    logger -s -p user.info -t "init[$$]" "Could not make swap on $DEVICE"
-  fi
+
+logger -s -p user.info -t "init[$$]" "Enabling SWAP LABEL=BARGE-SWAP"
+if ! swapon 'LABEL=BARGE-SWAP'; then
+  logger -s -p user.info -t "init[$$]" "Could not make swap on LABEL=BARGE-SWAP"
 fi
 
 if [ -x /etc/init.d/init.sh ]; then
