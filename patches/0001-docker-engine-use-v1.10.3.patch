@@ -1,0 +1,403 @@
+From b110ca547fc35b632cc8045da526a13b114f4ec3 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Tue, 2 Aug 2016 11:08:12 -0700
+Subject: [PATCH] docker-engine: use v1.10.3
+
+---
+ ...-issues-with-tailing-rotated-jsonlog-file.patch | 297 ---------------------
+ package/docker-engine/Config.in                    |   3 -
+ package/docker-engine/docker-engine.hash           |   2 +-
+ package/docker-engine/docker-engine.mk             |  17 +-
+ 4 files changed, 10 insertions(+), 309 deletions(-)
+ delete mode 100644 package/docker-engine/0001-Fix-issues-with-tailing-rotated-jsonlog-file.patch
+
+diff --git a/package/docker-engine/0001-Fix-issues-with-tailing-rotated-jsonlog-file.patch b/package/docker-engine/0001-Fix-issues-with-tailing-rotated-jsonlog-file.patch
+deleted file mode 100644
+index 413cfd6..0000000
+--- a/package/docker-engine/0001-Fix-issues-with-tailing-rotated-jsonlog-file.patch
++++ /dev/null
+@@ -1,297 +0,0 @@
+-From 8d6f2e3fe8851b581309da25fc4c32f8be675932 Mon Sep 17 00:00:00 2001
+-From: Brian Goff <cpuguy83@gmail.com>
+-Date: Mon, 11 Jul 2016 16:31:42 -0400
+-Subject: [PATCH] Fix issues with tailing rotated jsonlog file
+-
+-Fixes a race where the log reader would get events for both an actual
+-rotation as we from fsnotify (`fsnotify.Rename`).
+-This issue becomes extremely apparent when rotations are fast, for
+-example:
+-
+-```
+-$ docker run -d --name test --log-opt max-size=1 --log-opt max-file=2
+-busybox sh -c 'while true; do echo hello; usleep 100000; done'
+-```
+-
+-With this change the log reader for jsonlogs can handle rotations that
+-happen as above.
+-
+-Instead of listening for both fs events AND rotation events
+-simultaneously, potentially meaning we see 2 rotations for only a single
+-rotation due to channel buffering, only listen for fs events (like
+-`Rename`) and then wait to be notified about rotation by the logger.
+-This makes sure that we don't see 2 rotations for 1, and that we don't
+-start trying to read until the logger is actually ready for us to.
+-
+-Signed-off-by: Brian Goff <cpuguy83@gmail.com>
+-
+-This commit is pending upstream commit fixing broken log tailing. The
+-original commit can be found in the PR here:
+-
+-  - https://github.com/docker/docker/pull/24514
+-
+-Signed-off-by: Christian Stewart <christian@paral.in>
+----
+- daemon/logger/jsonfilelog/read.go | 180 +++++++++++++++++++++++++-------------
+- 1 file changed, 119 insertions(+), 61 deletions(-)
+-
+-diff --git a/daemon/logger/jsonfilelog/read.go b/daemon/logger/jsonfilelog/read.go
+-index bea83dd..0cb44af 100644
+---- a/daemon/logger/jsonfilelog/read.go
+-+++ b/daemon/logger/jsonfilelog/read.go
+-@@ -3,11 +3,14 @@ package jsonfilelog
+- import (
+- 	"bytes"
+- 	"encoding/json"
+-+	"errors"
+- 	"fmt"
+- 	"io"
+- 	"os"
+- 	"time"
+- 
+-+	"gopkg.in/fsnotify.v1"
+-+
+- 	"github.com/Sirupsen/logrus"
+- 	"github.com/docker/docker/daemon/logger"
+- 	"github.com/docker/docker/pkg/filenotify"
+-@@ -44,6 +47,10 @@ func (l *JSONFileLogger) ReadLogs(config logger.ReadConfig) *logger.LogWatcher {
+- func (l *JSONFileLogger) readLogs(logWatcher *logger.LogWatcher, config logger.ReadConfig) {
+- 	defer close(logWatcher.Msg)
+- 
+-+	// lock so the read stream doesn't get corrupted do to rotations or other log data written while we read
+-+	// This will block writes!!!
+-+	l.mu.Lock()
+-+
+- 	pth := l.writer.LogPath()
+- 	var files []io.ReadSeeker
+- 	for i := l.writer.MaxFiles(); i > 1; i-- {
+-@@ -61,6 +68,7 @@ func (l *JSONFileLogger) readLogs(logWatcher *logger.LogWatcher, config logger.R
+- 	latestFile, err := os.Open(pth)
+- 	if err != nil {
+- 		logWatcher.Err <- err
+-+		l.mu.Unlock()
+- 		return
+- 	}
+- 
+-@@ -80,6 +88,7 @@ func (l *JSONFileLogger) readLogs(logWatcher *logger.LogWatcher, config logger.R
+- 		if err := latestFile.Close(); err != nil {
+- 			logrus.Errorf("Error closing file: %v", err)
+- 		}
+-+		l.mu.Unlock()
+- 		return
+- 	}
+- 
+-@@ -87,7 +96,6 @@ func (l *JSONFileLogger) readLogs(logWatcher *logger.LogWatcher, config logger.R
+- 		latestFile.Seek(0, os.SEEK_END)
+- 	}
+- 
+--	l.mu.Lock()
+- 	l.readers[logWatcher] = struct{}{}
+- 	l.mu.Unlock()
+- 
+-@@ -128,92 +136,142 @@ func tailFile(f io.ReadSeeker, logWatcher *logger.LogWatcher, tail int, since ti
+- 	}
+- }
+- 
+-+func watchFile(name string) (filenotify.FileWatcher, error) {
+-+	fileWatcher, err := filenotify.New()
+-+	if err != nil {
+-+		return nil, err
+-+	}
+-+
+-+	if err := fileWatcher.Add(name); err != nil {
+-+		logrus.WithField("logger", "json-file").Warnf("falling back to file poller due to error: %v", err)
+-+		fileWatcher.Close()
+-+		fileWatcher = filenotify.NewPollingWatcher()
+-+
+-+		if err := fileWatcher.Add(name); err != nil {
+-+			fileWatcher.Close()
+-+			logrus.Debugf("error watching log file for modifications: %v", err)
+-+			return nil, err
+-+		}
+-+	}
+-+	return fileWatcher, nil
+-+}
+-+
+- func followLogs(f *os.File, logWatcher *logger.LogWatcher, notifyRotate chan interface{}, since time.Time) {
+- 	dec := json.NewDecoder(f)
+- 	l := &jsonlog.JSONLog{}
+- 
+--	fileWatcher, err := filenotify.New()
+-+	name := f.Name()
+-+	fileWatcher, err := watchFile(name)
+- 	if err != nil {
+- 		logWatcher.Err <- err
+-+		return
+- 	}
+- 	defer func() {
+- 		f.Close()
+- 		fileWatcher.Close()
+- 	}()
+--	name := f.Name()
+- 
+--	if err := fileWatcher.Add(name); err != nil {
+--		logrus.WithField("logger", "json-file").Warnf("falling back to file poller due to error: %v", err)
+--		fileWatcher.Close()
+--		fileWatcher = filenotify.NewPollingWatcher()
+-+	var retries int
+-+	handleRotate := func() error {
+-+		f.Close()
+-+		fileWatcher.Remove(name)
+- 
+-+		// retry when the file doesn't exist
+-+		for retries := 0; retries <= 5; retries++ {
+-+			f, err = os.Open(name)
+-+			if err == nil || !os.IsNotExist(err) {
+-+				break
+-+			}
+-+		}
+-+		if err != nil {
+-+			return err
+-+		}
+- 		if err := fileWatcher.Add(name); err != nil {
+--			logrus.Debugf("error watching log file for modifications: %v", err)
+--			logWatcher.Err <- err
+--			return
+-+			return err
+- 		}
+-+		dec = json.NewDecoder(f)
+-+		return nil
+- 	}
+- 
+--	var retries int
+--	for {
+--		msg, err := decodeLogLine(dec, l)
+--		if err != nil {
+--			if err != io.EOF {
+--				// try again because this shouldn't happen
+--				if _, ok := err.(*json.SyntaxError); ok && retries <= maxJSONDecodeRetry {
+--					dec = json.NewDecoder(f)
+--					retries++
+--					continue
+-+	errRetry := errors.New("retry")
+-+	errDone := errors.New("done")
+-+	waitRead := func() error {
+-+		select {
+-+		case e := <-fileWatcher.Events():
+-+			switch e.Op {
+-+			case fsnotify.Write:
+-+				dec = json.NewDecoder(f)
+-+				return nil
+-+			case fsnotify.Rename, fsnotify.Remove:
+-+				<-notifyRotate
+-+				if err := handleRotate(); err != nil {
+-+					return err
+- 				}
+--
+--				// io.ErrUnexpectedEOF is returned from json.Decoder when there is
+--				// remaining data in the parser's buffer while an io.EOF occurs.
+--				// If the json logger writes a partial json log entry to the disk
+--				// while at the same time the decoder tries to decode it, the race condition happens.
+--				if err == io.ErrUnexpectedEOF && retries <= maxJSONDecodeRetry {
+--					reader := io.MultiReader(dec.Buffered(), f)
+--					dec = json.NewDecoder(reader)
+--					retries++
+--					continue
+-+				return nil
+-+			}
+-+			return errRetry
+-+		case err := <-fileWatcher.Errors():
+-+			logrus.Debug("logger got error watching file: %v", err)
+-+			// Something happened, let's try and stay alive and create a new watcher
+-+			if retries <= 5 {
+-+				fileWatcher, err = watchFile(name)
+-+				if err != nil {
+-+					return err
+- 				}
+--
+--				return
+-+				retries++
+-+				return errRetry
+- 			}
+-+			return err
+-+		case <-logWatcher.WatchClose():
+-+			fileWatcher.Remove(name)
+-+			return errDone
+-+		}
+-+	}
+- 
+--			select {
+--			case <-fileWatcher.Events():
+--				dec = json.NewDecoder(f)
+--				continue
+--			case <-fileWatcher.Errors():
+--				logWatcher.Err <- err
+--				return
+--			case <-logWatcher.WatchClose():
+--				fileWatcher.Remove(name)
+--				return
+--			case <-notifyRotate:
+--				f.Close()
+--				fileWatcher.Remove(name)
+--
+--				// retry when the file doesn't exist
+--				for retries := 0; retries <= 5; retries++ {
+--					f, err = os.Open(name)
+--					if err == nil || !os.IsNotExist(err) {
+--						break
+--					}
+-+	handleDecodeErr := func(err error) error {
+-+		if err == io.EOF {
+-+			for err := waitRead(); err != nil; {
+-+				if err == errRetry {
+-+					// retry the waitRead
+-+					continue
+- 				}
+-+				return err
+-+			}
+-+			return nil
+-+		}
+-+		// try again because this shouldn't happen
+-+		if _, ok := err.(*json.SyntaxError); ok && retries <= maxJSONDecodeRetry {
+-+			dec = json.NewDecoder(f)
+-+			retries++
+-+			return nil
+-+		}
+-+		// io.ErrUnexpectedEOF is returned from json.Decoder when there is
+-+		// remaining data in the parser's buffer while an io.EOF occurs.
+-+		// If the json logger writes a partial json log entry to the disk
+-+		// while at the same time the decoder tries to decode it, the race condition happens.
+-+		if err == io.ErrUnexpectedEOF && retries <= maxJSONDecodeRetry {
+-+			reader := io.MultiReader(dec.Buffered(), f)
+-+			dec = json.NewDecoder(reader)
+-+			retries++
+-+			return nil
+-+		}
+-+		return err
+-+	}
+- 
+--				if err = fileWatcher.Add(name); err != nil {
+--					logWatcher.Err <- err
+--					return
+--				}
+--				if err != nil {
+--					logWatcher.Err <- err
+-+	// main loop
+-+	for {
+-+		msg, err := decodeLogLine(dec, l)
+-+		if err != nil {
+-+			if err := handleDecodeErr(err); err != nil {
+-+				if err == errDone {
+- 					return
+- 				}
+--
+--				dec = json.NewDecoder(f)
+--				continue
+-+				// we got an unrecoverable error, so return
+-+				logWatcher.Err <- err
+-+				return
+- 			}
+-+			// ready to try again
+-+			continue
+- 		}
+- 
+- 		retries = 0 // reset retries since we've succeeded
+--- 
+-2.7.3
+-
+diff --git a/package/docker-engine/Config.in b/package/docker-engine/Config.in
+index a22786a..56ea91d 100644
+--- a/package/docker-engine/Config.in
++++ b/package/docker-engine/Config.in
+@@ -13,9 +13,6 @@ if BR2_PACKAGE_DOCKER_ENGINE
+ 
+ config BR2_PACKAGE_DOCKER_ENGINE_DAEMON
+ 	bool "docker daemon"
+-	depends on BR2_USE_WCHAR # docker-containerd
+-	select BR2_PACKAGE_DOCKER_CONTAINERD # runtime dependency
+-	select BR2_PACKAGE_SQLITE # runtime dependency
+ 	default y
+ 	help
+ 	  Build the Docker system daemon.
+diff --git a/package/docker-engine/docker-engine.hash b/package/docker-engine/docker-engine.hash
+index 1de09f8..ddcba37 100644
+--- a/package/docker-engine/docker-engine.hash
++++ b/package/docker-engine/docker-engine.hash
+@@ -1,2 +1,2 @@
+ # Locally calculated
+-sha256 bc256d2a348efbf236eab991254c925fa1917dd1e29cb40586f1696f4e24852e  docker-engine-v1.12.0-rc4.tar.gz
++sha256 6b72fafa4c068a95133f5c9fda9fb148c9412db7a932800689e259a1b1c7ef6d  docker-engine-1.10.3.tar.gz
+diff --git a/package/docker-engine/docker-engine.mk b/package/docker-engine/docker-engine.mk
+index 80b0041..a4687c8 100644
+--- a/package/docker-engine/docker-engine.mk
++++ b/package/docker-engine/docker-engine.mk
+@@ -4,8 +4,9 @@
+ #
+ ################################################################################
+ 
+-DOCKER_ENGINE_VERSION = v1.12.0-rc4
+-DOCKER_ENGINE_SITE = $(call github,docker,docker,$(DOCKER_ENGINE_VERSION))
++DOCKER_ENGINE_VERSION = 1.10.3
++DOCKER_ENGINE_SITE = $(call github,docker,docker,v$(DOCKER_ENGINE_VERSION))
++DOCKER_ENGINE_GITCOMMIT = 20f81dd
+ 
+ DOCKER_ENGINE_LICENSE = Apache-2.0
+ DOCKER_ENGINE_LICENSE_FILES = LICENSE
+@@ -19,15 +20,16 @@ DOCKER_ENGINE_MAKE_ENV = $(HOST_GO_TARGET_ENV) \
+ 	GOBIN="$(@D)/bin" \
+ 	GOPATH="$(DOCKER_ENGINE_GOPATH)"
+ 
+-DOCKER_ENGINE_GLDFLAGS = \
+-	-X main.GitCommit=$(DOCKER_ENGINE_VERSION) \
++DOCKER_ENGINE_GLDFLAGS = -w -s \
++	-X main.GitCommit=$(DOCKER_ENGINE_GITCOMMIT) \
+ 	-X main.Version=$(DOCKER_ENGINE_VERSION)
+ 
+ ifeq ($(BR2_STATIC_LIBS),y)
+ DOCKER_ENGINE_GLDFLAGS += -extldflags '-static'
+ endif
+ 
+-DOCKER_ENGINE_BUILD_TAGS = cgo exclude_graphdriver_zfs autogen
++DOCKER_ENGINE_BUILD_TAGS = cgo exclude_graphdriver_zfs exclude_graphdriver_aufs autogen \
++	sqlite_omit_load_extension
+ DOCKER_ENGINE_BUILD_TARGETS = docker
+ 
+ ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
+@@ -37,7 +39,6 @@ endif
+ 
+ ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_DAEMON),y)
+ DOCKER_ENGINE_BUILD_TAGS += daemon
+-DOCKER_ENGINE_BUILD_TARGETS += dockerd
+ endif
+ 
+ ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_EXPERIMENTAL),y)
+@@ -65,7 +66,7 @@ endif
+ define DOCKER_ENGINE_CONFIGURE_CMDS
+ 	ln -fs $(@D) $(DOCKER_ENGINE_GOPATH)/src/github.com/docker/docker
+ 	cd $(@D) && \
+-		GITCOMMIT="unknown" BUILDTIME="$$(date)" VERSION="$(DOCKER_ENGINE_VERSION)" \
++		GITCOMMIT="$(DOCKER_ENGINE_GITCOMMIT)" BUILDTIME="$$(date)" VERSION="$(DOCKER_ENGINE_VERSION)" \
+ 		bash ./hack/make/.go-autogen
+ endef
+ 
+@@ -94,7 +95,7 @@ define DOCKER_ENGINE_BUILD_CMDS
+ 			-o $(@D)/bin/$(target) \
+ 			-tags "$(DOCKER_ENGINE_BUILD_TAGS)" \
+ 			-ldflags "$(DOCKER_ENGINE_GLDFLAGS)" \
+-			./cmd/$(target)
++			./$(target)
+ 	)
+ endef
+ 
+-- 
+2.5.4 (Apple Git-61)
+
