@@ -85,4 +85,4 @@ I18NPATH=${STAGING_DIR}/usr/share/i18n:/usr/share/i18n \
 mv ${ROOTFS}/usr/lib/locale/C.utf8 ${ROOTFS}/usr/lib/locale/C.UTF-8
 
 # Set Docker version
-sed -i "s/Docker version.*/$(${ROOTFS}/usr/bin/docker -v)/" ${ROOTFS}/etc/motd
+sed -i "s/Docker version.*/$(LD_LIBRARY_PATH=${ROOTFS}/usr/lib ${ROOTFS}/usr/bin/docker -v)/" ${ROOTFS}/etc/motd
