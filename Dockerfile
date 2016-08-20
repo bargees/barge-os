@@ -1,4 +1,4 @@
-FROM ailispaw/ubuntu-essential:14.04
+FROM ailispaw/ubuntu-essential:14.04-nodoc
 
 ENV TERM xterm
 
