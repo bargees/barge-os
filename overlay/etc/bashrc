@@ -1,0 +1,8 @@
+alias ll='/bin/ls --color=tty -laFh'
+alias ls='/bin/ls --color=tty -F'
+
+PS1="[\u@\h \W]\\$ "
+
+if [ -f /usr/share/bash-completion/bash_completion ]; then
+  source /usr/share/bash-completion/bash_completion
+fi

@@ -1,6 +1,4 @@
-#!/bin/sh
-
-if [ -r /etc/locale.conf ]; then
+if [ -f /etc/locale.conf ]; then
   . /etc/locale.conf
 fi
 
