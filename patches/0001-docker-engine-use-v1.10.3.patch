@@ -1,7 +1,7 @@
-From 53c968b01535bb9f728988de0fbbb2aa9d64e4c2 Mon Sep 17 00:00:00 2001
+From 90cde87f3c7fa4b547b84c9f58710ec4ca7a638b Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Tue, 2 Aug 2016 11:08:12 -0700
-Subject: [PATCH 2/3] docker-engine: use v1.10.3
+Subject: [PATCH 1/2] docker-engine: use v1.10.3
 
 ---
  ...-issues-with-tailing-rotated-jsonlog-file.patch | 297 ---------------------
@@ -329,22 +329,22 @@ index a22786a..56ea91d 100644
  	help
  	  Build the Docker system daemon.
 diff --git a/package/docker-engine/docker-engine.hash b/package/docker-engine/docker-engine.hash
-index 1de09f8..ddcba37 100644
+index 6078fbf..ddcba37 100644
 --- a/package/docker-engine/docker-engine.hash
 +++ b/package/docker-engine/docker-engine.hash
 @@ -1,2 +1,2 @@
  # Locally calculated
--sha256 bc256d2a348efbf236eab991254c925fa1917dd1e29cb40586f1696f4e24852e  docker-engine-v1.12.0-rc4.tar.gz
+-sha256 f8139acba98248eb1fdb0b6d94efee89b876f9a50d00e263dc144fd2b0c372d4  docker-engine-v1.12.0.tar.gz
 +sha256 6b72fafa4c068a95133f5c9fda9fb148c9412db7a932800689e259a1b1c7ef6d  docker-engine-1.10.3.tar.gz
 diff --git a/package/docker-engine/docker-engine.mk b/package/docker-engine/docker-engine.mk
-index 80b0041..a4687c8 100644
+index 3d39aac..a4687c8 100644
 --- a/package/docker-engine/docker-engine.mk
 +++ b/package/docker-engine/docker-engine.mk
 @@ -4,8 +4,9 @@
  #
  ################################################################################
  
--DOCKER_ENGINE_VERSION = v1.12.0-rc4
+-DOCKER_ENGINE_VERSION = v1.12.0
 -DOCKER_ENGINE_SITE = $(call github,docker,docker,$(DOCKER_ENGINE_VERSION))
 +DOCKER_ENGINE_VERSION = 1.10.3
 +DOCKER_ENGINE_SITE = $(call github,docker,docker,v$(DOCKER_ENGINE_VERSION))
