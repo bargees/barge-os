@@ -43,6 +43,12 @@ mkdir -p var/lib/misc
 # Change shell for root
 sed -i '/^root/s!/bin/sh!/bin/bash!' ${ROOTFS}/etc/passwd
 
+# Copy /etc/skel manually, because buildroot won't copy it with BR2_ROOTFS_USERS_TABLES.
+cp -R ${ROOTFS}/etc/skel/. ${ROOTFS}/root
+mkdir -p ${ROOTFS}/home/bargee
+cp -R ${ROOTFS}/etc/skel/. ${ROOTFS}/home/bargee
+# chowd -R bargee:bargees ${ROOTFS}/home/bargee will be performed with BR2_ROOTFS_DEVICE_TABLE.
+
 # Link shutdown scripts
 cd ${ROOTFS}/sbin/
 for i in halt reboot poweroff; do
@@ -83,3 +89,6 @@ I18NPATH=${STAGING_DIR}/usr/share/i18n:/usr/share/i18n \
   ${STAGING_DIR}/usr/bin/localedef --force --quiet --no-archive --little-endian --prefix=${ROOTFS} \
     -i POSIX -f UTF-8 C.UTF-8
 mv ${ROOTFS}/usr/lib/locale/C.utf8 ${ROOTFS}/usr/lib/locale/C.UTF-8
+
+# Set Docker version
+sed -i "s/Docker version.*/$(LD_LIBRARY_PATH=${ROOTFS}/usr/lib ${ROOTFS}/usr/bin/docker -v)/" ${ROOTFS}/etc/motd

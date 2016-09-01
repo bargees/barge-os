@@ -14,7 +14,7 @@ ENV SRC_DIR=/build \
     BR_ROOT=/build/buildroot
 RUN mkdir -p ${SRC_DIR} ${OVERLAY}
 
-ENV BR_VERSION 2016.05
+ENV BR_VERSION 2016.08
 RUN wget -qO- https://buildroot.org/downloads/buildroot-${BR_VERSION}.tar.bz2 | tar xj && \
     mv buildroot-${BR_VERSION} ${BR_ROOT}
 
@@ -37,12 +37,9 @@ RUN mkdir -p usr/share/bash-completion/completions && \
     wget -qO usr/share/bash-completion/bash_completion https://raw.githubusercontent.com/scop/bash-completion/master/bash_completion && \
     chmod +x usr/share/bash-completion/bash_completion
 
-# Add Docker
-ENV DOCKER_VERSION 1.9.1
-RUN mkdir -p usr/bin && \
-    wget -qO usr/bin/docker https://github.com/ailispaw/docker/releases/download/v${DOCKER_VERSION}-stripped/docker-${DOCKER_VERSION} && \
-    chmod +x usr/bin/docker && \
-    wget -qO usr/share/bash-completion/completions/docker https://raw.githubusercontent.com/docker/docker/v${DOCKER_VERSION}/contrib/completion/bash/docker
+# Add Docker bash-completion
+ENV DOCKER_VERSION 1.10.3
+RUN wget -qO usr/share/bash-completion/completions/docker https://raw.githubusercontent.com/docker/docker/v${DOCKER_VERSION}/contrib/completion/bash/docker
 
 # Add dumb-init
 ENV DINIT_VERSION 1.1.2
@@ -50,9 +47,9 @@ RUN mkdir -p usr/bin && \
     wget -qO usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DINIT_VERSION}/dumb-init_${DINIT_VERSION}_amd64 && \
     chmod +x usr/bin/dumb-init
 
-ENV VERSION 2.1.11
+ENV VERSION 2.2.0-rc3
 RUN mkdir -p etc && \
-    echo "Welcome to Barge ${VERSION}, $(usr/bin/docker -v)" > etc/motd && \
+    echo "Welcome to Barge ${VERSION}, Docker version ${DOCKER_VERSION}" > etc/motd && \
     echo "NAME=\"Barge\"" > etc/os-release && \
     echo "VERSION=${VERSION}" >> etc/os-release && \
     echo "ID=barge" >> etc/os-release && \
