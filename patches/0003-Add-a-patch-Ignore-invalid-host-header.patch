@@ -1,0 +1,154 @@
+From 38324c167c674e1d88e10be7ece8da66bcd69c15 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Thu, 1 Sep 2016 16:56:43 -0700
+Subject: [PATCH 3/3] =?UTF-8?q?Add=20a=20patch=20=E2=80=9CIgnore=20invalid?=
+ =?UTF-8?q?=20host=20header=E2=80=9D?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ .../0001-Ignore-invalid-host-header.patch          | 131 +++++++++++++++++++++
+ 1 file changed, 131 insertions(+)
+ create mode 100644 package/docker-engine/0001-Ignore-invalid-host-header.patch
+
+diff --git a/package/docker-engine/0001-Ignore-invalid-host-header.patch b/package/docker-engine/0001-Ignore-invalid-host-header.patch
+new file mode 100644
+index 0000000..1a1cfae
+--- /dev/null
++++ b/package/docker-engine/0001-Ignore-invalid-host-header.patch
+@@ -0,0 +1,131 @@
++From 83c886d52db4e18c1cf222ea9cc152f0bab16b02 Mon Sep 17 00:00:00 2001
++From: "A.I" <ailis@paw.zone>
++Date: Thu, 1 Sep 2016 16:54:45 -0700
++Subject: [PATCH] Ignore invalid host header
++
++between go1.6 and old docker clients
++
++Origin: https://github.com/docker/docker/pull/22000
++---
++ api/server/malformed_host_override.go | 85 +++++++++++++++++++++++++++++++++++
++ api/server/server_unix.go             |  5 ++-
++ 2 files changed, 89 insertions(+), 1 deletion(-)
++ create mode 100644 api/server/malformed_host_override.go
++
++diff --git a/api/server/malformed_host_override.go b/api/server/malformed_host_override.go
++new file mode 100644
++index 0000000..c9855e6
++--- /dev/null
+++++ b/api/server/malformed_host_override.go
++@@ -0,0 +1,85 @@
+++// +build !windows
+++
+++package server
+++
+++import (
+++	"net"
+++	"strings"
+++)
+++
+++// MalformedHostHeaderOverride is a wrapper to be able
+++// to overcome the 400 Bad request coming from old docker
+++// clients that send an invalid Host header.
+++type MalformedHostHeaderOverride struct {
+++	net.Listener
+++}
+++
+++// MalformedHostHeaderOverrideConn wraps the underlying unix
+++// connection and keeps track of the first read from http.Server
+++// which just reads the headers.
+++type MalformedHostHeaderOverrideConn struct {
+++	net.Conn
+++	first bool
+++}
+++
+++// Read reads the first *read* request from http.Server to inspect
+++// the Host header. If the Host starts with / then we're talking to
+++// an old docker client which send an invalid Host header. To not
+++// error out in http.Server we rewrite the first bytes of the request
+++// to sanitize the Host header itself.
+++// In case we're not dealing with old docker clients the data is just passed
+++// to the server w/o modification.
+++func (l *MalformedHostHeaderOverrideConn) Read(b []byte) (n int, err error) {
+++	// http.Server uses a 4k buffer
+++	if l.first && len(b) == 4096 {
+++		// This keeps track of the first read from http.Server which just reads
+++		// the headers
+++		l.first = false
+++		// The first read of the connection by http.Server is done limited to
+++		// DefaultMaxHeaderBytes (usually 1 << 20) + 4096.
+++		// Here we do the first read which gets us all the http headers to
+++		// be inspected and modified below.
+++		c, err := l.Conn.Read(b)
+++		if err != nil {
+++			return c, err
+++		}
+++		parts := strings.Split(string(b[:c]), "\n")
+++		head := []string{parts[0]}
+++		if len(parts) > 0 {
+++			if !strings.HasPrefix(parts[1], "Host:") {
+++				// old docker clients sends the Host header at parts[1]
+++				// which is the second line of the http request
+++				// if we're not talking to an old docker client, just skip
+++				head = parts
+++			} else if !strings.HasPrefix(parts[1], "Host: /") {
+++				// we're talking to a newer docker clients if Host doesn't start
+++				// with a slash
+++				head = parts
+++			} else {
+++				// we're now talking to an old docker client
+++				// Sanitize Host header
+++				head = append(head, "Host: \r")
+++				// Inject `Connection: close` to ensure we don't reuse this connection
+++				head = append(head, "Connection: close\r")
+++				// append the remaining headers
+++				if len(parts) > 1 {
+++					head = append(head, parts[2:]...)
+++				}
+++			}
+++		}
+++		newHead := strings.Join(head, "\n")
+++		copy(b, []byte(newHead))
+++		return len(newHead), nil
+++	}
+++	return l.Conn.Read(b)
+++}
+++
+++// Accept makes the listener accepts connections and wraps the connection
+++// in a MalformedHostHeaderOverrideConn initilizing first to true.
+++func (l *MalformedHostHeaderOverride) Accept() (net.Conn, error) {
+++	c, err := l.Listener.Accept()
+++	if err != nil {
+++		return c, err
+++	}
+++	return &MalformedHostHeaderOverrideConn{c, true}, nil
+++}
++diff --git a/api/server/server_unix.go b/api/server/server_unix.go
++index a4fc639..98320a5 100644
++--- a/api/server/server_unix.go
+++++ b/api/server/server_unix.go
++@@ -29,6 +29,9 @@ func (s *Server) newServer(proto, addr string) ([]*HTTPServer, error) {
++ 		if err != nil {
++ 			return nil, err
++ 		}
+++		for i := range ls {
+++			ls[i] = &MalformedHostHeaderOverride{ls[i]}
+++		}
++ 	case "tcp":
++ 		l, err := s.initTCPSocket(addr)
++ 		if err != nil {
++@@ -40,7 +43,7 @@ func (s *Server) newServer(proto, addr string) ([]*HTTPServer, error) {
++ 		if err != nil {
++ 			return nil, fmt.Errorf("can't create unix socket %s: %v", addr, err)
++ 		}
++-		ls = append(ls, l)
+++		ls = append(ls, &MalformedHostHeaderOverride{l})
++ 	default:
++ 		return nil, fmt.Errorf("Invalid protocol format: %q", proto)
++ 	}
++-- 
++2.5.4 (Apple Git-61)
++
+-- 
+2.5.4 (Apple Git-61)
+
