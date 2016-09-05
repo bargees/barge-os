@@ -9,9 +9,9 @@ module VagrantPlugins
 end
 
 Vagrant.configure(2) do |config|
-  config.vm.define "barge", primary: true
+  config.vm.define "barge", autostart: false
   config.vm.define "barge-dev", autostart: false
-  config.vm.define "barge-rpi", autostart: false
+  config.vm.define "barge-rpi", primary: true
   config.vm.define "barge-rpi-dev", autostart: false
 
   config.vm.box = "ailispaw/barge"

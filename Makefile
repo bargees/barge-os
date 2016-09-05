@@ -1,7 +1,7 @@
 KERNEL_VERSION  := 4.9.13
 BUSYBOX_VERSION := 1.26.2
 
-OUTPUTS := output/rootfs.tar.xz output/bzImage output/barge.iso output/barge.img
+OUTPUTS := output/images
 SOURCES := Dockerfile .dockerignore \
 	$(shell find configs -type f) \
 	$(shell find overlay -type f) \
@@ -20,7 +20,7 @@ CCACHE_DIR := /mnt/sda1/ccache
 all: $(OUTPUTS)
 
 $(OUTPUTS): build | output
-	docker cp $(BUILD_CONTAINER):/build/buildroot/output/images/$(@F) output/
+	docker cp $(BUILD_CONTAINER):/build/buildroot/output/images output/
 
 build: $(SOURCES) | dl
 	$(eval SRC_UPDATED=$$(shell stat -f "%m" $^ | sort -gr | head -n1))
@@ -54,14 +54,7 @@ distclean: clean
 
 .PHONY: all build clean distclean
 
-vagrant:
-	-vagrant resume barge
-	-vagrant reload barge
-	vagrant up --no-provision barge
-	vagrant provision barge
-	vagrant ssh barge -c 'sudo mkdir -p $(CCACHE_DIR)'
-
-dev:
+rpi rpi-dev:
 	-vagrant resume barge-$@
 	-vagrant reload barge-$@
 	vagrant up --no-provision barge-$@
@@ -76,12 +69,4 @@ config: | output
 	docker cp $(BUILD_CONTAINER):/build/buildroot/output/build/linux-$(KERNEL_VERSION)/.config output/kernel.config
 	-diff configs/kernel.config output/kernel.config
 
-install:
-	cp output/bzImage ../barge-packer/virtualbox/iso/
-	cp output/rootfs.tar.xz ../barge-packer/virtualbox/iso/
-	cp configs/kernel.config ../barge-packer/virtualbox/iso/
-	cp configs/isolinux.cfg ../barge-packer/virtualbox/iso/
-	cp output/barge.iso ../barge-packer/qemu/
-	cp output/barge.img ../barge-packer/qemu/
-
-.PHONY: vagrant dev config install
+.PHONY: rpi rpi-dev config
