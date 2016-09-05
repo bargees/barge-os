@@ -4,7 +4,7 @@ ENV TERM xterm
 
 RUN apt-get -q update && \
     apt-get -q -y install --no-install-recommends ca-certificates \
-      bc build-essential cpio file python unzip rsync wget \
+      bc build-essential cpio file git python unzip rsync wget \
       syslinux xorriso dosfstools mtools && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -40,12 +40,6 @@ RUN mkdir -p usr/share/bash-completion/completions && \
 # Add Docker bash-completion
 ENV DOCKER_VERSION 1.10.3
 RUN wget -qO usr/share/bash-completion/completions/docker https://raw.githubusercontent.com/docker/docker/v${DOCKER_VERSION}/contrib/completion/bash/docker
-
-# Add dumb-init
-ENV DINIT_VERSION 1.2.0
-RUN mkdir -p usr/bin && \
-    wget -qO usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DINIT_VERSION}/dumb-init_${DINIT_VERSION}_amd64 && \
-    chmod +x usr/bin/dumb-init
 
 ENV VERSION 2.5.4
 RUN mkdir -p etc && \

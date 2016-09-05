@@ -1,0 +1,1 @@
+NTPD_OPTS="-4 -I eth0 -I wlan0"
