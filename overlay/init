@@ -92,9 +92,6 @@ fi
 logger -s -p user.info -t "init[$$]" "Set hostname with /etc/hostname"
 /bin/hostname -F /etc/hostname
 
-logger -s -p user.info -t "init[$$]" "Executing ACPId"
-/usr/sbin/acpid
-
 logger -s -p user.info -t "init[$$]" "Configuring sysctl"
 sysctl -p /etc/sysctl.conf
 
@@ -109,8 +106,8 @@ fi
 sync
 
 logger -s -p user.info -t "init[$$]" "Starting console"
-if dmesg | grep -q 'ttyS0 at I/O'; then
-  respawn /sbin/getty -L 115200 ttyS0 vt100 &
+if dmesg | grep -q 'ttyAMA0 at MMIO'; then
+  respawn /sbin/getty -L 0 ttyAMA0 vt100 &
 fi
 respawn /sbin/getty 38400 tty0 &
 chvt 2
@@ -121,7 +118,7 @@ shutdown_trap() {
   set +e
 
   # Send SIGTERM to all processes except pid 1
-  killall5 -o $(cat /var/run/acpid.pid)
+  killall5
 
   # Stop network now
   /etc/init.d/S40network stop
