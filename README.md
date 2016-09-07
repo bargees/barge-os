@@ -1,3 +1,5 @@
+![barge-logo-800x300](https://cloud.githubusercontent.com/assets/10327896/18331486/2ffa9ec0-7514-11e6-9e2a-be3d69a092bc.png)
+
 # Barge 2.0
 
 Barge is a lightweight Linux distribution built with [Buildroot](http://buildroot.uclibc.org/) specifically to run [Docker](https://www.docker.com/) containers.
