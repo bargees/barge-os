@@ -112,7 +112,7 @@ logger -s -p user.info -t "init[$$]" "Starting console"
 respawn /sbin/getty 38400 tty0 &
 respawn /sbin/getty 38400 tty1 &
 if dmesg | grep 'ttyS0 at I/O'; then
-  respawn /sbin/getty -L 9600 ttyS0 vt100 &
+  respawn /sbin/getty -L 115200 ttyS0 vt100 &
 fi
 chvt 2
 
