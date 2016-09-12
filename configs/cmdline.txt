@@ -1,1 +1,1 @@
-dwc_otg.lpm_enable=0 console=ttyAMA0,115200 console=tty0 root=/dev/mmcblk0p2 rootfstype=ext4 rw elevator=deadline rootwait init=/init quiet loglevel=3 barge.debug
+dwc_otg.lpm_enable=0 console=ttyAMA0,115200 console=tty0 root=/dev/mmcblk0p2 rootfstype=ext4 rw elevator=deadline rootwait init=/init quiet loglevel=3

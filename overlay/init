@@ -26,7 +26,9 @@ fi
 
 [ -z "${DEBUG}" ] && set -e
 
-mount -t devtmpfs devtmpfs /dev
+if ! mountpoint -q /dev; then
+  mount -t devtmpfs devtmpfs /dev
+fi
 
 mkdir -p /var/log
 syslogd
@@ -50,7 +52,7 @@ for i in $(awk '!/^#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
 done
 
 # Lock the root account
-passwd -l root
+passwd -l root || true
 
 MOUNT_POINT="/mnt/data"
 logger -s -p user.info -t "init[$$]" "Mounting HDD LABEL=BARGE-DATA"
