@@ -115,6 +115,44 @@ if dmesg | grep -q 'ttyS0 at I/O'; then
 fi
 chvt 2
 
+shutdown_trap() {
+  local mode=$1
+
+  set +e
+
+  # Send SIGTERM to all processes except pid 1
+  killall5 -o $(cat /var/run/acpid.pid)
+
+  # Stop network now
+  /etc/init.d/S40network stop
+
+  sync
+  # Unmount all at the end
+  umount -a -r
+  swapoff -a
+
+  sync
+  sleep 1
+  # Send SIGKILL to all processes except pid 1
+  killall5 -9
+
+  case $mode in
+    0)
+      busybox halt -f
+      ;;
+    2)
+      busybox reboot -f
+      ;;
+    *)
+      busybox poweroff -f
+      ;;
+  esac
+}
+
+trap 'shutdown_trap 0' SIGUSR1        # halt
+trap 'shutdown_trap 1' SIGUSR2 SIGPWR # poweroff
+trap 'shutdown_trap 2' SIGTERM        # reboot
+
 set -mb
 trap '' SIGCHLD
 read

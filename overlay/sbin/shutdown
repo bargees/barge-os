@@ -21,14 +21,6 @@ if [ "${CMD}" == "shutdown" ]; then
     esac
   done
 fi
-logger -s -p user.info -t "$(basename $0)[$$]" "${CMD}"
 
-setsid /etc/init.d/S40network stop &
-PID1=$!
-setsid busybox ${CMD} -f -d 2 ${ARGS} &
-PID2=$!
-
-sync;sync;sync
-
-#logger -s -p user.info -t "$(basename $0)[$$]" "Sending SIGTERM to all processes"
-setsid killall5 -o $PID1 -o $PID2 -o $(cat /var/run/acpid.pid) &
+logger -s -p user.info -t "$(basename $0)[$$]" "${CMD} ${ARGS}"
+busybox ${CMD} ${ARGS}
