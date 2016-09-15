@@ -74,5 +74,6 @@ I18NPATH=${STAGING_DIR}/usr/share/i18n:/usr/share/i18n \
     -i POSIX -f UTF-8 C.UTF-8
 mv ${ROOTFS}/usr/lib/locale/C.utf8 ${ROOTFS}/usr/lib/locale/C.UTF-8
 
-# Replace cmdline.txt
+# Replace config.txt and cmdline.txt
+install -D -m 0644 ${SRC_DIR}/configs/config.txt ${BINARIES_DIR}/rpi-firmware/config.txt
 install -D -m 0644 ${SRC_DIR}/configs/cmdline.txt ${BINARIES_DIR}/rpi-firmware/cmdline.txt

@@ -1,71 +1,32 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
-IMAGES=$1
-
-ISO=${IMAGES}/iso
-
-mkdir -p ${ISO}/boot
-cp ${IMAGES}/bzImage ${ISO}/boot/bzImage
+BUILD_DIR=${BR_ROOT}/output/build
+HOST_DIR=${BR_ROOT}/output/host
+BINARIES_DIR=${BR_ROOT}/output/images
+TARGET_DIR=${BR_ROOT}/output/target
 
 ROOTFS=/tmp/root
 mkdir -p ${ROOTFS}
-tar xJf ${IMAGES}/rootfs.tar.xz -C ${ROOTFS}
+tar xJf ${BINARIES_DIR}/rootfs.tar.xz -C ${ROOTFS}
 cd ${ROOTFS}
-find | cpio -H newc -o | xz -9 -C crc32 -c > ${ISO}/boot/initrd
+find | cpio -H newc -o | gzip -9 -c > ${BINARIES_DIR}/initrd
 
-mkdir -p ${ISO}/boot/isolinux
-cp /usr/lib/syslinux/isolinux.bin ${ISO}/boot/isolinux/
-cp /usr/lib/syslinux/linux.c32 ${ISO}/boot/isolinux/ldlinux.c32
+GENIMAGE_CFG="${SRC_DIR}/configs/genimage-rpi3.cfg"
+GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 
-cp /build/configs/isolinux.cfg ${ISO}/boot/isolinux/
+# Mark the kernel as DT-enabled
+mkdir -p "${BINARIES_DIR}/kernel-marked"
+${HOST_DIR}/usr/bin/mkknlimg "${BINARIES_DIR}/zImage" \
+  "${BINARIES_DIR}/kernel-marked/zImage"
 
-# Make an ISO
-cd ${ISO}
-xorriso \
-  -publisher "A.I. <ailis@paw.zone>" \
-  -as mkisofs \
-  -l -J -R -V "BARGE" \
-  -no-emul-boot -boot-load-size 4 -boot-info-table \
-  -b boot/isolinux/isolinux.bin -c boot/isolinux/boot.cat \
-  -isohybrid-mbr /usr/lib/syslinux/isohdpfx.bin \
-  -no-pad -o ${IMAGES}/barge.iso $(pwd)
+rm -rf "${GENIMAGE_TMP}"
 
-# Make a bootable disk image
-IMAGE=${IMAGES}/barge.img
-DISK=${IMAGES}/disk
-ISO=${IMAGES}/ISO
+${HOST_DIR}/usr/bin/genimage                         \
+  --rootpath "${TARGET_DIR}"     \
+  --tmppath "${GENIMAGE_TMP}"    \
+  --inputpath "${BINARIES_DIR}"  \
+  --outputpath "${BINARIES_DIR}" \
+  --config "${GENIMAGE_CFG}"
 
-mkdir -p ${ISO}
-losetup /dev/loop0 ${IMAGES}/barge.iso
-mount /dev/loop0 ${ISO}
-
-SIZE=$(du -s ${ISO} | awk '{print $1}')
-
-dd if=/dev/zero of=${IMAGE} bs=1024 count=$((${SIZE}+68+${SIZE}%2))
-losetup /dev/loop1 ${IMAGE}
-(echo c; echo n; echo p; echo 1; echo; echo; echo t; echo 4; echo a; echo 1; echo w;) | fdisk /dev/loop1 || true
-
-losetup -o 32256 /dev/loop2 ${IMAGE}
-mkfs -t vfat -F 16 /dev/loop2
-
-mkdir -p ${DISK}
-mount -t vfat /dev/loop2 ${DISK}
-
-mkdir -p ${DISK}/boot/syslinux
-cp ${ISO}/boot/bzImage ${DISK}/boot/
-cp ${ISO}/boot/initrd ${DISK}/boot/
-cp ${ISO}/boot/isolinux/isolinux.cfg ${DISK}/boot/syslinux/syslinux.cfg
-umount ${ISO}
-umount ${DISK}
-
-syslinux -i -d /boot/syslinux /dev/loop2 2> ${IMAGES}/error.log
-cat ${IMAGES}/error.log >&2
-losetup -d /dev/loop2
-dd if=/usr/lib/syslinux/mbr.bin of=/dev/loop1 bs=440 count=1
-losetup -d /dev/loop1
-losetup -d /dev/loop0
-
-if [ -s ${IMAGES}/error.log ]; then
-  exit 1
-fi
+exit $?

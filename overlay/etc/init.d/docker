@@ -21,6 +21,11 @@ if [ ! -f "${DOCKERD}" ]; then
 fi
 DOCKER_SWITCHING=false
 
+ROOT_SWITCHED=false
+if grep -qw "tmpfs / tmpfs" /proc/mounts; then
+  ROOT_SWITCHED=true
+fi
+
 configure() {
   if [ -f /etc/default/docker ]; then
     logger -s -p user.info -t "docker[$$]" "Loading /etc/default/docker"
@@ -81,6 +86,12 @@ ${DOCKER_LOGFILE} {
   copytruncate
 }
 EOF
+
+  # Top secret option...
+  if ! ${ROOT_SWITCHED} ; then
+    export DOCKER_RAMDISK=true
+  fi
+  logger -s -p user.info -t "docker[$$]" "DOCKER_RAMDISK=${DOCKER_RAMDISK}"
 
   echo -n 1 > /sys/fs/cgroup/memory/memory.use_hierarchy
 
