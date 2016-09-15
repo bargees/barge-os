@@ -29,4 +29,11 @@ ${HOST_DIR}/usr/bin/genimage                         \
   --outputpath "${BINARIES_DIR}" \
   --config "${GENIMAGE_CFG}"
 
-exit $?
+BOOTFS=/tmp/boot
+losetup -o 512 /dev/loop0 ${BINARIES_DIR}/barge-rpi.img
+mlabel -i /dev/loop0 ::BARGE-RPI
+mkdir -p ${BOOTFS}
+mount -t vfat /dev/loop0 ${BOOTFS}
+cp -R ${BINARIES_DIR}/rpi-firmware/overlays ${BOOTFS}
+umount /dev/loop0
+losetup -d /dev/loop0
