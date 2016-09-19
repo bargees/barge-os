@@ -183,7 +183,7 @@ switch() {
     DOCKER_SWITCHING=true
     return
   elif [ "${version}" = "latest" ]; then
-    version=$(wget -qO- https://api.github.com/repos/docker/docker/releases/latest \
+    version=$(wget -qO- https://api.github.com/repos/armhf-docker-library/docker-build/releases/latest \
       | awk -F'"' '/tag_name/ { print $4 }')
   fi
 
@@ -209,10 +209,7 @@ switch() {
     DOCKERD="/opt/bin/${DOCKER_DAEMON}"
   fi
 
-  local base_url="https://get.docker.io/builds/Linux/x86_64"
-  if [[ "${version}" == *"-rc"* ]]; then
-    base_url="https://test.docker.com/builds/Linux/x86_64"
-  fi
+  local base_url="https://github.com/armhf-docker-library/docker-build/releases/download/${version}"
 
   if [ ! -f "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" ]; then
     echo -n "Downloading v${version} ..."
