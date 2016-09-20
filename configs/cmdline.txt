@@ -1,1 +1,1 @@
-dwc_otg.lpm_enable=0 console=ttyAMA0,115200 console=tty0 root=/dev/ram0 elevator=deadline rootwait init=/init quiet loglevel=3 barge.switch_root
+dwc_otg.lpm_enable=0 console=ttyAMA0,115200 console=tty0 root=/dev/ram0 elevator=deadline rootwait init=/init cgroup_enable=cpuset quiet loglevel=3 barge.switch_root
