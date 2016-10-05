@@ -42,12 +42,6 @@ mount -t devpts devpts /dev/pts
 mount -t proc proc /proc
 mount -t tmpfs tmpfs /run
 mount -t sysfs sysfs /sys
-mount -t tmpfs cgroup /sys/fs/cgroup
-
-for i in $(awk '!/^#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
-  mkdir -p /sys/fs/cgroup/$i
-  mount -t cgroup -o $i cgroup /sys/fs/cgroup/$i
-done
 
 # Lock the root account
 passwd -l root

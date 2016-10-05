@@ -47,6 +47,17 @@ start() {
     exit 1
   fi
 
+  mkdir -p /sys/fs/cgroup
+  if ! mountpoint -q /sys/fs/cgroup; then
+    mount -t tmpfs cgroup /sys/fs/cgroup
+  fi
+  for i in $(awk '!/^#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
+    mkdir -p /sys/fs/cgroup/$i
+    if ! mountpoint -q /sys/fs/cgroup/$i; then
+      mount -t cgroup -o $i cgroup /sys/fs/cgroup/$i
+    fi
+  done
+
   mkdir -p /var/lib/docker
   mkdir -p /var/log/docker
   MOUNT_POINT="/mnt/data"
@@ -144,6 +155,11 @@ stop() {
       while [ $(( timeout-- )) -gt 0 ] && check; do
         sleep 1
       done
+
+      for i in $(awk '!/^#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
+        umount /sys/fs/cgroup/$i
+      done
+      umount /sys/fs/cgroup
     fi
   fi
 }
