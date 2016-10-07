@@ -1,0 +1,44 @@
+From 98a90884d261f2fe74a0bb1a4c1ab8b5be67a10c Mon Sep 17 00:00:00 2001
+From: Gustavo Zacarias <gustavo@zacarias.com.ar>
+Date: Mon, 26 Sep 2016 20:44:55 -0300
+Subject: [PATCH 6/6] openssl: security bump to version 1.0.2j
+
+Fixes:
+CVE-2016-7052 - Missing CRL sanity check
+
+[Peter: drop CVE 6309 from description as pointed out by Baruch]
+Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ package/openssl/openssl.hash | 4 ++--
+ package/openssl/openssl.mk   | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/package/openssl/openssl.hash b/package/openssl/openssl.hash
+index 50a0cc7..0dc5450 100644
+--- a/package/openssl/openssl.hash
++++ b/package/openssl/openssl.hash
+@@ -1,5 +1,5 @@
+-# From https://www.openssl.org/source/openssl-1.0.2i.tar.gz.sha256
+-sha256	9287487d11c9545b6efb287cdb70535d4e9b284dd10d51441d9b9963d000de6f	openssl-1.0.2i.tar.gz
++# From https://www.openssl.org/source/openssl-1.0.2j.tar.gz.sha256
++sha256	e7aff292be21c259c6af26469c7a9b3ba26e9abaaffd325e3dccc9785256c431	openssl-1.0.2j.tar.gz
+ # Locally computed
+ sha256	eddd8a5123748052c598214487ac178e4bfa4e31ba2ec520c70d59c8c5bfa2e9	openssl-1.0.2a-parallel-install-dirs.patch?id=c8abcbe8de5d3b6cdd68c162f398c011ff6e2d9d
+ sha256	147c3eeaad614c044749ea527cb433eae5e2d5cad34a78c6ba61cd967bfbe01f	openssl-1.0.2a-parallel-obj-headers.patch?id=c8abcbe8de5d3b6cdd68c162f398c011ff6e2d9d
+diff --git a/package/openssl/openssl.mk b/package/openssl/openssl.mk
+index 0814382..ed9a230 100644
+--- a/package/openssl/openssl.mk
++++ b/package/openssl/openssl.mk
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-OPENSSL_VERSION = 1.0.2i
++OPENSSL_VERSION = 1.0.2j
+ OPENSSL_SITE = http://www.openssl.org/source
+ OPENSSL_LICENSE = OpenSSL or SSLeay
+ OPENSSL_LICENSE_FILES = LICENSE
+-- 
+2.5.4 (Apple Git-61)
+
