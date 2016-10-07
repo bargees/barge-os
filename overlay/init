@@ -111,8 +111,12 @@ shutdown_trap() {
 
   set +e
 
-  # Send SIGTERM to all processes except pid 1
-  killall5
+  # Send SIGTERM to all processes except pid 1 and wpa_supplicant
+  local omit_pids=""
+  for pid in $(pgrep wpa_supplicant); do
+    omit_pids="${omit_pids} -o ${pid}"
+  done
+  killall5 ${omit_pids}
 
   # Stop network now
   /etc/init.d/S40network stop
