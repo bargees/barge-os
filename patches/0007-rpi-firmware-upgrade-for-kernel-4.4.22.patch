@@ -1,7 +1,7 @@
 From 5dc7acf5ebbee9006939d70e2260f1aa4808baa8 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 26 Sep 2016 11:38:03 -0700
-Subject: [PATCH 7/7] rpi-firmware: upgrade for kernel 4.4.22
+Subject: [PATCH 7/9] rpi-firmware: upgrade for kernel 4.4.22
 
 ---
  package/rpi-firmware/rpi-firmware.hash | 2 +-

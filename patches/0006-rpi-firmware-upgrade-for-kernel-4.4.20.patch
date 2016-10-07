@@ -1,7 +1,7 @@
 From 5a9c1600e1e5557f40488332517c26514288ef5e Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Fri, 9 Sep 2016 14:01:23 -0700
-Subject: [PATCH 6/7] rpi-firmware: upgrade for kernel 4.4.20
+Subject: [PATCH 6/9] rpi-firmware: upgrade for kernel 4.4.20
 
 ---
  package/rpi-firmware/mkknlimg          | 84 +++++++++++-----------------------
