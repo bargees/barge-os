@@ -1,0 +1,229 @@
+From e4bd61d9c65d83cd7e9a708d57684f0e7ae8584e Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Fri, 9 Sep 2016 14:01:23 -0700
+Subject: [PATCH 9/9] rpi-firmware: upgrade for kernel 4.4.24
+
+---
+ package/rpi-firmware/mkknlimg          | 84 +++++++++++-----------------------
+ package/rpi-firmware/rpi-firmware.hash |  2 +-
+ package/rpi-firmware/rpi-firmware.mk   |  2 +-
+ 3 files changed, 28 insertions(+), 60 deletions(-)
+
+diff --git a/package/rpi-firmware/mkknlimg b/package/rpi-firmware/mkknlimg
+index 33f8187..7eb9915 100644
+--- a/package/rpi-firmware/mkknlimg
++++ b/package/rpi-firmware/mkknlimg
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env perl
+ #
+-# Originaly from: https://github.com/raspberrypi/tools/blob/master/mkimage/mkknlimg
+-# Original cset : f5642106425d430e1f82ee064121a5fd0e05a386
++# Originaly from: https://github.com/raspberrypi/linux/blob/rpi-4.4.y/scripts/mkknlimg
++# Original cset : 73bada585aa9b896d2af124457141280f8cae19e
+ #
+ # ----------------------------------------------------------------------
+ # mkknlimg by Phil Elwell for Raspberry Pi
+@@ -17,10 +17,11 @@ use strict;
+ use warnings;
+ use integer;
+ 
+-use constant FLAG_PI   => 1;
+-use constant FLAG_DTOK => 2;
+-use constant FLAG_DDTK => 4;
+-use constant FLAG_283X => 8;
++use constant FLAG_PI   => 0x01;
++use constant FLAG_DTOK => 0x02;
++use constant FLAG_DDTK => 0x04;
++use constant FLAG_270X => 0x08;
++use constant FLAG_283X => 0x10;
+ 
+ my $trailer_magic = 'RPTL';
+ 
+@@ -29,6 +30,7 @@ my $tmpfile2 = "/tmp/mkknlimg_$$.2";
+ 
+ my $dtok = 0;
+ my $ddtk = 0;
++my $is_270x = 0;
+ my $is_283x = 0;
+ 
+ while (@ARGV && ($ARGV[0] =~ /^-/))
+@@ -42,6 +44,10 @@ while (@ARGV && ($ARGV[0] =~ /^-/))
+     {
+ 	$ddtk = 1;
+     }
++    elsif ($arg eq '--270x')
++    {
++	$is_270x = 1;
++    }
+     elsif ($arg eq '--283x')
+     {
+ 	$is_283x = 1;
+@@ -64,12 +70,6 @@ if (! -r $kernel_file)
+     usage();
+ }
+ 
+-my $wanted_configs =
+-{
+-	'CONFIG_BCM2708_DT' => FLAG_PI | FLAG_DTOK,
+-	'CONFIG_ARCH_BCM2835' => FLAG_PI | FLAG_DTOK | FLAG_283X,
+-};
+-
+ my $wanted_strings =
+ {
+ 	'bcm2708_fb' => FLAG_PI,
+@@ -77,7 +77,10 @@ my $wanted_strings =
+ 	'brcm,bcm2835-sdhost' => FLAG_PI,
+ 	'brcm,bcm2708-pinctrl' => FLAG_PI | FLAG_DTOK,
+ 	'brcm,bcm2835-gpio' => FLAG_PI | FLAG_DTOK,
+-	'brcm,bcm2835-pm-wdt' => FLAG_PI | FLAG_DTOK | FLAG_283X,
++	'brcm,bcm2708' => FLAG_PI | FLAG_DTOK | FLAG_270X,
++	'brcm,bcm2709' => FLAG_PI | FLAG_DTOK | FLAG_270X,
++	'brcm,bcm2835' => FLAG_PI | FLAG_DTOK | FLAG_283X,
++	'brcm,bcm2836' => FLAG_PI | FLAG_DTOK | FLAG_283X,
+ 	'of_overlay_apply' => FLAG_DTOK | FLAG_DDTK,
+ };
+ 
+@@ -99,7 +102,7 @@ my $append_trailer;
+ my $trailer;
+ my $kver = '?';
+ 
+-$append_trailer = $dtok;
++$append_trailer = 1;
+ 
+ if ($res)
+ {
+@@ -109,25 +112,26 @@ if ($res)
+ 
+     if ($flags & FLAG_PI)
+     {
+-	$append_trailer = 1;
+ 	$dtok ||= ($flags & FLAG_DTOK) != 0;
++	$is_270x ||= ($flags & FLAG_270X) != 0;
+ 	$is_283x ||= ($flags & FLAG_283X) != 0;
+ 	$ddtk ||= ($flags & FLAG_DDTK) != 0;
+     }
+     else
+     {
+-	print ("* This doesn't look like a Raspberry Pi kernel. In pass-through mode.\n");
++	print ("* This doesn't look like a Raspberry Pi kernel.\n");
+     }
+ }
+ elsif (!$dtok)
+ {
+-    print ("* Is this a valid kernel? In pass-through mode.\n");
++    print ("* Is this a valid kernel?\n");
+ }
+ 
+ if ($append_trailer)
+ {
+     printf("DT: %s\n", $dtok ? "y" : "n");
+     printf("DDT: %s\n", $ddtk ? "y" : "n");
++    printf("270x: %s\n", $is_270x ? "y" : "n");
+     printf("283x: %s\n", $is_283x ? "y" : "n");
+ 
+     my @atoms;
+@@ -136,7 +140,9 @@ if ($append_trailer)
+     push @atoms, [ 'KVer', $kver ];
+     push @atoms, [ 'DTOK', pack('V', $dtok) ];
+     push @atoms, [ 'DDTK', pack('V', $ddtk) ];
+-    push @atoms, [ '283x', pack('V', $is_283x) ];
++    push @atoms, [ '270X', pack('V', $is_270x) ];
++    push @atoms, [ '283X', pack('V', $is_283x) ];
++    push @atoms, [ '283x', pack('V', $is_283x && !$is_270x) ];
+ 
+     $trailer = pack_trailer(\@atoms);
+     $atoms[0]->[1] = pack('V', length($trailer));
+@@ -190,7 +196,7 @@ END {
+ 
+ sub usage
+ {
+-	print ("Usage: mkknlimg [--dtok] [--283x] <vmlinux|zImage|bzImage> <outfile>\n");
++	print ("Usage: mkknlimg [--dtok] [--270x] [--283x] <vmlinux|zImage|bzImage> <outfile>\n");
+ 	exit(1);
+ }
+ 
+@@ -205,8 +211,7 @@ sub try_extract
+ 	chomp($ver);
+ 
+ 	my $res = { 'kver'=>$ver };
+-	$res->{'flags'} = strings_to_flags($knl, $wanted_strings) |
+-			  configs_to_flags($knl, $tmp, $wanted_configs);
++	$res->{'flags'} = strings_to_flags($knl, $wanted_strings);
+ 
+ 	return $res;
+ }
+@@ -233,7 +238,6 @@ sub try_decompress
+ 	return undef;
+ }
+ 
+-
+ sub strings_to_flags
+ {
+ 	my ($knl, $strings) = @_;
+@@ -250,42 +254,6 @@ sub strings_to_flags
+ 	return $flags;
+ }
+ 
+-sub configs_to_flags
+-{
+-	my ($knl, $tmp, $configs) = @_;
+-	my $config_pattern = '^('.join('|', keys(%$configs)).')=(.*)$';
+-	my $cf1 = 'IKCFG_ST\037\213\010';
+-	my $cf2 = '0123456789';
+-	my $flags = 0;
+-
+-	my $pos = `tr "$cf1\n$cf2" "\n$cf2=" < "$knl" | grep -abo "^$cf2"`;
+-	if ($pos)
+-	{
+-		$pos =~ s/:.*[\r\n]*$//s;
+-		$pos += 8;
+-		my $err = (system("tail -c+$pos \"$knl\" | zcat > $tmp 2> /dev/null") >> 8);
+-		if (($err == 0) || ($err == 2))
+-		{
+-			if (open(my $fh, '<', $tmp))
+-			{
+-				while (my $line = <$fh>)
+-				{
+-					chomp($line);
+-					if (($line =~ /$config_pattern/) &&
+-					    (($2 eq 'y') || ($2 eq 'm')))
+-					{
+-					    $flags |= $configs->{$1};
+-					}
+-				}
+-
+-				close($fh);
+-			}
+-		}
+-	}
+-
+-	return $flags;
+-}
+-
+ sub pack_trailer
+ {
+ 	my ($atoms) = @_;
+diff --git a/package/rpi-firmware/rpi-firmware.hash b/package/rpi-firmware/rpi-firmware.hash
+index e2e31c9..c1eae4b 100644
+--- a/package/rpi-firmware/rpi-firmware.hash
++++ b/package/rpi-firmware/rpi-firmware.hash
+@@ -1,2 +1,2 @@
+ # Locally computed
+-sha256 b2ce949db3745354383ac0d66107cbbb8902ccbf5fc027be8824519c44d5a302 rpi-firmware-70143fe9d371cd6486a80d6765e93b5574212b64.tar.gz
++sha256 e982a3258a6a2785f5ae751dc05b9d3734285d3bd2406609ce06fd60127d3b24 rpi-firmware-ec63df146f454e8cab7080380f9138246d877013.tar.gz
+diff --git a/package/rpi-firmware/rpi-firmware.mk b/package/rpi-firmware/rpi-firmware.mk
+index 0587802..18325c0 100644
+--- a/package/rpi-firmware/rpi-firmware.mk
++++ b/package/rpi-firmware/rpi-firmware.mk
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-RPI_FIRMWARE_VERSION = 70143fe9d371cd6486a80d6765e93b5574212b64
++RPI_FIRMWARE_VERSION = ec63df146f454e8cab7080380f9138246d877013
+ RPI_FIRMWARE_SITE = $(call github,raspberrypi,firmware,$(RPI_FIRMWARE_VERSION))
+ RPI_FIRMWARE_LICENSE = BSD-3c
+ RPI_FIRMWARE_LICENSE_FILES = boot/LICENCE.broadcom
+-- 
+2.5.4 (Apple Git-61)
+
