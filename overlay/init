@@ -100,8 +100,8 @@ fi
 sync
 
 logger -s -p user.info -t "init[$$]" "Starting console"
-if dmesg | grep -q 'ttyAMA0 at MMIO'; then
-  respawn /sbin/getty -L 0 ttyAMA0 vt100 &
+if dmesg | grep -q 'ttyS0 at MMIO'; then
+  respawn /sbin/getty -L 115200 ttyS0 vt100 &
 fi
 respawn /sbin/getty 38400 tty0 &
 chvt 2
