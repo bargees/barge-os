@@ -1,7 +1,7 @@
 From c2be688d62296443d2e0baa7fa3576762244db5e Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Tue, 2 Aug 2016 11:08:12 -0700
-Subject: [PATCH 1/6] docker-engine: use v1.10.3
+Subject: [PATCH 1/7] docker-engine: use v1.10.3
 
 ---
  ...-issues-with-tailing-rotated-jsonlog-file.patch | 297 ---------------------

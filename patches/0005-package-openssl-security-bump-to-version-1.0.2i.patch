@@ -1,7 +1,7 @@
 From 6a82569490b7d554d1c986b0e1f7a99fc1b0f778 Mon Sep 17 00:00:00 2001
 From: Bernd Kuhls <bernd.kuhls@t-online.de>
 Date: Thu, 22 Sep 2016 19:16:54 +0200
-Subject: [PATCH 5/6] package/openssl: security bump to version 1.0.2i
+Subject: [PATCH 5/7] package/openssl: security bump to version 1.0.2i
 
 https://www.openssl.org/news/secadv/20160922.txt
 
