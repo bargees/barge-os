@@ -41,7 +41,7 @@ RUN mkdir -p usr/share/bash-completion/completions && \
 ENV DOCKER_VERSION 1.10.3
 RUN wget -qO usr/share/bash-completion/completions/docker https://raw.githubusercontent.com/docker/docker/v${DOCKER_VERSION}/contrib/completion/bash/docker
 
-ENV VERSION 2.5.4
+ENV VERSION 2.5.4-rpi
 RUN mkdir -p etc && \
     echo "Welcome to Barge ${VERSION}, Docker version ${DOCKER_VERSION}" > etc/motd && \
     echo "NAME=\"Barge\"" > etc/os-release && \
