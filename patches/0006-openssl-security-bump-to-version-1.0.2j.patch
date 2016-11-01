@@ -1,7 +1,7 @@
 From 98a90884d261f2fe74a0bb1a4c1ab8b5be67a10c Mon Sep 17 00:00:00 2001
 From: Gustavo Zacarias <gustavo@zacarias.com.ar>
 Date: Mon, 26 Sep 2016 20:44:55 -0300
-Subject: [PATCH 6/9] openssl: security bump to version 1.0.2j
+Subject: [PATCH 06/10] openssl: security bump to version 1.0.2j
 
 Fixes:
 CVE-2016-7052 - Missing CRL sanity check
