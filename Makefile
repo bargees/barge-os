@@ -1,5 +1,5 @@
 KERNEL_VERSION  := 4.4.30
-BUSYBOX_VERSION := 1.25.0
+BUSYBOX_VERSION := 1.25.1
 
 OUTPUTS := output/rootfs.tar.xz output/bzImage output/barge.iso output/barge.img
 SOURCES := Dockerfile .dockerignore \
