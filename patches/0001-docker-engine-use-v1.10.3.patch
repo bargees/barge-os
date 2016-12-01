@@ -1,14 +1,14 @@
-From c2be688d62296443d2e0baa7fa3576762244db5e Mon Sep 17 00:00:00 2001
+From b48fb8b2cb69da9c4f7fae95cec4d54a48ecc4f3 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Tue, 2 Aug 2016 11:08:12 -0700
-Subject: [PATCH 1/7] docker-engine: use v1.10.3
+Subject: [PATCH 1/3] docker-engine: use v1.10.3
 
 ---
  ...-issues-with-tailing-rotated-jsonlog-file.patch | 297 ---------------------
- package/docker-engine/Config.in                    |   3 -
+ package/docker-engine/Config.in                    |   5 -
  package/docker-engine/docker-engine.hash           |   2 +-
  package/docker-engine/docker-engine.mk             |  17 +-
- 4 files changed, 10 insertions(+), 309 deletions(-)
+ 4 files changed, 10 insertions(+), 311 deletions(-)
  delete mode 100644 package/docker-engine/0001-Fix-issues-with-tailing-rotated-jsonlog-file.patch
 
 diff --git a/package/docker-engine/0001-Fix-issues-with-tailing-rotated-jsonlog-file.patch b/package/docker-engine/0001-Fix-issues-with-tailing-rotated-jsonlog-file.patch
@@ -315,36 +315,38 @@ index 413cfd6..0000000
 -2.7.3
 -
 diff --git a/package/docker-engine/Config.in b/package/docker-engine/Config.in
-index a22786a..56ea91d 100644
+index b99b121..ca900f0 100644
 --- a/package/docker-engine/Config.in
 +++ b/package/docker-engine/Config.in
-@@ -13,9 +13,6 @@ if BR2_PACKAGE_DOCKER_ENGINE
+@@ -13,11 +13,6 @@ if BR2_PACKAGE_DOCKER_ENGINE
  
  config BR2_PACKAGE_DOCKER_ENGINE_DAEMON
  	bool "docker daemon"
+-	depends on BR2_USE_MMU # docker-containerd
 -	depends on BR2_USE_WCHAR # docker-containerd
 -	select BR2_PACKAGE_DOCKER_CONTAINERD # runtime dependency
+-	select BR2_PACKAGE_IPTABLES # runtime dependency
 -	select BR2_PACKAGE_SQLITE # runtime dependency
  	default y
  	help
  	  Build the Docker system daemon.
 diff --git a/package/docker-engine/docker-engine.hash b/package/docker-engine/docker-engine.hash
-index 6078fbf..ddcba37 100644
+index 13e28bd..ddcba37 100644
 --- a/package/docker-engine/docker-engine.hash
 +++ b/package/docker-engine/docker-engine.hash
 @@ -1,2 +1,2 @@
  # Locally calculated
--sha256 f8139acba98248eb1fdb0b6d94efee89b876f9a50d00e263dc144fd2b0c372d4  docker-engine-v1.12.0.tar.gz
+-sha256 29bc203e483c81c9a337b4a4186e6b0a23984c518b09478d8718c616b5923e88  docker-engine-v1.12.2.tar.gz
 +sha256 6b72fafa4c068a95133f5c9fda9fb148c9412db7a932800689e259a1b1c7ef6d  docker-engine-1.10.3.tar.gz
 diff --git a/package/docker-engine/docker-engine.mk b/package/docker-engine/docker-engine.mk
-index 3d39aac..a4687c8 100644
+index f895dcc..a4687c8 100644
 --- a/package/docker-engine/docker-engine.mk
 +++ b/package/docker-engine/docker-engine.mk
 @@ -4,8 +4,9 @@
  #
  ################################################################################
  
--DOCKER_ENGINE_VERSION = v1.12.0
+-DOCKER_ENGINE_VERSION = v1.12.2
 -DOCKER_ENGINE_SITE = $(call github,docker,docker,$(DOCKER_ENGINE_VERSION))
 +DOCKER_ENGINE_VERSION = 1.10.3
 +DOCKER_ENGINE_SITE = $(call github,docker,docker,v$(DOCKER_ENGINE_VERSION))
