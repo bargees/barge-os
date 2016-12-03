@@ -1,7 +1,7 @@
 From 13ab7137bf0470f94e8638223f7607e075f0d3c9 Mon Sep 17 00:00:00 2001
 From: Adam Duskett <Aduskett@gmail.com>
 Date: Mon, 6 Feb 2017 09:12:25 -0500
-Subject: [PATCH 5/5] ntp: security bump to verserion 4.2.8p9
+Subject: [PATCH 5/7] ntp: security bump to verserion 4.2.8p9
 
 This version of ntp fixes several vulnerabilities.
 
