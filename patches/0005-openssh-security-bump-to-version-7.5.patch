@@ -1,7 +1,7 @@
 From 84f064d1c03e405569369e307a8df8db3ebda9ca Mon Sep 17 00:00:00 2001
 From: Baruch Siach <baruch@tkos.co.il>
 Date: Tue, 21 Mar 2017 15:11:22 +0200
-Subject: [PATCH 5/5] openssh: security bump to version 7.5
+Subject: [PATCH 5/7] openssh: security bump to version 7.5
 
 From the release notes (https://www.openssh.com/txt/release-7.5):
 
