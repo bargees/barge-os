@@ -1,7 +1,7 @@
 From cbb003092b192e59f92fe36a98a665bd41d24bb0 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 29 Dec 2016 15:37:26 -0800
-Subject: [PATCH 3/3] go: bump version to 1.7.4
+Subject: [PATCH 3/5] go: bump version to 1.7.4
 
 ---
  package/go/go.hash | 2 +-
