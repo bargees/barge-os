@@ -20,6 +20,11 @@ rm -rf ./*/kernel/net/bluetooth/*
 rm -rf ./*/kernel/net/mac80211/*
 rm -rf ./*/kernel/net/wireless/*
 
+# Strip kernel modules
+GNU_TARGET_NAME=x86_64-buildroot-linux-gnu
+OBJCOPY=${GNU_TARGET_NAME}-objcopy
+find . -type f -name '*.ko' | xargs -n 1 ${OBJCOPY} --strip-unneeded
+
 # Remove unnecessary files
 cd ${ROOTFS}
 rm -rf linuxrc
