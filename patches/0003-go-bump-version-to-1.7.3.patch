@@ -1,7 +1,7 @@
 From cb66043cc7aa74b6ed968d3b20e9060c7b1c4293 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sat, 22 Oct 2016 10:09:11 -0700
-Subject: [PATCH 3/4] go: bump version to 1.7.3
+Subject: [PATCH 3/5] go: bump version to 1.7.3
 
 ---
  package/go/go.hash | 2 +-
