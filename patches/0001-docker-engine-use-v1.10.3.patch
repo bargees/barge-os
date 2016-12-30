@@ -1,7 +1,7 @@
-From 740ea4ce6135c3de853a5bc82e6b4480e1f1b2ab Mon Sep 17 00:00:00 2001
+From 108de54fac21742a8a706f8ba4fa29fbcadc6833 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Tue, 2 Aug 2016 11:08:12 -0700
-Subject: [PATCH 1/5] docker-engine: use v1.10.3
+Subject: [PATCH 1/3] docker-engine: use v1.10.3
 
 ---
  ...-issues-with-tailing-rotated-jsonlog-file.patch | 297 ---------------------
@@ -331,32 +331,32 @@ index b99b121..ca900f0 100644
  	help
  	  Build the Docker system daemon.
 diff --git a/package/docker-engine/docker-engine.hash b/package/docker-engine/docker-engine.hash
-index 13e28bd..ddcba37 100644
+index ecc5c66..ddcba37 100644
 --- a/package/docker-engine/docker-engine.hash
 +++ b/package/docker-engine/docker-engine.hash
 @@ -1,2 +1,2 @@
  # Locally calculated
--sha256 29bc203e483c81c9a337b4a4186e6b0a23984c518b09478d8718c616b5923e88  docker-engine-v1.12.2.tar.gz
+-sha256 cf4f876593abde06b4c19f971163a853a21b1992d75bd2fe5d8bea9015b09f87  docker-engine-v1.12.3.tar.gz
 +sha256 6b72fafa4c068a95133f5c9fda9fb148c9412db7a932800689e259a1b1c7ef6d  docker-engine-1.10.3.tar.gz
 diff --git a/package/docker-engine/docker-engine.mk b/package/docker-engine/docker-engine.mk
-index f895dcc..a4687c8 100644
+index fdb3c07..40318c6 100644
 --- a/package/docker-engine/docker-engine.mk
 +++ b/package/docker-engine/docker-engine.mk
 @@ -4,8 +4,9 @@
  #
  ################################################################################
  
--DOCKER_ENGINE_VERSION = v1.12.2
+-DOCKER_ENGINE_VERSION = v1.12.3
 -DOCKER_ENGINE_SITE = $(call github,docker,docker,$(DOCKER_ENGINE_VERSION))
 +DOCKER_ENGINE_VERSION = 1.10.3
-+DOCKER_ENGINE_SITE = $(call github,docker,docker,v$(DOCKER_ENGINE_VERSION))
 +DOCKER_ENGINE_GITCOMMIT = 20f81dd
++DOCKER_ENGINE_SITE = $(call github,docker,docker,v$(DOCKER_ENGINE_VERSION))
  
  DOCKER_ENGINE_LICENSE = Apache-2.0
  DOCKER_ENGINE_LICENSE_FILES = LICENSE
-@@ -19,15 +20,16 @@ DOCKER_ENGINE_MAKE_ENV = $(HOST_GO_TARGET_ENV) \
- 	GOBIN="$(@D)/bin" \
- 	GOPATH="$(DOCKER_ENGINE_GOPATH)"
+@@ -21,15 +22,16 @@ DOCKER_ENGINE_MAKE_ENV = $(HOST_GO_TARGET_ENV) \
+ 	PKG_CONFIG="$(PKG_CONFIG_HOST_BINARY)" \
+ 	$(TARGET_MAKE_ENV)
  
 -DOCKER_ENGINE_GLDFLAGS = \
 -	-X main.GitCommit=$(DOCKER_ENGINE_VERSION) \
@@ -374,7 +374,7 @@ index f895dcc..a4687c8 100644
  DOCKER_ENGINE_BUILD_TARGETS = docker
  
  ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
-@@ -37,7 +39,6 @@ endif
+@@ -39,7 +41,6 @@ endif
  
  ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_DAEMON),y)
  DOCKER_ENGINE_BUILD_TAGS += daemon
@@ -382,16 +382,16 @@ index f895dcc..a4687c8 100644
  endif
  
  ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_EXPERIMENTAL),y)
-@@ -65,7 +66,7 @@ endif
+@@ -67,7 +68,7 @@ endif
  define DOCKER_ENGINE_CONFIGURE_CMDS
  	ln -fs $(@D) $(DOCKER_ENGINE_GOPATH)/src/github.com/docker/docker
  	cd $(@D) && \
 -		GITCOMMIT="unknown" BUILDTIME="$$(date)" VERSION="$(DOCKER_ENGINE_VERSION)" \
 +		GITCOMMIT="$(DOCKER_ENGINE_GITCOMMIT)" BUILDTIME="$$(date)" VERSION="$(DOCKER_ENGINE_VERSION)" \
+ 		PKG_CONFIG="$(PKG_CONFIG_HOST_BINARY)" $(TARGET_MAKE_ENV) \
  		bash ./hack/make/.go-autogen
  endef
- 
-@@ -94,7 +95,7 @@ define DOCKER_ENGINE_BUILD_CMDS
+@@ -97,7 +98,7 @@ define DOCKER_ENGINE_BUILD_CMDS
  			-o $(@D)/bin/$(target) \
  			-tags "$(DOCKER_ENGINE_BUILD_TAGS)" \
  			-ldflags "$(DOCKER_ENGINE_GLDFLAGS)" \
