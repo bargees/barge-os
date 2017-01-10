@@ -109,8 +109,8 @@ EOF
   local params="-D -s ${DOCKER_STORAGE} -g \"${DOCKER_DIR}\" ${DOCKER_HOST} ${DOCKER_EXTRA_ARGS}"
 
   if ${DOCKER_SWITCHING} ; then
-    for i in docker docker-containerd docker-containerd-ctr docker-containerd-shim docker-proxy \
-      docker-runc dockerd ; do
+    for i in docker docker-containerd docker-containerd-ctr docker-containerd-shim docker-init \
+      docker-proxy docker-runc dockerd ; do
       rm -f "/opt/bin/$i"
       if [ -f "${DOCKER_BIN_DIR}/$i" ]; then
         ln -s "${DOCKER_BIN_DIR}/$i" "/opt/bin/$i"
