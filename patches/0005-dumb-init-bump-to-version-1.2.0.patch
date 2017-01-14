@@ -1,7 +1,7 @@
 From 57f92419e2bb5585416a632cded634522bca5103 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Wed, 5 Oct 2016 17:00:48 -0700
-Subject: [PATCH 5/5] dumb-init: bump to version 1.2.0
+Subject: [PATCH 5/6] dumb-init: bump to version 1.2.0
 
 ---
  package/dumb-init/dumb-init.hash |  2 +-
