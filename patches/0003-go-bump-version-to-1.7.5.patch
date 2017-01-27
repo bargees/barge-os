@@ -1,7 +1,7 @@
-From cbb003092b192e59f92fe36a98a665bd41d24bb0 Mon Sep 17 00:00:00 2001
+From 3a213a21dfa07e09fc826f08140d97f0c6f7800c Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 29 Dec 2016 15:37:26 -0800
-Subject: [PATCH 3/3] go: bump version to 1.7.4
+Subject: [PATCH 3/4] go: bump version to 1.7.5
 
 ---
  package/go/go.hash | 2 +-
@@ -9,23 +9,23 @@ Subject: [PATCH 3/3] go: bump version to 1.7.4
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/package/go/go.hash b/package/go/go.hash
-index ff0e8f7..e50f004 100644
+index e50f004..2120d25 100644
 --- a/package/go/go.hash
 +++ b/package/go/go.hash
 @@ -1,2 +1,2 @@
  # Locally computed:
--sha256 ce4f331352313ad7ba9db5daf6f7f81581f3ca9c862d272ae02ee5a3cb294023  go1.7.2.src.tar.gz
-+sha256 4c189111e9ba651a2bb3ee868aa881fab36b2f2da3409e80885ca758a6b614cc  go1.7.4.src.tar.gz
+-sha256 4c189111e9ba651a2bb3ee868aa881fab36b2f2da3409e80885ca758a6b614cc  go1.7.4.src.tar.gz
++sha256 4e834513a2079f8cbbd357502cccaac9507fd00a1efe672375798858ff291815  go1.7.5.src.tar.gz
 diff --git a/package/go/go.mk b/package/go/go.mk
-index 057d9fd..bd30890 100644
+index bd30890..dc611cb 100644
 --- a/package/go/go.mk
 +++ b/package/go/go.mk
 @@ -4,7 +4,7 @@
  #
  ################################################################################
  
--GO_VERSION = 1.7.2
-+GO_VERSION = 1.7.4
+-GO_VERSION = 1.7.4
++GO_VERSION = 1.7.5
  GO_SITE = https://storage.googleapis.com/golang
  GO_SOURCE = go$(GO_VERSION).src.tar.gz
  
