@@ -1,7 +1,7 @@
 From 36a499914ace72a1cd8a52062fc191e30e4e8499 Mon Sep 17 00:00:00 2001
 From: Gustavo Zacarias <gustavo@zacarias.com.ar>
 Date: Thu, 26 Jan 2017 17:07:56 -0300
-Subject: [PATCH 4/4] openssl: security bump to version 1.0.2k
+Subject: [PATCH 4/5] openssl: security bump to version 1.0.2k
 
 Fixes:
 CVE-2017-3731 - Truncated packet could crash via OOB read.
