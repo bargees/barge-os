@@ -1,0 +1,165 @@
+From d82072825b53c9d40ba503855f7bd8d0fcade2b8 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Sun, 12 Feb 2017 10:59:35 +0900
+Subject: [PATCH 4/4] wget: bump version to 1.19.1
+
+---
+ ...-define-clash-with-gnulib-s-unlink-module.patch | 71 ----------------------
+ ...ve-skipping-libunistring-with-disable-iri.patch | 35 -----------
+ package/wget/wget.hash                             |  2 +-
+ package/wget/wget.mk                               |  5 +-
+ 4 files changed, 2 insertions(+), 111 deletions(-)
+ delete mode 100644 package/wget/0001-Fix-include-define-clash-with-gnulib-s-unlink-module.patch
+ delete mode 100644 package/wget/0002-Remove-skipping-libunistring-with-disable-iri.patch
+
+diff --git a/package/wget/0001-Fix-include-define-clash-with-gnulib-s-unlink-module.patch b/package/wget/0001-Fix-include-define-clash-with-gnulib-s-unlink-module.patch
+deleted file mode 100644
+index 03c0a61..0000000
+--- a/package/wget/0001-Fix-include-define-clash-with-gnulib-s-unlink-module.patch
++++ /dev/null
+@@ -1,71 +0,0 @@
+-From 31ac36e170f4777655451fce10a2fa5b2b27ecd7 Mon Sep 17 00:00:00 2001
+-From: =?UTF-8?q?Tim=20R=C3=BChsen?= <tim.ruehsen@gmx.de>
+-Date: Sat, 4 Feb 2017 18:02:54 +0100
+-Subject: [PATCH] Fix include/define clash with gnulib's unlink module
+-
+-* src/options.h: Rename options.unlink to options.unlink_requested
+-* src/init.c: Replace options unlink member by unlink_requested
+-* src/http.c: Likewise
+-* src/ftp.c: Likewise
+----
+- src/ftp.c     | 2 +-
+- src/http.c    | 2 +-
+- src/init.c    | 2 +-
+- src/options.h | 2 +-
+- 4 files changed, 4 insertions(+), 4 deletions(-)
+-
+-diff --git a/src/ftp.c b/src/ftp.c
+-index fe09817..2f2866c 100644
+---- a/src/ftp.c
+-+++ b/src/ftp.c
+-@@ -1463,7 +1463,7 @@ Error in server response, closing control connection.\n"));
+-       else if (opt.noclobber || opt.always_rest || opt.timestamping || opt.dirstruct
+-                || opt.output_document || count > 0)
+-         {
+--          if (opt.unlink && file_exists_p (con->target))
+-+          if (opt.unlink_requested && file_exists_p (con->target))
+-             {
+-               if (unlink (con->target) < 0)
+-                 {
+-diff --git a/src/http.c b/src/http.c
+-index bd1f115..3c3c8b2 100644
+---- a/src/http.c
+-+++ b/src/http.c
+-@@ -2486,7 +2486,7 @@ open_output_stream (struct http_stat *hs, int count, FILE **fp)
+-         }
+-       else if (ALLOW_CLOBBER || count > 0)
+-         {
+--          if (opt.unlink && file_exists_p (hs->local_file))
+-+          if (opt.unlink_requested && file_exists_p (hs->local_file))
+-             {
+-               if (unlink (hs->local_file) < 0)
+-                 {
+-diff --git a/src/init.c b/src/init.c
+-index 271bc77..623ef9d 100644
+---- a/src/init.c
+-+++ b/src/init.c
+-@@ -321,7 +321,7 @@ static const struct {
+-   { "timestamping",     &opt.timestamping,      cmd_boolean },
+-   { "tries",            &opt.ntry,              cmd_number_inf },
+-   { "trustservernames", &opt.trustservernames,  cmd_boolean },
+--  { "unlink",           &opt.unlink,            cmd_boolean },
+-+  { "unlink",           &opt.unlink_requested,  cmd_boolean },
+-   { "useaskpass" ,      &opt.use_askpass,       cmd_use_askpass },
+-   { "useproxy",         &opt.use_proxy,         cmd_boolean },
+-   { "user",             &opt.user,              cmd_string },
+-diff --git a/src/options.h b/src/options.h
+-index d713acc..8a818ca 100644
+---- a/src/options.h
+-+++ b/src/options.h
+-@@ -61,7 +61,7 @@ struct options
+-   bool add_hostdir;             /* Do we add hostname directory? */
+-   bool protocol_directories;    /* Whether to prepend "http"/"ftp" to dirs. */
+-   bool noclobber;               /* Disables clobbering of existing data. */
+--  bool unlink;                  /* remove file before clobbering */
+-+  bool unlink_requested;        /* remove file before clobbering */
+-   char *dir_prefix;             /* The top of directory tree */
+-   char *lfilename;              /* Log filename */
+-   char *input_filename;         /* Input filename */
+--- 
+-2.6.2
+-
+diff --git a/package/wget/0002-Remove-skipping-libunistring-with-disable-iri.patch b/package/wget/0002-Remove-skipping-libunistring-with-disable-iri.patch
+deleted file mode 100644
+index a1461df..0000000
+--- a/package/wget/0002-Remove-skipping-libunistring-with-disable-iri.patch
++++ /dev/null
+@@ -1,35 +0,0 @@
+-From 990f3d67d340d226bbd4187f5d310a4d2bf2bfe4 Mon Sep 17 00:00:00 2001
+-From: =?UTF-8?q?Tim=20R=C3=BChsen?= <tim.ruehsen@gmx.de>
+-Date: Mon, 6 Feb 2017 11:25:48 +0100
+-Subject: [PATCH] Remove skipping libunistring with --disable-iri
+-
+-* configure.ac: Remove checking for IRI=no
+-
+-On certain systems, gnulib falls back to libunistring
+-for mbtowc() and wcwidth() (used in src/progress.c).
+-
+-Reported-by: Zhiming Wang
+-Signed-off-by: Rahul Bedarkar <rahul.bedarkar@imgtec.com>
+----
+- configure.ac | 5 -----
+- 1 file changed, 5 deletions(-)
+-
+-diff --git a/configure.ac b/configure.ac
+-index 8786e00..686f040 100644
+---- a/configure.ac
+-+++ b/configure.ac
+-@@ -663,11 +663,6 @@ if test "X$iri" != "Xno"; then
+- #    ])
+-   ])
+- fi
+--if test "X$iri" = "Xno"; then
+--  # we don't need libunistring - clear settings from gnulib module
+--  LIBUNISTRING=""
+--  LTLIBUNISTRING=""
+--fi
+- 
+- dnl
+- dnl Check for UUID
+--- 
+-2.6.2
+-
+diff --git a/package/wget/wget.hash b/package/wget/wget.hash
+index 8611cfb..5f22396 100644
+--- a/package/wget/wget.hash
++++ b/package/wget/wget.hash
+@@ -1,2 +1,2 @@
+ # Locally calculated after checking pgp signature
+-sha256 0f1157bbf4daae19f3e1ddb70c6ccb2067feb834a6aa23c9d9daa7f048606384  wget-1.19.tar.xz
++sha256 0c950b9671881222a4d385b013c9604e98a8025d1988529dfca0e93617744cd2  wget-1.19.1.tar.xz
+diff --git a/package/wget/wget.mk b/package/wget/wget.mk
+index 8698cdf..22e057d 100644
+--- a/package/wget/wget.mk
++++ b/package/wget/wget.mk
+@@ -4,16 +4,13 @@
+ #
+ ################################################################################
+ 
+-WGET_VERSION = 1.19
++WGET_VERSION = 1.19.1
+ WGET_SOURCE = wget-$(WGET_VERSION).tar.xz
+ WGET_SITE = $(BR2_GNU_MIRROR)/wget
+ WGET_DEPENDENCIES = host-pkgconf
+ WGET_LICENSE = GPLv3+
+ WGET_LICENSE_FILES = COPYING
+ 
+-# For 0002-Remove-skipping-libunistring-with-disable-iri.patch
+-WGET_AUTORECONF = YES
+-
+ # Prefer full-blown wget over busybox
+ ifeq ($(BR2_PACKAGE_BUSYBOX),y)
+ WGET_DEPENDENCIES += busybox
+-- 
+2.5.4 (Apple Git-61)
+
