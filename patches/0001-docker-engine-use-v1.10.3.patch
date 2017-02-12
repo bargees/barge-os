@@ -1,14 +1,14 @@
-From 98d57cba6babaef94371f5ba66058dd436ce368b Mon Sep 17 00:00:00 2001
+From cd6a69f246dfe58f17c1a2ec00fc0876f348bb9f Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Tue, 2 Aug 2016 11:08:12 -0700
-Subject: [PATCH 1/5] docker-engine: use v1.10.3
+Subject: [PATCH 1/3] docker-engine: use v1.10.3
 
 ---
  ...-issues-with-tailing-rotated-jsonlog-file.patch | 297 ---------------------
- package/docker-engine/Config.in                    |   5 -
+ package/docker-engine/Config.in                    |   4 -
  package/docker-engine/docker-engine.hash           |   2 +-
  package/docker-engine/docker-engine.mk             |  20 +-
- 4 files changed, 11 insertions(+), 313 deletions(-)
+ 4 files changed, 11 insertions(+), 312 deletions(-)
  delete mode 100644 package/docker-engine/0001-Fix-issues-with-tailing-rotated-jsonlog-file.patch
 
 diff --git a/package/docker-engine/0001-Fix-issues-with-tailing-rotated-jsonlog-file.patch b/package/docker-engine/0001-Fix-issues-with-tailing-rotated-jsonlog-file.patch
@@ -315,15 +315,14 @@ index 413cfd6..0000000
 -2.7.3
 -
 diff --git a/package/docker-engine/Config.in b/package/docker-engine/Config.in
-index b99b121..ca900f0 100644
+index 1879a56..edc40fd 100644
 --- a/package/docker-engine/Config.in
 +++ b/package/docker-engine/Config.in
-@@ -13,11 +13,6 @@ if BR2_PACKAGE_DOCKER_ENGINE
+@@ -13,10 +13,6 @@ if BR2_PACKAGE_DOCKER_ENGINE
  
  config BR2_PACKAGE_DOCKER_ENGINE_DAEMON
  	bool "docker daemon"
 -	depends on BR2_USE_MMU # docker-containerd
--	depends on BR2_USE_WCHAR # docker-containerd
 -	select BR2_PACKAGE_DOCKER_CONTAINERD # runtime dependency
 -	select BR2_PACKAGE_IPTABLES # runtime dependency
 -	select BR2_PACKAGE_SQLITE # runtime dependency
