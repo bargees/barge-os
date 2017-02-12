@@ -28,6 +28,8 @@ find . -type f -name '*.ko' | xargs -n 1 ${OBJCOPY} --strip-unneeded
 # Remove unnecessary files
 cd ${ROOTFS}
 rm -rf linuxrc
+rm -rf lib/bash
+rm -rf lib/pkgconfig
 
 # Initialize directories without linking to /tmp
 rm -rf run
