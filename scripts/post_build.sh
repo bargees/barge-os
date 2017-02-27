@@ -31,6 +31,11 @@ rm -rf linuxrc
 rm -rf lib/bash
 rm -rf lib/pkgconfig
 
+# Remove unnecessary ncurses libraries
+rm -f usr/lib/libform.so*
+rm -f usr/lib/libmenu.so*
+rm -f usr/lib/libpanel.so*
+
 # Initialize directories without linking to /tmp
 rm -rf run
 rm -rf var/cache
