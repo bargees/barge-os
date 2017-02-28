@@ -3,11 +3,11 @@
 # Make sure the ssh-keygen progam exists
 [ -f /usr/bin/ssh-keygen ] || exit 0
 
-# Create any missing keys
-/usr/bin/ssh-keygen -A
-
 case "$1" in
   start)
+    # Create any missing keys
+    /usr/bin/ssh-keygen -A
+
     echo -n "Starting sshd... "
     start-stop-daemon -S -q -m -b -p /var/run/sshd.pid --exec /usr/sbin/sshd
     [ $? -eq 0 ] && echo "OK" || echo "FAIL"

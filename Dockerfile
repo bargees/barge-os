@@ -14,7 +14,7 @@ ENV SRC_DIR=/build \
     BR_ROOT=/build/buildroot
 RUN mkdir -p ${SRC_DIR} ${OVERLAY}
 
-ENV BR_VERSION 2016.11.2
+ENV BR_VERSION 2017.02
 RUN wget -qO- https://buildroot.org/downloads/buildroot-${BR_VERSION}.tar.bz2 | tar xj && \
     mv buildroot-${BR_VERSION} ${BR_ROOT}
 
@@ -47,7 +47,7 @@ RUN mkdir -p usr/bin && \
     wget -qO usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DINIT_VERSION}/dumb-init_${DINIT_VERSION}_amd64 && \
     chmod +x usr/bin/dumb-init
 
-ENV VERSION 2.3.6
+ENV VERSION 2.4.0
 RUN mkdir -p etc && \
     echo "Welcome to Barge ${VERSION}, Docker version ${DOCKER_VERSION}" > etc/motd && \
     echo "NAME=\"Barge\"" > etc/os-release && \
