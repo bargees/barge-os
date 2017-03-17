@@ -6,6 +6,8 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
+source /etc/os-release
+
 DOCKER_DAEMON="docker"
 DOCKER_DAEMON_COMMAND="daemon"
 if [ -f "/opt/bin/dockerd" ]; then
@@ -120,8 +122,10 @@ EOF
     if [ -f "${DOCKER_BIN_DIR}/docker.bash-completion" ]; then
       ln -s "${DOCKER_BIN_DIR}/docker.bash-completion" "/etc/bash_completion.d/docker"
     fi
-    sed -i "s/Docker version.*/$(${DOCKERD} -v)/" /etc/motd
   fi
+
+  echo "Welcome to ${PRETTY_NAME}, $(${DOCKERD} -v)" > /etc/motd
+
   logger -s -p user.info -t "docker[$$]" "$(${DOCKERD} -v)"
   echo "----- $(${DOCKERD} -v) -----" >> "${DOCKER_LOGFILE}"
 
