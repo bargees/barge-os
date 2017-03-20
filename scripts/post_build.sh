@@ -31,7 +31,9 @@ rm -rf linuxrc
 rm -rf lib/bash
 rm -rf lib/pkgconfig
 
-# Remove unnecessary ncurses libraries
+# Remove unnecessary libraries
+rm -f usr/lib/libevent.so
+rm -f usr/lib/libevent-*
 rm -f usr/lib/libform.so*
 rm -f usr/lib/libmenu.so*
 rm -f usr/lib/libpanel.so*
