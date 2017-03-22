@@ -1,7 +1,7 @@
 From 867409ad076a5c41877f8907f073bc66c414666f Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 29 Dec 2016 15:37:26 -0800
-Subject: [PATCH 3/3] go: bump version to 1.7.5
+Subject: [PATCH 3/5] go: bump version to 1.7.5
 
 ---
  package/go/go.hash | 2 +-
@@ -30,5 +30,5 @@ index bd30890..dc611cb 100644
  GO_SOURCE = go$(GO_VERSION).src.tar.gz
  
 -- 
-2.5.4 (Apple Git-61)
+2.10.1
 
