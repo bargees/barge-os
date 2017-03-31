@@ -55,17 +55,11 @@ distclean: clean
 .PHONY: all build clean distclean
 
 vagrant:
-	-vagrant resume barge
-	-vagrant reload barge
-	vagrant up --no-provision barge
-	vagrant provision barge
+	vagrant up barge
 	vagrant ssh barge -c 'sudo mkdir -p $(DL_DIR) $(CCACHE_DIR)'
 
 dev:
-	-vagrant resume barge-$@
-	-vagrant reload barge-$@
-	vagrant up --no-provision barge-$@
-	vagrant provision barge-$@
+	vagrant up barge-$@
 	vagrant ssh barge-$@ -c 'sudo mkdir -p $(DL_DIR) $(CCACHE_DIR)'
 
 config: | output
