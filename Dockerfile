@@ -71,7 +71,7 @@ RUN cp ${SRC_DIR}/configs/buildroot.config ${BR_ROOT}/.config && \
 
 COPY scripts ${SRC_DIR}/scripts
 
-VOLUME ${BR_ROOT}/ccache ${BR_ROOT}/dl
+VOLUME ${BR_ROOT}/dl ${BR_ROOT}/ccache
 
 WORKDIR ${BR_ROOT}
 CMD ["../scripts/build.sh"]

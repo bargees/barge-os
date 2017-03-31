@@ -15,14 +15,15 @@ BUILT := `docker ps -aq -f name=$(BUILD_CONTAINER) -f exited=0`
 STR_CREATED := $$(docker inspect -f '{{.Created}}' $(BUILD_IMAGE) 2>/dev/null)
 IMG_CREATED := `date -j -u -f "%FT%T" "$(STR_CREATED)" +"%s" 2>/dev/null || echo 0`
 
-CCACHE_DIR := /mnt/sda1/ccache
+DL_DIR     := /mnt/data/dl
+CCACHE_DIR := /mnt/data/ccache
 
 all: $(OUTPUTS)
 
 $(OUTPUTS): build | output
 	docker cp $(BUILD_CONTAINER):/build/buildroot/output/images/$(@F) output/
 
-build: $(SOURCES) | dl
+build: $(SOURCES)
 	$(eval SRC_UPDATED=$$(shell stat -f "%m" $^ | sort -gr | head -n1))
 	@if [ "$(SRC_UPDATED)" -gt "$(IMG_CREATED)" ]; then \
 		set -e; \
@@ -35,11 +36,11 @@ build: $(SOURCES) | dl
 	@if [ "$(BUILT)" = "" ]; then \
 		set -e; \
 		(docker rm -f $(BUILD_CONTAINER) || true); \
-		docker run --privileged -v $(CCACHE_DIR):/build/buildroot/ccache \
-			-v /vagrant/dl:/build/buildroot/dl --name $(BUILD_CONTAINER) $(BUILD_IMAGE); \
+		docker run --privileged -v $(DL_DIR):/build/buildroot/dl \
+			-v $(CCACHE_DIR):/build/buildroot/ccache --name $(BUILD_CONTAINER) $(BUILD_IMAGE); \
 	fi
 
-output dl:
+output:
 	@mkdir -p $@
 
 clean:
@@ -47,7 +48,6 @@ clean:
 	-docker rm -f $(BUILD_CONTAINER)
 
 distclean: clean
-	$(RM) -r dl
 	-docker rmi $(BUILD_IMAGE)
 	vagrant destroy -f
 	$(RM) -r .vagrant
@@ -59,14 +59,14 @@ vagrant:
 	-vagrant reload barge
 	vagrant up --no-provision barge
 	vagrant provision barge
-	vagrant ssh barge -c 'sudo mkdir -p $(CCACHE_DIR)'
+	vagrant ssh barge -c 'sudo mkdir -p $(DL_DIR) $(CCACHE_DIR)'
 
 dev:
 	-vagrant resume barge-$@
 	-vagrant reload barge-$@
 	vagrant up --no-provision barge-$@
 	vagrant provision barge-$@
-	vagrant ssh barge-$@ -c 'sudo mkdir -p $(CCACHE_DIR)'
+	vagrant ssh barge-$@ -c 'sudo mkdir -p $(DL_DIR) $(CCACHE_DIR)'
 
 config: | output
 	docker cp $(BUILD_CONTAINER):/build/buildroot/.config output/buildroot.config
