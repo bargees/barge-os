@@ -1,7 +1,7 @@
 From 1d97a9d55eb1fbcc2040f74be8701a632fc87fca Mon Sep 17 00:00:00 2001
 From: Christian Stewart <christian@paral.in>
 Date: Tue, 17 May 2016 14:10:00 -0700
-Subject: [PATCH 6/7] dumb-init: new package
+Subject: [PATCH 6/8] dumb-init: new package
 
 dumb-init is an extremely minimal PID 0 init process. It is designed to
 run within Docker containers to solve the complexities of signal
