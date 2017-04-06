@@ -1,7 +1,7 @@
-From 867409ad076a5c41877f8907f073bc66c414666f Mon Sep 17 00:00:00 2001
+From ff1cefef6760f7bc27c9d0ab87e15636ff7721b2 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 29 Dec 2016 15:37:26 -0800
-Subject: [PATCH 3/5] go: bump version to 1.7.5
+Subject: [PATCH 3/3] go: bump version to 1.7.5
 
 ---
  package/go/go.hash | 2 +-
