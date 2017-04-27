@@ -1,0 +1,35 @@
+From 4e9ebf72bbfdce0940237d150d2d332a83bf87d3 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 27 Apr 2017 12:37:20 +0200
+Subject: [PATCH] Revert "mmc: sdhci-msm: Enable few quirks"
+
+This reverts commit d84be51d1c1d3fa148a3abdeeb1455690df59e63 which is
+commit a0e3142869d29688de6f77be31aa7a401a4a88f1 upstream.
+
+It causes problems and would need other patches backported to resolve
+it, and it shouldn't have been applied to 4.9-stable.
+
+Reported-by: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: Sahitya Tummala <stummala@codeaurora.org>
+Cc: Ritesh Harjani <riteshh@codeaurora.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Sasha Levin <alexander.levin@verizon.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/mmc/host/sdhci-msm.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -524,9 +524,7 @@ static const struct sdhci_ops sdhci_msm_
+ static const struct sdhci_pltfm_data sdhci_msm_pdata = {
+ 	.quirks = SDHCI_QUIRK_BROKEN_CARD_DETECTION |
+ 		  SDHCI_QUIRK_NO_CARD_NO_RESET |
+-		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
+-		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+-	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
++		  SDHCI_QUIRK_SINGLE_POWER_WRITE,
+ 	.ops = &sdhci_msm_ops,
+ };
+ 
