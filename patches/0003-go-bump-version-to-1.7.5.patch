@@ -1,4 +1,4 @@
-From ff1cefef6760f7bc27c9d0ab87e15636ff7721b2 Mon Sep 17 00:00:00 2001
+From 8b17aa5ef60e886568a763b29941c58d32f42faf Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 29 Dec 2016 15:37:26 -0800
 Subject: [PATCH 3/3] go: bump version to 1.7.5
@@ -17,7 +17,7 @@ index e50f004..2120d25 100644
 -sha256 4c189111e9ba651a2bb3ee868aa881fab36b2f2da3409e80885ca758a6b614cc  go1.7.4.src.tar.gz
 +sha256 4e834513a2079f8cbbd357502cccaac9507fd00a1efe672375798858ff291815  go1.7.5.src.tar.gz
 diff --git a/package/go/go.mk b/package/go/go.mk
-index bd30890..dc611cb 100644
+index a461342..e7b2add 100644
 --- a/package/go/go.mk
 +++ b/package/go/go.mk
 @@ -4,7 +4,7 @@
