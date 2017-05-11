@@ -1,0 +1,48 @@
+From b5c66bab72a6a65edb15beb60b90d3cb84c5763b Mon Sep 17 00:00:00 2001
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Date: Wed, 22 Feb 2017 15:40:53 -0800
+Subject: 9p: fix a potential acl leak
+
+From: Cong Wang <xiyou.wangcong@gmail.com>
+
+commit b5c66bab72a6a65edb15beb60b90d3cb84c5763b upstream.
+
+posix_acl_update_mode() could possibly clear 'acl', if so we leak the
+memory pointed by 'acl'.  Save this pointer before calling
+posix_acl_update_mode() and release the memory if 'acl' really gets
+cleared.
+
+Link: http://lkml.kernel.org/r/1486678332-2430-1-git-send-email-xiyou.wangcong@gmail.com
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Reported-by: Mark Salyzyn <salyzyn@android.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Greg Kurz <groug@kaod.org>
+Cc: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: Ron Minnich <rminnich@sandia.gov>
+Cc: Latchesar Ionkov <lucho@ionkov.net>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ fs/9p/acl.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/fs/9p/acl.c
++++ b/fs/9p/acl.c
+@@ -277,6 +277,7 @@ static int v9fs_xattr_set_acl(const stru
+ 	case ACL_TYPE_ACCESS:
+ 		if (acl) {
+ 			struct iattr iattr;
++			struct posix_acl *old_acl = acl;
+ 
+ 			retval = posix_acl_update_mode(inode, &iattr.ia_mode, &acl);
+ 			if (retval)
+@@ -287,6 +288,7 @@ static int v9fs_xattr_set_acl(const stru
+ 				 * by the mode bits. So don't
+ 				 * update ACL.
+ 				 */
++				posix_acl_release(old_acl);
+ 				value = NULL;
+ 				size = 0;
+ 			}
