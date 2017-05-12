@@ -34,9 +34,9 @@ rm -rf lib/pkgconfig
 # Remove unnecessary libraries
 rm -f usr/lib/libevent.so
 rm -f usr/lib/libevent-*
-rm -f usr/lib/libform.so*
-rm -f usr/lib/libmenu.so*
-rm -f usr/lib/libpanel.so*
+rm -f usr/lib/libformw.so*
+rm -f usr/lib/libmenuw.so*
+rm -f usr/lib/libpanelw.so*
 
 # Remove unnecessary binaries from e2fsprogs
 rm -f bin/chattr
