@@ -1,4 +1,4 @@
-From a9f5d3315d646d17dde13ded7b591423c9e0b031 Mon Sep 17 00:00:00 2001
+From 6876f4e802f3d4ec8782d5946f16697d52af698a Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Wed, 24 May 2017 07:16:53 +0900
 Subject: [PATCH 8/8] go: security bump version to 1.7.6

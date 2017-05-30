@@ -1,4 +1,4 @@
-From 30d0cd8e1a48e5c6e8b56c47893176a62f5c325f Mon Sep 17 00:00:00 2001
+From 9828fea83ed74dad7a714d85d394a67e70198c0f Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 8 May 2017 08:35:29 -0700
 Subject: [PATCH 1/8] docker-engine: use v1.10.3
@@ -35,7 +35,7 @@ index aa7c3ac..515f697 100644
 -sha256	b6ee0aa93ecea44e956d3627907e10557b3ec37d13ddfb40e436656e5037c640	docker-engine-v17.04.0-ce.tar.gz
 +sha256	668a571a2406024423f11b4cd150f97b4d7bc3ee39407a0ac7df6e5db1437385	docker-engine-1.10.3.tar.gz
 diff --git a/package/docker-engine/docker-engine.mk b/package/docker-engine/docker-engine.mk
-index c4c1157..3a661b4 100644
+index 0176f51..1cb6e5f 100644
 --- a/package/docker-engine/docker-engine.mk
 +++ b/package/docker-engine/docker-engine.mk
 @@ -4,16 +4,16 @@
@@ -80,7 +80,7 @@ index c4c1157..3a661b4 100644
  DOCKER_ENGINE_BUILD_TARGETS = docker
  
  ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
-@@ -44,7 +45,6 @@ endif
+@@ -49,7 +50,6 @@ endif
  
  ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_DAEMON),y)
  DOCKER_ENGINE_BUILD_TAGS += daemon
@@ -88,7 +88,7 @@ index c4c1157..3a661b4 100644
  endif
  
  ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_EXPERIMENTAL),y)
-@@ -70,12 +70,11 @@ DOCKER_ENGINE_BUILD_TAGS += exclude_graphdriver_vfs
+@@ -75,12 +75,11 @@ DOCKER_ENGINE_BUILD_TAGS += exclude_graphdriver_vfs
  endif
  
  define DOCKER_ENGINE_CONFIGURE_CMDS
@@ -103,7 +103,7 @@ index c4c1157..3a661b4 100644
  		PKG_CONFIG="$(PKG_CONFIG_HOST_BINARY)" $(TARGET_MAKE_ENV) \
  		bash ./hack/make/.go-autogen
  endef
-@@ -100,13 +99,12 @@ endif
+@@ -105,13 +104,12 @@ endif
  
  define DOCKER_ENGINE_BUILD_CMDS
  	$(foreach target,$(DOCKER_ENGINE_BUILD_TARGETS), \

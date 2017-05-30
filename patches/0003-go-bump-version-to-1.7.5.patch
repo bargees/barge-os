@@ -1,4 +1,4 @@
-From 9fea2b0f32c37d347200a7e28e1850bc005745d9 Mon Sep 17 00:00:00 2001
+From f7bb000902734202aaa7578d92c6cbbd355f5154 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 29 Dec 2016 15:37:26 -0800
 Subject: [PATCH 3/8] go: bump version to 1.7.5
