@@ -1,0 +1,29 @@
+From ba5497fde097a4443bd2e097911e11e1de69c8b7 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Sun, 14 May 2017 15:56:47 -0700
+Subject: [PATCH 4/8] Revert "busybox: preserve ncurses progs/tools"
+
+This reverts commit 33c72344a8686a136c1da6a056ed6c0945bbf8b7.
+---
+ package/ncurses/ncurses.mk | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/package/ncurses/ncurses.mk b/package/ncurses/ncurses.mk
+index 2b99d3f..68c77ac 100644
+--- a/package/ncurses/ncurses.mk
++++ b/package/ncurses/ncurses.mk
+@@ -29,6 +29,11 @@ NCURSES_CONF_OPTS = \
+ 	$(if $(BR2_PACKAGE_NCURSES_TARGET_PROGS),,--without-progs) \
+ 	--without-manpages
+ 
++# Install after busybox for the full-blown versions
++ifeq ($(BR2_PACKAGE_BUSYBOX),y)
++NCURSES_DEPENDENCIES += busybox
++endif
++
+ ifeq ($(BR2_STATIC_LIBS),y)
+ NCURSES_CONF_OPTS += --without-shared --with-normal
+ else ifeq ($(BR2_SHARED_LIBS),y)
+-- 
+2.10.1
+

@@ -38,6 +38,20 @@ rm -f usr/lib/libform.so*
 rm -f usr/lib/libmenu.so*
 rm -f usr/lib/libpanel.so*
 
+# Remove unnecessary binaries from e2fsprogs
+rm -f bin/chattr
+rm -f bin/lsattr
+rm -f sbin/badblocks
+rm -f sbin/dumpe2fs
+rm -f sbin/e2freefrag
+rm -f sbin/e2label
+rm -f sbin/e2undo
+rm -f sbin/e4crypt
+rm -f sbin/filefrag
+rm -f sbin/logsave
+rm -f sbin/mklost+found
+rm -f sbin/tune2fs
+
 # Initialize directories without linking to /tmp
 rm -rf run
 rm -rf var/cache
