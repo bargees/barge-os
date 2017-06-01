@@ -193,6 +193,8 @@ status() {
 
 switch() {
   local version="$1"
+  local docker_repo="moby/moby"
+  local completion="contrib/completion/bash/docker"
 
   DOCKER_DAEMON="docker"
   DOCKER_DAEMON_COMMAND="daemon"
@@ -203,13 +205,22 @@ switch() {
     DOCKER_SWITCHING=true
     return
   elif [ "${version}" = "latest" ]; then
-    version=$(wget -qO- https://api.github.com/repos/docker/docker/releases/latest \
+    version=$(wget -qO- https://api.github.com/repos/docker/docker-ce/releases/latest \
       | awk -F'"' '/tag_name/ { print $4 }')
+    if [ "${version}" = "" ]; then
+      version=$(wget -qO- https://api.github.com/repos/moby/moby/releases/latest \
+        | awk -F'"' '/tag_name/ { print $4 }')
+    fi
   fi
 
   version="${version/#v/}"
 
   DOCKER_BIN_DIR="/opt/docker/v${version}"
+
+  local base_url="https://get.docker.io/builds/Linux/x86_64"
+  if [[ "${version}" == *"-rc"* ]]; then
+    base_url="https://test.docker.com/builds/Linux/x86_64"
+  fi
 
   local versions=($(echo ${version} | tr -s '.' ' '))
   if [[ ${versions[0]} -lt 1 ]]; then
@@ -227,11 +238,26 @@ switch() {
     DOCKER_DAEMON="dockerd"
     DOCKER_DAEMON_COMMAND=""
     DOCKERD="/opt/bin/${DOCKER_DAEMON}"
-  fi
 
-  local base_url="https://get.docker.io/builds/Linux/x86_64"
-  if [[ "${version}" == *"-rc"* ]]; then
-    base_url="https://test.docker.com/builds/Linux/x86_64"
+    local patches=($(echo ${versions[2]} | tr -s '-' ' '))
+    if [[ (${versions[0]} -eq 17) && (${versions[1]} -eq 3) && (${patches[0]} -eq 0) \
+      && ("${version}" == *"-rc"*) ]]; then
+      :
+    elif [[ ${versions[0]} -ge 17 ]]; then
+      local channel="edge"
+      if ! ((${versions[1]} % 3)); then
+        channel="stable"
+      fi
+      if [[ "${version}" == *"-rc"* ]]; then
+        channel="test"
+      fi
+      base_url="https://download.docker.com/linux/static/${channel}/x86_64"
+
+      if [[ (${versions[0]} -gt 17) || (${versions[1]} -ge 6) ]]; then
+        docker_repo="docker/docker-ce"
+        completion="components/engine/contrib/completion/bash/docker"
+      fi
+    fi
   fi
 
   if [ ! -f "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" ]; then
@@ -247,7 +273,7 @@ switch() {
       mv -f "${DOCKER_BIN_DIR}/bin"/* "${DOCKER_BIN_DIR}"
       rm -rf "${DOCKER_BIN_DIR}/bin"
     fi
-    wget -qO "${DOCKER_BIN_DIR}/docker.bash-completion" "https://raw.githubusercontent.com/docker/docker/v${version}/contrib/completion/bash/docker"
+    wget -qO "${DOCKER_BIN_DIR}/docker.bash-completion" "https://raw.githubusercontent.com/${docker_repo}/v${version}/${completion}" 2>/dev/null
     if [ ! -f "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" ]; then
       echo " not found."
       exit 1
