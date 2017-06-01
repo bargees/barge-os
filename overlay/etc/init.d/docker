@@ -205,8 +205,12 @@ switch() {
     DOCKER_SWITCHING=true
     return
   elif [ "${version}" = "latest" ]; then
-    version=$(wget -qO- https://api.github.com/repos/moby/moby/releases/latest \
+    version=$(wget -qO- https://api.github.com/repos/docker/docker-ce/releases/latest \
       | awk -F'"' '/tag_name/ { print $4 }')
+    if [ "${version}" = "" ]; then
+      version=$(wget -qO- https://api.github.com/repos/moby/moby/releases/latest \
+        | awk -F'"' '/tag_name/ { print $4 }')
+    fi
   fi
 
   version="${version/#v/}"
