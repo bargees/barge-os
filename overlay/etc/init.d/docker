@@ -264,7 +264,10 @@ switch() {
     echo -n "Downloading v${version} ..."
     trap "rm -rf \"${DOCKER_BIN_DIR}\"" ERR
     mkdir -p "${DOCKER_BIN_DIR}"
-    wget -qO- "${base_url}/docker-${version}.tgz" | tar zxf - -C "${DOCKER_BIN_DIR}" 2>/dev/null
+    wget -qO- "${base_url}/docker-${version}.tgz" | \
+      tar zxf - -C "${DOCKER_BIN_DIR}" 2>/dev/null || \
+        wget -qO- "${base_url}/docker-${version}-x86_64.tgz" | \
+          tar zxf - -C "${DOCKER_BIN_DIR}" 2>/dev/null
     if [ -d "${DOCKER_BIN_DIR}/usr/local/bin" ]; then
       mv -f "${DOCKER_BIN_DIR}/usr/local/bin"/* "${DOCKER_BIN_DIR}"
       rm -rf "${DOCKER_BIN_DIR}/usr"
