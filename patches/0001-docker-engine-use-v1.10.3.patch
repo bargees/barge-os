@@ -1,7 +1,7 @@
 From d0ab3566c1cd94a334adb201c4bacd4660529109 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 8 May 2017 08:35:29 -0700
-Subject: [PATCH 1/8] docker-engine: use v1.10.3
+Subject: [PATCH] docker-engine: use v1.10.3
 
 It has been moved to https://github.com/moby/moby,
 therefor the hash has been changed.

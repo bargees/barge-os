@@ -1,7 +1,7 @@
 From ba5497fde097a4443bd2e097911e11e1de69c8b7 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 14 May 2017 15:56:47 -0700
-Subject: [PATCH 4/8] Revert "busybox: preserve ncurses progs/tools"
+Subject: [PATCH] Revert "busybox: preserve ncurses progs/tools"
 
 This reverts commit 33c72344a8686a136c1da6a056ed6c0945bbf8b7.
 ---

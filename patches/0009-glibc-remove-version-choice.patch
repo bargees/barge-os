@@ -1,0 +1,607 @@
+From 9d6d609747cddcc0c5d12c37d306c24edce66192 Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Sat, 10 Jun 2017 22:53:37 +0200
+Subject: [PATCH] glibc: remove version choice
+
+We do not support uClibc-ng/musl C library version choice support,
+do the same for GNU C Library.
+No legacy handling required as only version choice is removed.
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Reviewed-by: Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>
+[Thomas: move 3.2 kernel headers dependency to the libc choice in
+toolchain/toolchain-buildroot/Config.in file, and added a Config.in
+comment about it.]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ .../0001-sh-Fix-building-with-gcc5-6.patch         |   0
+ package/glibc/2.23/0001-fix-CVE-2016-3075.patch    |  47 --------
+ package/glibc/2.23/0002-gcc6.patch                 |  88 ---------------
+ ...-fix-wrong-vfork-aliases-in-libpthread.so.patch |  76 -------------
+ ...more-fixes-to-the-vfork-aliases-in-libpth.patch | 122 ---------------------
+ .../2.23/0005-sh-Fix-building-with-gcc5-6.patch    |  56 ----------
+ .../2.24/0001-sh-Fix-building-with-gcc5-6.patch    |  56 ----------
+ package/glibc/Config.in                            |  28 -----
+ package/glibc/glibc.hash                           |   2 -
+ package/glibc/glibc.mk                             |   2 +-
+ toolchain/toolchain-buildroot/Config.in            |   5 +-
+ 11 files changed, 4 insertions(+), 478 deletions(-)
+ rename package/glibc/{2.25 => }/0001-sh-Fix-building-with-gcc5-6.patch (100%)
+ delete mode 100644 package/glibc/2.23/0001-fix-CVE-2016-3075.patch
+ delete mode 100644 package/glibc/2.23/0002-gcc6.patch
+ delete mode 100644 package/glibc/2.23/0003-MIPS-SPARC-fix-wrong-vfork-aliases-in-libpthread.so.patch
+ delete mode 100644 package/glibc/2.23/0004-MIPS-SPARC-more-fixes-to-the-vfork-aliases-in-libpth.patch
+ delete mode 100644 package/glibc/2.23/0005-sh-Fix-building-with-gcc5-6.patch
+ delete mode 100644 package/glibc/2.24/0001-sh-Fix-building-with-gcc5-6.patch
+
+diff --git a/package/glibc/2.25/0001-sh-Fix-building-with-gcc5-6.patch b/package/glibc/0001-sh-Fix-building-with-gcc5-6.patch
+similarity index 100%
+rename from package/glibc/2.25/0001-sh-Fix-building-with-gcc5-6.patch
+rename to package/glibc/0001-sh-Fix-building-with-gcc5-6.patch
+diff --git a/package/glibc/2.23/0001-fix-CVE-2016-3075.patch b/package/glibc/2.23/0001-fix-CVE-2016-3075.patch
+deleted file mode 100644
+index 6b07116..0000000
+--- a/package/glibc/2.23/0001-fix-CVE-2016-3075.patch
++++ /dev/null
+@@ -1,47 +0,0 @@
+-From 146b58d11fddbef15b888906e3be4f33900c416f Mon Sep 17 00:00:00 2001
+-From: Florian Weimer <fweimer@redhat.com>
+-Date: Tue, 29 Mar 2016 12:57:56 +0200
+-Subject: [PATCH 1/1] CVE-2016-3075: Stack overflow in _nss_dns_getnetbyname_r [BZ #19879]
+-
+-The defensive copy is not needed because the name may not alias the
+-output buffer.
+-
+-(cherry picked from commit 317b199b4aff8cfa27f2302ab404d2bb5032b9a4)
+-(cherry picked from commit 883dceebc8f11921a9890211a4e202e5be17562f)
+-
+-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+-(downloaded from upstream git repo and removed changes to files
+- Changelog and NEWS:
+- https://sourceware.org/git/gitweb.cgi?p=glibc.git;a=commitdiff;h=146b58d11fddbef15b888906e3be4f33900c416f;hp=0eb234232eaf925fe4dca3bd60a3e1b4a7ab2882)
+----
+- ChangeLog                    |    7 +++++++
+- NEWS                         |   10 ++++++++--
+- resolv/nss_dns/dns-network.c |    5 +----
+- 3 files changed, 16 insertions(+), 6 deletions(-)
+-
+-diff --git a/resolv/nss_dns/dns-network.c b/resolv/nss_dns/dns-network.c
+-index 2eb2f67..8f301a7 100644
+---- a/resolv/nss_dns/dns-network.c
+-+++ b/resolv/nss_dns/dns-network.c
+-@@ -118,17 +118,14 @@ _nss_dns_getnetbyname_r (const char *name, struct netent *result,
+-   } net_buffer;
+-   querybuf *orig_net_buffer;
+-   int anslen;
+--  char *qbuf;
+-   enum nss_status status;
+- 
+-   if (__res_maybe_init (&_res, 0) == -1)
+-     return NSS_STATUS_UNAVAIL;
+- 
+--  qbuf = strdupa (name);
+--
+-   net_buffer.buf = orig_net_buffer = (querybuf *) alloca (1024);
+- 
+--  anslen = __libc_res_nsearch (&_res, qbuf, C_IN, T_PTR, net_buffer.buf->buf,
+-+  anslen = __libc_res_nsearch (&_res, name, C_IN, T_PTR, net_buffer.buf->buf,
+- 			       1024, &net_buffer.ptr, NULL, NULL, NULL, NULL);
+-   if (anslen < 0)
+-     {
+--- 
+-1.7.1
+-
+diff --git a/package/glibc/2.23/0002-gcc6.patch b/package/glibc/2.23/0002-gcc6.patch
+deleted file mode 100644
+index f831cae..0000000
+--- a/package/glibc/2.23/0002-gcc6.patch
++++ /dev/null
+@@ -1,88 +0,0 @@
+-From 5769d5d17cdb4770f1e08167b76c1684ad4e1f73 Mon Sep 17 00:00:00 2001
+-From: Yvan Roux <yvan.roux@linaro.org>
+-Date: Fri, 15 Apr 2016 13:29:26 +0200
+-Subject: [PATCH 1/1] Suppress GCC 6 warning about ambiguous 'else' with -Wparentheses
+-
+-(cherry picked from commit df1cf48777fe4cd81ad7fb09ecbe5b31432b7c1c)
+-
+-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+-(downloaded from upstream git repo and removed changes to Changelog:
+- https://sourceware.org/git/gitweb.cgi?p=glibc.git;a=commitdiff;h=5769d5d17cdb4770f1e08167b76c1684ad4e1f73;hp=f1e182acaaa84e844eb96462a92ba532e1c1fff4)
+----
+- ChangeLog       |    5 +++++
+- nis/nis_call.c  |   20 +++++++++++---------
+- stdlib/setenv.c |   26 ++++++++++++++------------
+- 3 files changed, 30 insertions(+), 21 deletions(-)
+-
+-diff --git a/nis/nis_call.c b/nis/nis_call.c
+-index 3fa37e4..cb7839a 100644
+---- a/nis/nis_call.c
+-+++ b/nis/nis_call.c
+-@@ -680,16 +680,18 @@ nis_server_cache_add (const_nis_name name, int search_parent,
+-   /* Choose which entry should be evicted from the cache.  */
+-   loc = &nis_server_cache[0];
+-   if (*loc != NULL)
+--    for (i = 1; i < 16; ++i)
+--      if (nis_server_cache[i] == NULL)
+--	{
+-+    {
+-+      for (i = 1; i < 16; ++i)
+-+	if (nis_server_cache[i] == NULL)
+-+	  {
+-+	    loc = &nis_server_cache[i];
+-+	    break;
+-+	  }
+-+	else if ((*loc)->uses > nis_server_cache[i]->uses
+-+		 || ((*loc)->uses == nis_server_cache[i]->uses
+-+		     && (*loc)->expires > nis_server_cache[i]->expires))
+- 	  loc = &nis_server_cache[i];
+--	  break;
+--	}
+--      else if ((*loc)->uses > nis_server_cache[i]->uses
+--	       || ((*loc)->uses == nis_server_cache[i]->uses
+--		   && (*loc)->expires > nis_server_cache[i]->expires))
+--	loc = &nis_server_cache[i];
+-+    }
+-   old = *loc;
+-   *loc = new;
+- 
+-diff --git a/stdlib/setenv.c b/stdlib/setenv.c
+-index da61ee0..e66045f 100644
+---- a/stdlib/setenv.c
+-+++ b/stdlib/setenv.c
+-@@ -278,18 +278,20 @@ unsetenv (const char *name)
+-   ep = __environ;
+-   if (ep != NULL)
+-     while (*ep != NULL)
+--      if (!strncmp (*ep, name, len) && (*ep)[len] == '=')
+--	{
+--	  /* Found it.  Remove this pointer by moving later ones back.  */
+--	  char **dp = ep;
+--
+--	  do
+--	    dp[0] = dp[1];
+--	  while (*dp++);
+--	  /* Continue the loop in case NAME appears again.  */
+--	}
+--      else
+--	++ep;
+-+      {
+-+	if (!strncmp (*ep, name, len) && (*ep)[len] == '=')
+-+	  {
+-+	    /* Found it.  Remove this pointer by moving later ones back.  */
+-+	    char **dp = ep;
+-+
+-+	    do
+-+		dp[0] = dp[1];
+-+	    while (*dp++);
+-+	    /* Continue the loop in case NAME appears again.  */
+-+	  }
+-+	else
+-+	  ++ep;
+-+      }
+- 
+-   UNLOCK;
+- 
+--- 
+-1.7.1
+-
+diff --git a/package/glibc/2.23/0003-MIPS-SPARC-fix-wrong-vfork-aliases-in-libpthread.so.patch b/package/glibc/2.23/0003-MIPS-SPARC-fix-wrong-vfork-aliases-in-libpthread.so.patch
+deleted file mode 100644
+index 740b322..0000000
+--- a/package/glibc/2.23/0003-MIPS-SPARC-fix-wrong-vfork-aliases-in-libpthread.so.patch
++++ /dev/null
+@@ -1,76 +0,0 @@
+-From 43c2948756bb6e144c7b871e827bba37d61ad3a3 Mon Sep 17 00:00:00 2001
+-From: Aurelien Jarno <aurelien@aurel32.net>
+-Date: Sat, 18 Jun 2016 19:11:23 +0200
+-Subject: [PATCH] MIPS, SPARC: fix wrong vfork aliases in libpthread.so
+-
+-With recent binutils versions the GNU libc fails to build on at least
+-MISP and SPARC, with this kind of error:
+-
+-  /home/aurel32/glibc/glibc-build/nptl/libpthread.so:(*IND*+0x0): multiple definition of `vfork@GLIBC_2.0'
+-  /home/aurel32/glibc/glibc-build/nptl/libpthread.so::(.text+0xee50): first defined here
+-
+-It appears that on these architectures pt-vfork.S includes vfork.S
+-(through the alpha version of pt-vfork.S) and that the __vfork aliases
+-are not conditionalized on IS_IN (libc) like on other architectures.
+-Therefore the aliases are also wrongly included in libpthread.so.
+-
+-Fix this by properly conditionalizing the aliases like on other
+-architectures.
+-
+-Changelog:
+-	* sysdeps/unix/sysv/linux/mips/vfork.S (__vfork): Conditionalize
+-	hidden_def, weak_alias and strong_alias on [IS_IN (libc)].
+-	* sysdeps/unix/sysv/linux/sparc/sparc32/vfork.S: Likewise.
+-	* sysdeps/unix/sysv/linux/sparc/sparc64/vfork.S: Likewise.
+-
+-[Vincent: do not patch ChangeLog]
+-
+-Signed-off-by: Vicente Olivert Riera <Vincent.Riera@imgtec.com>
+----
+- sysdeps/unix/sysv/linux/mips/vfork.S          | 2 ++
+- sysdeps/unix/sysv/linux/sparc/sparc32/vfork.S | 2 ++
+- sysdeps/unix/sysv/linux/sparc/sparc64/vfork.S | 2 ++
+- 3 files changed, 6 insertions(+)
+-
+-diff --git a/sysdeps/unix/sysv/linux/mips/vfork.S b/sysdeps/unix/sysv/linux/mips/vfork.S
+-index 8c66151..c0c0ce6 100644
+---- a/sysdeps/unix/sysv/linux/mips/vfork.S
+-+++ b/sysdeps/unix/sysv/linux/mips/vfork.S
+-@@ -106,6 +106,8 @@ L(error):
+- #endif
+- 	END(__vfork)
+- 
+-+#if IS_IN (libc)
+- libc_hidden_def(__vfork)
+- weak_alias (__vfork, vfork)
+- strong_alias (__vfork, __libc_vfork)
+-+#endif
+-diff --git a/sysdeps/unix/sysv/linux/sparc/sparc32/vfork.S b/sysdeps/unix/sysv/linux/sparc/sparc32/vfork.S
+-index dc32e0a..94f2c8d 100644
+---- a/sysdeps/unix/sysv/linux/sparc/sparc32/vfork.S
+-+++ b/sysdeps/unix/sysv/linux/sparc/sparc32/vfork.S
+-@@ -44,6 +44,8 @@ ENTRY(__vfork)
+- 	 nop
+- END(__vfork)
+- 
+-+#if IS_IN (libc)
+- libc_hidden_def (__vfork)
+- weak_alias (__vfork, vfork)
+- strong_alias (__vfork, __libc_vfork)
+-+#endif
+-diff --git a/sysdeps/unix/sysv/linux/sparc/sparc64/vfork.S b/sysdeps/unix/sysv/linux/sparc/sparc64/vfork.S
+-index 05be3c2..a7479e9 100644
+---- a/sysdeps/unix/sysv/linux/sparc/sparc64/vfork.S
+-+++ b/sysdeps/unix/sysv/linux/sparc/sparc64/vfork.S
+-@@ -44,6 +44,8 @@ ENTRY(__vfork)
+- 	 nop
+- END(__vfork)
+- 
+-+#if IS_IN (libc)
+- libc_hidden_def (__vfork)
+- weak_alias (__vfork, vfork)
+- strong_alias (__vfork, __libc_vfork)
+-+#endif
+--- 
+-2.7.3
+-
+diff --git a/package/glibc/2.23/0004-MIPS-SPARC-more-fixes-to-the-vfork-aliases-in-libpth.patch b/package/glibc/2.23/0004-MIPS-SPARC-more-fixes-to-the-vfork-aliases-in-libpth.patch
+deleted file mode 100644
+index 3c53f6d..0000000
+--- a/package/glibc/2.23/0004-MIPS-SPARC-more-fixes-to-the-vfork-aliases-in-libpth.patch
++++ /dev/null
+@@ -1,122 +0,0 @@
+-From b87c1ec3fa398646f042a68f0ce0f7d09c1348c7 Mon Sep 17 00:00:00 2001
+-From: Aurelien Jarno <aurelien@aurel32.net>
+-Date: Tue, 21 Jun 2016 23:59:37 +0200
+-Subject: [PATCH] MIPS, SPARC: more fixes to the vfork aliases in libpthread.so
+-
+-Commit 43c29487 tried to fix the vfork aliases in libpthread.so on MIPS
+-and SPARC, but failed to do it correctly, introducing an ABI change.
+-
+-This patch does the remaining changes needed to align the MIPS and SPARC
+-vfork implementations with the other architectures. That way the the
+-alpha version of pt-vfork.S works correctly for MIPS and SPARC. The
+-changes for alpha were done in 82aab97c.
+-
+-Changelog:
+-	* sysdeps/unix/sysv/linux/mips/vfork.S (__vfork): Rename into
+-	__libc_vfork.
+-	(__vfork) [IS_IN (libc)]: Remove alias.
+-	(__libc_vfork) [IS_IN (libc)]: Define as an alias.
+-	* sysdeps/unix/sysv/linux/sparc/sparc32/vfork.S: Likewise.
+-	* sysdeps/unix/sysv/linux/sparc/sparc64/vfork.S: Likewise.
+-
+-[Vincent: do not patch ChangeLog]
+-
+-Signed-off-by: Vicente Olivert Riera <Vincent.Riera@imgtec.com>
+----
+- sysdeps/unix/sysv/linux/mips/vfork.S          | 12 ++++++------
+- sysdeps/unix/sysv/linux/sparc/sparc32/vfork.S |  8 ++++----
+- sysdeps/unix/sysv/linux/sparc/sparc64/vfork.S |  8 ++++----
+- 3 files changed, 14 insertions(+), 14 deletions(-)
+-
+-diff --git a/sysdeps/unix/sysv/linux/mips/vfork.S b/sysdeps/unix/sysv/linux/mips/vfork.S
+-index c0c0ce6..1867c86 100644
+---- a/sysdeps/unix/sysv/linux/mips/vfork.S
+-+++ b/sysdeps/unix/sysv/linux/mips/vfork.S
+-@@ -31,13 +31,13 @@
+- LOCALSZ= 1
+- FRAMESZ= (((NARGSAVE+LOCALSZ)*SZREG)+ALSZ)&ALMASK
+- GPOFF= FRAMESZ-(1*SZREG)
+--NESTED(__vfork,FRAMESZ,sp)
+-+NESTED(__libc_vfork,FRAMESZ,sp)
+- #ifdef __PIC__
+- 	SETUP_GP
+- #endif
+- 	PTR_SUBU sp, FRAMESZ
+- 	cfi_adjust_cfa_offset (FRAMESZ)
+--	SETUP_GP64_REG (a5, __vfork)
+-+	SETUP_GP64_REG (a5, __libc_vfork)
+- #ifdef __PIC__
+- 	SAVE_GP (GPOFF)
+- #endif
+-@@ -104,10 +104,10 @@ L(error):
+- 	RESTORE_GP64_REG
+- 	j		__syscall_error
+- #endif
+--	END(__vfork)
+-+	END(__libc_vfork)
+- 
+- #if IS_IN (libc)
+--libc_hidden_def(__vfork)
+--weak_alias (__vfork, vfork)
+--strong_alias (__vfork, __libc_vfork)
+-+weak_alias (__libc_vfork, vfork)
+-+strong_alias (__libc_vfork, __vfork)
+-+libc_hidden_def (__vfork)
+- #endif
+-diff --git a/sysdeps/unix/sysv/linux/sparc/sparc32/vfork.S b/sysdeps/unix/sysv/linux/sparc/sparc32/vfork.S
+-index 94f2c8d..0d0a3b5 100644
+---- a/sysdeps/unix/sysv/linux/sparc/sparc32/vfork.S
+-+++ b/sysdeps/unix/sysv/linux/sparc/sparc32/vfork.S
+-@@ -21,7 +21,7 @@
+- 
+- 	.text
+- 	.globl		__syscall_error
+--ENTRY(__vfork)
+-+ENTRY(__libc_vfork)
+- 	ld	[%g7 + PID], %o5
+- 	cmp	%o5, 0
+- 	bne	1f
+-@@ -42,10 +42,10 @@ ENTRY(__vfork)
+- 	 st	%o5, [%g7 + PID]
+- 1:	retl
+- 	 nop
+--END(__vfork)
+-+END(__libc_vfork)
+- 
+- #if IS_IN (libc)
+-+weak_alias (__libc_vfork, vfork)
+-+strong_alias (__libc_vfork, __vfork)
+- libc_hidden_def (__vfork)
+--weak_alias (__vfork, vfork)
+--strong_alias (__vfork, __libc_vfork)
+- #endif
+-diff --git a/sysdeps/unix/sysv/linux/sparc/sparc64/vfork.S b/sysdeps/unix/sysv/linux/sparc/sparc64/vfork.S
+-index a7479e9..0818eba 100644
+---- a/sysdeps/unix/sysv/linux/sparc/sparc64/vfork.S
+-+++ b/sysdeps/unix/sysv/linux/sparc/sparc64/vfork.S
+-@@ -21,7 +21,7 @@
+- 
+- 	.text
+- 	.globl	__syscall_error
+--ENTRY(__vfork)
+-+ENTRY(__libc_vfork)
+- 	ld	[%g7 + PID], %o5
+- 	sethi	%hi(0x80000000), %o3
+- 	cmp	%o5, 0
+-@@ -42,10 +42,10 @@ ENTRY(__vfork)
+- 	 st	%o5, [%g7 + PID]
+- 1:	retl
+- 	 nop
+--END(__vfork)
+-+END(__libc_vfork)
+- 
+- #if IS_IN (libc)
+-+weak_alias (__libc_vfork, vfork)
+-+strong_alias (__libc_vfork, __vfork)
+- libc_hidden_def (__vfork)
+--weak_alias (__vfork, vfork)
+--strong_alias (__vfork, __libc_vfork)
+- #endif
+--- 
+-2.7.3
+-
+diff --git a/package/glibc/2.23/0005-sh-Fix-building-with-gcc5-6.patch b/package/glibc/2.23/0005-sh-Fix-building-with-gcc5-6.patch
+deleted file mode 100644
+index fa43add..0000000
+--- a/package/glibc/2.23/0005-sh-Fix-building-with-gcc5-6.patch
++++ /dev/null
+@@ -1,56 +0,0 @@
+-From dbb9ecfaac8db022292791936733e0841a0aa447 Mon Sep 17 00:00:00 2001
+-From: Alexey Neyman <stilor@att.net>
+-Date: Wed, 8 Feb 2017 16:00:57 -0200
+-Subject: [PATCH] sh: Fix building with gcc5/6
+-
+-Build glibc for sh4-unknown-linux-gnu currently fails if one's
+-using GCC5/6: in dl-conflict.c, the elf_machine_rela() function
+-is called with NULL as its 3rd argument, sym. The implementation
+-of that function in sysdeps/sh/dl-machine.h dereferences that pointer:
+-
+-const Elf32_Sym *const refsym = sym;
+-...
+-if (map == &GL(dl_rtld_map))
+-  value -= map->l_addr + refsym->st_value + reloc->r_addend;
+-
+-GCC discovers a null pointer dereference, and in accordance with
+--fdelete-null-pointer-checks (which is enabled in -O2) replaces this
+-code with a trap - which, as SH does not implement a trap pattern in
+-GCC, evaluates to an abort() call. This abort() call pulls many more
+-objects from libc_nonshared.a, eventually resulting in link failure
+-due to multiple definitions for a number of symbols.
+-
+-As far as I see, the conditional before this code is always false in
+-rtld: _dl_resolve_conflicts() is called with main_map as the first
+-argument, not GL(_dl_rtld_map), but since that call is in yet another
+-compilation unit, GCC does not know about it. Patch that wraps this
+-conditional into !defined RESOLVE_CONFLICT_FIND_MAP attached.
+-
+-	* sysdeps/sh/dl-machine.h (elf_machine_rela): The condition
+-	in R_SH_DIR32 case is always false when inlined from
+-	dl-conflict.c. Ifdef out to prevent GCC from insertin an
+-	abort() call.
+-
+-[Waldemar: backport of
+-https://sourceware.org/git/?p=glibc.git;a=commit;h=d40dbe722f004f999b589de776f7e57e564dda01.]
+-Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+----
+- sysdeps/sh/dl-machine.h | 2 +-
+- 1 file changed, 1 insertion(+), 1 deletion(-)
+-
+-diff --git a/sysdeps/sh/dl-machine.h b/sysdeps/sh/dl-machine.h
+-index 5bb37d0..6509055 100644
+---- a/sysdeps/sh/dl-machine.h
+-+++ b/sysdeps/sh/dl-machine.h
+-@@ -389,7 +389,7 @@ elf_machine_rela (struct link_map *map, const Elf32_Rela *reloc,
+- 	  break;
+- 	case R_SH_DIR32:
+- 	  {
+--#ifndef RTLD_BOOTSTRAP
+-+#if !defined RTLD_BOOTSTRAP && !defined RESOLVE_CONFLICT_FIND_MAP
+- 	   /* This is defined in rtld.c, but nowhere in the static
+- 	      libc.a; make the reference weak so static programs can
+- 	      still link.  This declaration cannot be done when
+--- 
+-2.7.4
+-
+diff --git a/package/glibc/2.24/0001-sh-Fix-building-with-gcc5-6.patch b/package/glibc/2.24/0001-sh-Fix-building-with-gcc5-6.patch
+deleted file mode 100644
+index 821f2c6..0000000
+--- a/package/glibc/2.24/0001-sh-Fix-building-with-gcc5-6.patch
++++ /dev/null
+@@ -1,56 +0,0 @@
+-From 98cadd4b9fa8e32d1d0dea8e46b5ba829af4e8a2 Mon Sep 17 00:00:00 2001
+-From: Alexey Neyman <stilor@att.net>
+-Date: Wed, 8 Feb 2017 16:00:57 -0200
+-Subject: [PATCH] sh: Fix building with gcc5/6
+-
+-Build glibc for sh4-unknown-linux-gnu currently fails if one's
+-using GCC5/6: in dl-conflict.c, the elf_machine_rela() function
+-is called with NULL as its 3rd argument, sym. The implementation
+-of that function in sysdeps/sh/dl-machine.h dereferences that pointer:
+-
+-const Elf32_Sym *const refsym = sym;
+-...
+-if (map == &GL(dl_rtld_map))
+-  value -= map->l_addr + refsym->st_value + reloc->r_addend;
+-
+-GCC discovers a null pointer dereference, and in accordance with
+--fdelete-null-pointer-checks (which is enabled in -O2) replaces this
+-code with a trap - which, as SH does not implement a trap pattern in
+-GCC, evaluates to an abort() call. This abort() call pulls many more
+-objects from libc_nonshared.a, eventually resulting in link failure
+-due to multiple definitions for a number of symbols.
+-
+-As far as I see, the conditional before this code is always false in
+-rtld: _dl_resolve_conflicts() is called with main_map as the first
+-argument, not GL(_dl_rtld_map), but since that call is in yet another
+-compilation unit, GCC does not know about it. Patch that wraps this
+-conditional into !defined RESOLVE_CONFLICT_FIND_MAP attached.
+-
+-	* sysdeps/sh/dl-machine.h (elf_machine_rela): The condition
+-	in R_SH_DIR32 case is always false when inlined from
+-	dl-conflict.c. Ifdef out to prevent GCC from insertin an
+-	abort() call.
+-
+-[Waldemar: backport of
+-https://sourceware.org/git/?p=glibc.git;a=commit;h=d40dbe722f004f999b589de776f7e57e564dda01.]
+-Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+----
+- sysdeps/sh/dl-machine.h | 2 +-
+- 1 file changed, 1 insertion(+), 1 deletion(-)
+-
+-diff --git a/sysdeps/sh/dl-machine.h b/sysdeps/sh/dl-machine.h
+-index 5bb37d0..6509055 100644
+---- a/sysdeps/sh/dl-machine.h
+-+++ b/sysdeps/sh/dl-machine.h
+-@@ -389,7 +389,7 @@ elf_machine_rela (struct link_map *map, const Elf32_Rela *reloc,
+- 	  break;
+- 	case R_SH_DIR32:
+- 	  {
+--#ifndef RTLD_BOOTSTRAP
+-+#if !defined RTLD_BOOTSTRAP && !defined RESOLVE_CONFLICT_FIND_MAP
+- 	   /* This is defined in rtld.c, but nowhere in the static
+- 	      libc.a; make the reference weak so static programs can
+- 	      still link.  This declaration cannot be done when
+--- 
+-2.7.4
+-
+diff --git a/package/glibc/Config.in b/package/glibc/Config.in
+index 115388e..57a2e83 100644
+--- a/package/glibc/Config.in
++++ b/package/glibc/Config.in
+@@ -6,32 +6,4 @@ config BR2_PACKAGE_GLIBC
+ 	select BR2_PACKAGE_LINUX_HEADERS
+ 	select BR2_TOOLCHAIN_HAS_SSP
+ 
+-choice
+-	prompt "glibc version"
+-	default BR2_GLIBC_VERSION_2_24
+-
+-config BR2_GLIBC_VERSION_2_23
+-	bool "2.23"
+-
+-config BR2_GLIBC_VERSION_2_24
+-	bool "2.24"
+-	# Linux 3.2 or later kernel headers are required on all arches.
+-	# See: https://sourceware.org/ml/libc-alpha/2016-08/msg00212.html
+-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_2
+-
+-config BR2_GLIBC_VERSION_2_25
+-	bool "2.25"
+-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_2
+-
+-comment "glibc-2.24+ needs kernel headers >= 3.2"
+-	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_2
+-
+-endchoice
+-
+ endif
+-
+-config BR2_GLIBC_VERSION_STRING
+-	string
+-	default "2.23" if BR2_GLIBC_VERSION_2_23
+-	default "2.24" if BR2_GLIBC_VERSION_2_24
+-	default "2.25" if BR2_GLIBC_VERSION_2_25
+diff --git a/package/glibc/glibc.hash b/package/glibc/glibc.hash
+index 0f420c5..daaf014 100644
+--- a/package/glibc/glibc.hash
++++ b/package/glibc/glibc.hash
+@@ -1,4 +1,2 @@
+ # Locally calculated after checking pgp signature (glibc)
+-sha256	94efeb00e4603c8546209cefb3e1a50a5315c86fa9b078b6fad758e187ce13e9	glibc-2.23.tar.xz
+-sha256	99d4a3e8efd144d71488e478f62587578c0f4e1fa0b4eed47ee3d4975ebeb5d3	glibc-2.24.tar.xz
+ sha256	067bd9bb3390e79aa45911537d13c3721f1d9d3769931a30c2681bfee66f23a0	glibc-2.25.tar.xz
+diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
+index aa9b906..c9a6579 100644
+--- a/package/glibc/glibc.mk
++++ b/package/glibc/glibc.mk
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-GLIBC_VERSION = $(call qstrip,$(BR2_GLIBC_VERSION_STRING))
++GLIBC_VERSION = 2.25
+ GLIBC_SITE = $(BR2_GNU_MIRROR)/libc
+ GLIBC_SOURCE = glibc-$(GLIBC_VERSION).tar.xz
+ GLIBC_SRC_SUBDIR = .
+diff --git a/toolchain/toolchain-buildroot/Config.in b/toolchain/toolchain-buildroot/Config.in
+index 91cddc2..f47001f 100644
+--- a/toolchain/toolchain-buildroot/Config.in
++++ b/toolchain/toolchain-buildroot/Config.in
+@@ -50,6 +50,7 @@ config BR2_TOOLCHAIN_BUILDROOT_GLIBC
+ 		   BR2_microblaze || BR2_nios2
+ 	depends on BR2_USE_MMU
+ 	depends on !BR2_STATIC_LIBS
++	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_2
+ 	depends on !BR2_powerpc_SPE
+ 	select BR2_TOOLCHAIN_USES_GLIBC
+ 	# our glibc.mk enables RPC support
+@@ -60,9 +61,9 @@ config BR2_TOOLCHAIN_BUILDROOT_GLIBC
+ 
+ 	  http://www.gnu.org/software/libc/
+ 
+-comment "glibc only available with shared lib support"
++comment "glibc needs a toolchain w/ dynamic library, kernel headers >= 3.2"
+ 	depends on BR2_USE_MMU
+-	depends on BR2_STATIC_LIBS
++	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_2
+ 
+ config BR2_TOOLCHAIN_BUILDROOT_MUSL
+ 	bool "musl"
+-- 
+2.10.1
+

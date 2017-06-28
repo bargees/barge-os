@@ -1,7 +1,7 @@
 From 4927523af28546613194328240113e07d55eb8af Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 14 May 2017 15:57:09 -0700
-Subject: [PATCH 6/8] Revert "ncurses: bump to 6.0"
+Subject: [PATCH] Revert "ncurses: bump to 6.0"
 
 This reverts commit b6b5d184b3df81166ac6bd41d10c702682fd80fe.
 ---

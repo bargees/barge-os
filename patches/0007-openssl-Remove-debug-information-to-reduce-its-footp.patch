@@ -1,7 +1,8 @@
 From 5b217ccba394a83de42402e0d145c32a9cf69883 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 15 May 2017 15:52:29 -0700
-Subject: [PATCH 7/8] openssl: Remove debug information to reduce its footprint
+Subject: [PATCH] openssl: Remove debug information to reduce its
+ footprint
 
 ---
  package/openssl/openssl.mk | 2 ++

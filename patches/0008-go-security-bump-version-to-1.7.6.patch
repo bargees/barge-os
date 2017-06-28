@@ -1,7 +1,7 @@
 From 740abad1c7add7fc6837d78e660540c9c63aa7bd Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Wed, 24 May 2017 07:16:53 +0900
-Subject: [PATCH 8/8] go: security bump version to 1.7.6
+Subject: [PATCH] go: security bump version to 1.7.6
 
 ---
  package/go/go.hash | 2 +-
