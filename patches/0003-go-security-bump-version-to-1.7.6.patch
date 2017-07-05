@@ -1,6 +1,6 @@
-From 740abad1c7add7fc6837d78e660540c9c63aa7bd Mon Sep 17 00:00:00 2001
+From 8879283f8ce4ed58630235521997385f58409bc6 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
-Date: Wed, 24 May 2017 07:16:53 +0900
+Date: Thu, 29 Dec 2016 15:37:26 -0800
 Subject: [PATCH] go: security bump version to 1.7.6
 
 ---
@@ -9,22 +9,22 @@ Subject: [PATCH] go: security bump version to 1.7.6
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/package/go/go.hash b/package/go/go.hash
-index 2120d25..89e09c9 100644
+index e50f004..89e09c9 100644
 --- a/package/go/go.hash
 +++ b/package/go/go.hash
 @@ -1,2 +1,2 @@
  # Locally computed:
--sha256 4e834513a2079f8cbbd357502cccaac9507fd00a1efe672375798858ff291815  go1.7.5.src.tar.gz
+-sha256 4c189111e9ba651a2bb3ee868aa881fab36b2f2da3409e80885ca758a6b614cc  go1.7.4.src.tar.gz
 +sha256 1a67a4e688673fdff7ba41e73482b0e59ac5bd0f7acf703bc6d50cc775c5baba  go1.7.6.src.tar.gz
 diff --git a/package/go/go.mk b/package/go/go.mk
-index e7b2add..f463aca 100644
+index a461342..f463aca 100644
 --- a/package/go/go.mk
 +++ b/package/go/go.mk
 @@ -4,7 +4,7 @@
  #
  ################################################################################
  
--GO_VERSION = 1.7.5
+-GO_VERSION = 1.7.4
 +GO_VERSION = 1.7.6
  GO_SITE = https://storage.googleapis.com/golang
  GO_SOURCE = go$(GO_VERSION).src.tar.gz
