@@ -1,4 +1,4 @@
-From b6ac22518df91738816f3ebfd8bf6c334c17ccb4 Mon Sep 17 00:00:00 2001
+From c4f8a99d07c1121943881f9966eef59f0d258b63 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 14 May 2017 15:56:59 -0700
 Subject: [PATCH] Revert "ncurses: drop unneeded trailing backslashes"
@@ -9,7 +9,7 @@ This reverts commit 734363aeaa976955457925ca130ebd3787c8b820.
  1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/package/ncurses/ncurses.mk b/package/ncurses/ncurses.mk
-index 68c77ac..9552364 100644
+index 76200ff..cc0c5b4 100644
 --- a/package/ncurses/ncurses.mk
 +++ b/package/ncurses/ncurses.mk
 @@ -27,7 +27,8 @@ NCURSES_CONF_OPTS = \
@@ -22,7 +22,7 @@ index 68c77ac..9552364 100644
  
  # Install after busybox for the full-blown versions
  ifeq ($(BR2_PACKAGE_BUSYBOX),y)
-@@ -63,7 +64,7 @@ NCURSES_TERMINFO_FILES = \
+@@ -65,7 +66,7 @@ NCURSES_TERMINFO_FILES = \
  	v/vt220 \
  	x/xterm \
  	x/xterm-color \
