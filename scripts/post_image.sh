@@ -25,6 +25,6 @@ ${HOST_DIR}/usr/bin/genimage                         \
   --config "${GENIMAGE_CFG}"
 
 # Set a label
-losetup -o 512 /dev/loop0 ${BINARIES_DIR}/barge-rpi.img
+losetup -o 512 /dev/loop0 ${BINARIES_DIR}/barge-rpi-arm64v8.img
 mlabel -i /dev/loop0 ::BARGE-RPI
 losetup -d /dev/loop0
