@@ -12,7 +12,7 @@ rsync -a --ignore-times \
   package/skeleton-init-sysv/skeleton/ ${ROOTFS}/
 
 # Strip kernel modules
-GNU_TARGET_NAME=arm-buildroot-linux-gnueabihf
+GNU_TARGET_NAME=aarch64-buildroot-linux-gnu
 OBJCOPY=${GNU_TARGET_NAME}-objcopy
 cd ${ROOTFS}/lib/modules
 find . -type f -name '*.ko' | xargs -n 1 ${OBJCOPY} --strip-unneeded

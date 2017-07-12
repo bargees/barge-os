@@ -4,7 +4,7 @@
 # See http://buildroot.org/manual.html#rootfs-custom
 # and http://elinux.org/RPiconfig for a description of config.txt syntax
 
-kernel=zImage
+kernel=Image
 
 # To use an external initramfs file
 #initramfs rootfs.cpio.gz
@@ -22,3 +22,6 @@ gpu_mem_1024=100
 
 # enable rpi3 ttyS0 serial console
 enable_uart=1
+
+# enable 64bits support
+arm_control=0x200
