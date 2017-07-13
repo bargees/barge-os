@@ -213,7 +213,7 @@ switch() {
 
   DOCKER_BIN_DIR="/opt/docker/v${version}"
 
-  local base_url="https://github.com/bargees/armhf-docker/releases/download/v${version}"
+  local base_url="https://github.com/bargees/aarch64-docker/releases/download/v${version}"
 
   local versions=($(echo ${version} | tr -s '.' ' '))
   if [[ ${versions[0]} -lt 1 ]]; then
@@ -236,7 +236,8 @@ switch() {
       if [[ (${versions[0]} -gt 17) || (${versions[1]#0} -ge 6) ]]; then
         docker_repo="docker/docker-ce"
         completion="components/cli/contrib/completion/bash/docker"
-
+      fi
+      if [[ (${versions[0]} -gt 17) || (${versions[1]#0} -ge 9) ]]; then
         local channel="edge"
         if ! ((${versions[1]#0} % 3)); then
           channel="stable"
@@ -244,7 +245,7 @@ switch() {
         if [[ "${version}" == *"-rc"* ]]; then
           channel="test"
         fi
-        base_url="https://download.docker.com/linux/static/${channel}/armhf"
+        base_url="https://download.docker.com/linux/static/${channel}/aarch64"
       fi
     fi
   fi
@@ -254,9 +255,7 @@ switch() {
     trap "rm -rf \"${DOCKER_BIN_DIR}\"" ERR
     mkdir -p "${DOCKER_BIN_DIR}"
     wget -qO- "${base_url}/docker-${version}.tgz" | \
-      tar zxf - -C "${DOCKER_BIN_DIR}" 2>/dev/null || \
-        wget -qO- "${base_url}/docker-${version}-armhf.tgz" | \
-          tar zxf - -C "${DOCKER_BIN_DIR}" 2>/dev/null
+      tar zxf - -C "${DOCKER_BIN_DIR}" 2>/dev/null
     if [ -d "${DOCKER_BIN_DIR}/usr/local/bin" ]; then
       mv -f "${DOCKER_BIN_DIR}/usr/local/bin"/* "${DOCKER_BIN_DIR}"
       rm -rf "${DOCKER_BIN_DIR}/usr"
