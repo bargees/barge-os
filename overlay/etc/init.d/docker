@@ -255,7 +255,7 @@ switch() {
 
       if [[ (${versions[0]} -gt 17) || (${versions[1]} -ge 6) ]]; then
         docker_repo="docker/docker-ce"
-        completion="components/engine/contrib/completion/bash/docker"
+        completion="components/cli/contrib/completion/bash/docker"
       fi
     fi
   fi
