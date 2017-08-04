@@ -1,4 +1,4 @@
-From c5b530afdf6964987d1a57d885d159aa4a973999 Mon Sep 17 00:00:00 2001
+From 08078616481eb7f428a34ae528e2694e4c0c3cef Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 15 May 2017 15:52:29 -0700
 Subject: [PATCH] openssl: Remove debug information to reduce its footprint
@@ -8,7 +8,7 @@ Subject: [PATCH] openssl: Remove debug information to reduce its footprint
  1 file changed, 2 insertions(+)
 
 diff --git a/package/openssl/openssl.mk b/package/openssl/openssl.mk
-index 1536982..25eb743 100644
+index ec8e6f2..199fd7d 100644
 --- a/package/openssl/openssl.mk
 +++ b/package/openssl/openssl.mk
 @@ -87,6 +87,8 @@ define OPENSSL_CONFIGURE_CMDS

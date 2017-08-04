@@ -14,7 +14,7 @@ ENV SRC_DIR=/build \
     BR_ROOT=/build/buildroot
 RUN mkdir -p ${SRC_DIR} ${OVERLAY}
 
-ENV BR_VERSION 2017.05.2
+ENV BR_VERSION 2017.08-rc1
 RUN wget -qO- https://buildroot.org/downloads/buildroot-${BR_VERSION}.tar.bz2 | tar xj && \
     mv buildroot-${BR_VERSION} ${BR_ROOT}
 
