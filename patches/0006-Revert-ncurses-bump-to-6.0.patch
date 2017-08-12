@@ -1,4 +1,4 @@
-From fc10b399cb7feb16d08441c9b1f2e83f5ea208af Mon Sep 17 00:00:00 2001
+From 31408eebff8ccb55cafad3b98a3c41adb928ab3b Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 14 May 2017 15:57:09 -0700
 Subject: [PATCH] Revert "ncurses: bump to 6.0"
