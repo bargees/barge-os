@@ -3,40 +3,15 @@ set -e
 
 ROOTFS=$1
 
-# Remove useless kernel modules, based on unclejack/debian2docker
-cd ${ROOTFS}/lib/modules
-rm -rf ./*/kernel/build
-rm -rf ./*/kernel/source
-rm -rf ./*/kernel/sound/*
-rm -rf ./*/kernel/drivers/gpu/*
-rm -rf ./*/kernel/drivers/infiniband/*
-rm -rf ./*/kernel/drivers/isdn/*
-rm -rf ./*/kernel/drivers/media/*
-rm -rf ./*/kernel/drivers/staging/lustre/*
-rm -rf ./*/kernel/drivers/staging/comedi/*
-rm -rf ./*/kernel/fs/ocfs2/*
-rm -rf ./*/kernel/fs/reiserfs/*
-rm -rf ./*/kernel/net/bluetooth/*
-rm -rf ./*/kernel/net/mac80211/*
-rm -rf ./*/kernel/net/wireless/*
-
 # Strip kernel modules
-GNU_TARGET_NAME=x86_64-buildroot-linux-gnu
+GNU_TARGET_NAME=arm-buildroot-linux-gnueabihf
 OBJCOPY=${GNU_TARGET_NAME}-objcopy
+cd ${ROOTFS}/lib/modules
 find . -type f -name '*.ko' | xargs -n 1 ${OBJCOPY} --strip-unneeded
 
 # Remove unnecessary files
 cd ${ROOTFS}
 rm -rf linuxrc
-rm -rf lib/bash
-rm -rf lib/pkgconfig
-
-# Remove unnecessary libraries
-rm -f usr/lib/libevent.so
-rm -f usr/lib/libevent-*
-rm -f usr/lib/libform.so*
-rm -f usr/lib/libmenu.so*
-rm -f usr/lib/libpanel.so*
 
 # Remove unnecessary binaries from e2fsprogs
 rm -f bin/chattr
@@ -107,6 +82,7 @@ if ! grep -q "^ca_certificate =" ${ROOTFS}/etc/wgetrc; then
 fi
 
 STAGING_DIR=${ROOTFS}/../staging
+BINARIES_DIR=${ROOTFS}/../images
 
 # Install locale command
 install -m 0755 -D ${STAGING_DIR}/usr/bin/locale ${ROOTFS}/usr/bin/locale
@@ -114,9 +90,10 @@ install -m 0755 -D ${STAGING_DIR}/usr/bin/locale ${ROOTFS}/usr/bin/locale
 # Install C.UTF-8 locale
 mkdir -p ${ROOTFS}/usr/lib/locale
 I18NPATH=${STAGING_DIR}/usr/share/i18n:/usr/share/i18n \
-  ${STAGING_DIR}/usr/bin/localedef --force --quiet --no-archive --little-endian --prefix=${ROOTFS} \
+  /usr/bin/localedef --force --quiet --no-archive --little-endian --prefix=${ROOTFS} \
     -i POSIX -f UTF-8 C.UTF-8
 mv ${ROOTFS}/usr/lib/locale/C.utf8 ${ROOTFS}/usr/lib/locale/C.UTF-8
 
-# Set Docker version
-sed -i "s/Docker version.*/$(LD_LIBRARY_PATH=${ROOTFS}/usr/lib ${ROOTFS}/usr/bin/docker -v)/" ${ROOTFS}/etc/motd
+# Replace config.txt and cmdline.txt
+install -D -m 0644 ${SRC_DIR}/configs/config.txt ${BINARIES_DIR}/rpi-firmware/config.txt
+install -D -m 0644 ${SRC_DIR}/configs/cmdline.txt ${BINARIES_DIR}/rpi-firmware/cmdline.txt
