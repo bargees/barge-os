@@ -1,4 +1,4 @@
-From b10a2f2e4ba9c3829be478dd9a3565905791a412 Mon Sep 17 00:00:00 2001
+From 920f25f50fb5ea48e085889ef5b95d62f76815bc Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 3 Aug 2017 19:13:58 -0700
 Subject: [PATCH] Revert "binutils: remove support for 2.26"
@@ -37,7 +37,7 @@ This reverts commit 0b5dc3192306409113adbb0dfbcaa62bbcdf4fb4.
  create mode 100644 package/binutils/2.26.1/0906-microblaze-pr21180.patch
 
 diff --git a/Config.in.legacy b/Config.in.legacy
-index 693dc95..d2e6325 100644
+index 693dc95d74..d2e63252e7 100644
 --- a/Config.in.legacy
 +++ b/Config.in.legacy
 @@ -145,14 +145,6 @@ endif
@@ -57,7 +57,7 @@ index 693dc95..d2e6325 100644
  	help
 diff --git a/package/binutils/2.26.1/0120-sh-conf.patch b/package/binutils/2.26.1/0120-sh-conf.patch
 new file mode 100644
-index 0000000..cc14ef4
+index 0000000000..cc14ef4029
 --- /dev/null
 +++ b/package/binutils/2.26.1/0120-sh-conf.patch
 @@ -0,0 +1,46 @@
@@ -109,7 +109,7 @@ index 0000000..cc14ef4
 +
 diff --git a/package/binutils/2.26.1/0300-ld-makefile.patch b/package/binutils/2.26.1/0300-ld-makefile.patch
 new file mode 100644
-index 0000000..73cc098
+index 0000000000..73cc098024
 --- /dev/null
 +++ b/package/binutils/2.26.1/0300-ld-makefile.patch
 @@ -0,0 +1,41 @@
@@ -156,7 +156,7 @@ index 0000000..73cc098
 +
 diff --git a/package/binutils/2.26.1/0301-check-ldrunpath-length.patch b/package/binutils/2.26.1/0301-check-ldrunpath-length.patch
 new file mode 100644
-index 0000000..3b4c204
+index 0000000000..3b4c204c7f
 --- /dev/null
 +++ b/package/binutils/2.26.1/0301-check-ldrunpath-length.patch
 @@ -0,0 +1,36 @@
@@ -198,7 +198,7 @@ index 0000000..3b4c204
 +
 diff --git a/package/binutils/2.26.1/0500-add-sysroot-fix-from-bug-3049.patch b/package/binutils/2.26.1/0500-add-sysroot-fix-from-bug-3049.patch
 new file mode 100644
-index 0000000..f67a43e
+index 0000000000..f67a43efdf
 --- /dev/null
 +++ b/package/binutils/2.26.1/0500-add-sysroot-fix-from-bug-3049.patch
 @@ -0,0 +1,52 @@
@@ -256,7 +256,7 @@ index 0000000..f67a43e
 +
 diff --git a/package/binutils/2.26.1/0600-poison-system-directories.patch b/package/binutils/2.26.1/0600-poison-system-directories.patch
 new file mode 100644
-index 0000000..d16994e
+index 0000000000..d16994ec0c
 --- /dev/null
 +++ b/package/binutils/2.26.1/0600-poison-system-directories.patch
 @@ -0,0 +1,306 @@
@@ -568,7 +568,7 @@ index 0000000..d16994e
 +
 diff --git a/package/binutils/2.26.1/0800-microblaze-musl.patch b/package/binutils/2.26.1/0800-microblaze-musl.patch
 new file mode 100644
-index 0000000..5e45058
+index 0000000000..5e45058f6c
 --- /dev/null
 +++ b/package/binutils/2.26.1/0800-microblaze-musl.patch
 @@ -0,0 +1,23 @@
@@ -597,7 +597,7 @@ index 0000000..5e45058
 +           microblaze_elf_output_dynamic_relocation (output_bfd,
 diff --git a/package/binutils/2.26.1/0900-Correct-nios2-_gp-address-computation.patch b/package/binutils/2.26.1/0900-Correct-nios2-_gp-address-computation.patch
 new file mode 100644
-index 0000000..81986f5
+index 0000000000..81986f51b9
 --- /dev/null
 +++ b/package/binutils/2.26.1/0900-Correct-nios2-_gp-address-computation.patch
 @@ -0,0 +1,108 @@
@@ -711,7 +711,7 @@ index 0000000..81986f5
 +
 diff --git a/package/binutils/2.26.1/0901-Fix-assertion-reduce-number-of-messages-about-FDE-en.patch b/package/binutils/2.26.1/0901-Fix-assertion-reduce-number-of-messages-about-FDE-en.patch
 new file mode 100644
-index 0000000..a490780
+index 0000000000..a490780f7e
 --- /dev/null
 +++ b/package/binutils/2.26.1/0901-Fix-assertion-reduce-number-of-messages-about-FDE-en.patch
 @@ -0,0 +1,67 @@
@@ -784,7 +784,7 @@ index 0000000..a490780
 +
 diff --git a/package/binutils/2.26.1/0902-xtensa-fix-signedness-of-gas-relocations.patch b/package/binutils/2.26.1/0902-xtensa-fix-signedness-of-gas-relocations.patch
 new file mode 100644
-index 0000000..4ba2f75
+index 0000000000..4ba2f75cc8
 --- /dev/null
 +++ b/package/binutils/2.26.1/0902-xtensa-fix-signedness-of-gas-relocations.patch
 @@ -0,0 +1,101 @@
@@ -891,7 +891,7 @@ index 0000000..4ba2f75
 +
 diff --git a/package/binutils/2.26.1/0903-xtensa-fix-.init-.fini-literals-moving.patch b/package/binutils/2.26.1/0903-xtensa-fix-.init-.fini-literals-moving.patch
 new file mode 100644
-index 0000000..ead3e42
+index 0000000000..ead3e42b75
 --- /dev/null
 +++ b/package/binutils/2.26.1/0903-xtensa-fix-.init-.fini-literals-moving.patch
 @@ -0,0 +1,149 @@
@@ -1046,7 +1046,7 @@ index 0000000..ead3e42
 +
 diff --git a/package/binutils/2.26.1/0904-bfin-fdpic-upstream.patch b/package/binutils/2.26.1/0904-bfin-fdpic-upstream.patch
 new file mode 100644
-index 0000000..ffbacc4
+index 0000000000..ffbacc4c0e
 --- /dev/null
 +++ b/package/binutils/2.26.1/0904-bfin-fdpic-upstream.patch
 @@ -0,0 +1,30 @@
@@ -1082,7 +1082,7 @@ index 0000000..ffbacc4
 +1.7.1
 diff --git a/package/binutils/2.26.1/0905-bfin-rofixup-bug.patch b/package/binutils/2.26.1/0905-bfin-rofixup-bug.patch
 new file mode 100644
-index 0000000..da9d586
+index 0000000000..da9d586551
 --- /dev/null
 +++ b/package/binutils/2.26.1/0905-bfin-rofixup-bug.patch
 @@ -0,0 +1,21 @@
@@ -1109,7 +1109,7 @@ index 0000000..da9d586
 +         /* This relocation describes the C++ object vtable hierarchy.
 diff --git a/package/binutils/2.26.1/0906-microblaze-pr21180.patch b/package/binutils/2.26.1/0906-microblaze-pr21180.patch
 new file mode 100644
-index 0000000..8104db3
+index 0000000000..8104db3462
 --- /dev/null
 +++ b/package/binutils/2.26.1/0906-microblaze-pr21180.patch
 @@ -0,0 +1,33 @@
@@ -1147,7 +1147,7 @@ index 0000000..8104db3
 +       else
 +         {
 diff --git a/package/binutils/Config.in.host b/package/binutils/Config.in.host
-index 48d3ea1..ef6aadb 100644
+index 48d3ea1d74..ef6aadb5ba 100644
 --- a/package/binutils/Config.in.host
 +++ b/package/binutils/Config.in.host
 @@ -7,6 +7,9 @@ choice
@@ -1169,7 +1169,7 @@ index 48d3ea1..ef6aadb 100644
  	default "2.28.1"	if BR2_BINUTILS_VERSION_2_28_X
  	default "2.29"		if BR2_BINUTILS_VERSION_2_29_X
 diff --git a/package/binutils/binutils.hash b/package/binutils/binutils.hash
-index 4630a26..f6ac10d 100644
+index 4630a26fef..f6ac10d2fd 100644
 --- a/package/binutils/binutils.hash
 +++ b/package/binutils/binutils.hash
 @@ -1,4 +1,5 @@
@@ -1179,5 +1179,5 @@ index 4630a26..f6ac10d 100644
  sha512	dc5b6872ae01c07c12d38f3bb7ead06effc6da3265ac872e2d9c6104304f89f85f2645b029a43f308a7938a7299b1928d385205d0a2245674a621649032a138d  binutils-2.28.1.tar.xz
  sha512  bb227c7af65133a61bbde8be4104a543f4185fce8c8e7be22c36d92d121d28b5413d42f18c7e987d035d6312c542d0e2aaca8930386a4ce26d7c9d7248145398  binutils-2.29.tar.xz
 -- 
-2.10.1
+2.14.1
 

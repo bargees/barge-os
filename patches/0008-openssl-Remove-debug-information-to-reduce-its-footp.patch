@@ -1,4 +1,4 @@
-From 4ce3cf99ceb4c6f4b14354fb8ed1a27539a6ddc1 Mon Sep 17 00:00:00 2001
+From 5f4dfc75460da11094f573d6137ebf72e6e84166 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 15 May 2017 15:52:29 -0700
 Subject: [PATCH] openssl: Remove debug information to reduce its footprint
@@ -8,7 +8,7 @@ Subject: [PATCH] openssl: Remove debug information to reduce its footprint
  1 file changed, 2 insertions(+)
 
 diff --git a/package/openssl/openssl.mk b/package/openssl/openssl.mk
-index ec8e6f2..199fd7d 100644
+index ec8e6f204c..199fd7d39d 100644
 --- a/package/openssl/openssl.mk
 +++ b/package/openssl/openssl.mk
 @@ -87,6 +87,8 @@ define OPENSSL_CONFIGURE_CMDS
@@ -21,5 +21,5 @@ index ec8e6f2..199fd7d 100644
  	$(SED) "s#-march=[-a-z0-9] ##" -e "s#-mcpu=[-a-z0-9] ##g" $(@D)/Makefile
  	$(SED) "s#-O[0-9]#$(OPENSSL_CFLAGS)#" $(@D)/Makefile
 -- 
-2.10.1
+2.14.1
 
