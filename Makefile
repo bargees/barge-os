@@ -1,4 +1,4 @@
-KERNEL_VERSION  := 4.9.42
+KERNEL_VERSION  := 4.9.44
 BUSYBOX_VERSION := 1.27.1
 
 OUTPUTS := output/rootfs.tar.xz output/bzImage output/barge.iso output/barge.img
