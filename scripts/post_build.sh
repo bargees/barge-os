@@ -52,7 +52,7 @@ rm -f sbin/logsave
 rm -f sbin/mklost+found
 rm -f sbin/tune2fs
 
-# Initialize directories without linking to /tmp except /var/tmp
+# Initialize directories without linking to /tmp
 rm -rf run
 rm -rf var/cache
 rm -rf var/lock
@@ -67,10 +67,6 @@ mkdir -p var/log
 mkdir -p var/run
 mkdir -p var/spool
 mkdir -p var/lib/misc
-
-cd ${ROOTFS}/var
-rm -rf tmp
-ln -s ../tmp tmp
 
 # Change shell for root
 sed -i '/^root/s!/bin/sh!/bin/bash!' ${ROOTFS}/etc/passwd
