@@ -3,6 +3,14 @@ set -e
 
 ROOTFS=$1
 
+# Needs the traditional SYSV skeleton
+rm -rf ${ROOTFS}/var/run
+rsync -a --ignore-times \
+  --exclude .svn --exclude .git --exclude .hg --exclude .bzr \
+  --exclude CVS \
+  --chmod=u=rwX,go=rX --exclude .empty --exclude '*~' \
+  package/skeleton-init-sysv/skeleton/ ${ROOTFS}/
+
 # Remove useless kernel modules, based on unclejack/debian2docker
 cd ${ROOTFS}/lib/modules
 rm -rf ./*/kernel/build

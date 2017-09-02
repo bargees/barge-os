@@ -1,4 +1,4 @@
-From a279a76166eefc6f003dd4fb2529a41a271cb5c7 Mon Sep 17 00:00:00 2001
+From e94be9666c11398742b356efba604c424887d562 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 14 May 2017 15:57:09 -0700
 Subject: [PATCH] Revert "ncurses: bump to 6.0"
@@ -19,7 +19,7 @@ This reverts commit b6b5d184b3df81166ac6bd41d10c702682fd80fe.
 
 diff --git a/package/ncurses/0001-fixup-pkg-config-handling.patch b/package/ncurses/0001-fixup-pkg-config-handling.patch
 new file mode 100644
-index 0000000..e1cfc75
+index 0000000000..e1cfc75164
 --- /dev/null
 +++ b/package/ncurses/0001-fixup-pkg-config-handling.patch
 @@ -0,0 +1,89 @@
@@ -116,7 +116,7 @@ diff --git a/package/ncurses/0001-gcc-5.x-MKlib_gen.patch b/package/ncurses/0002
 similarity index 87%
 rename from package/ncurses/0001-gcc-5.x-MKlib_gen.patch
 rename to package/ncurses/0002-gcc-5.x-MKlib_gen.patch
-index df7c15f..25c2bd0 100644
+index df7c15fee9..25c2bd02d1 100644
 --- a/package/ncurses/0001-gcc-5.x-MKlib_gen.patch
 +++ b/package/ncurses/0002-gcc-5.x-MKlib_gen.patch
 @@ -12,9 +12,9 @@ http://ncurses.scripts.mit.edu/?p=ncurses.git;a=commit;h=97bb4678dc03e753290b39b
@@ -134,7 +134,7 @@ index df7c15f..25c2bd0 100644
   
 diff --git a/package/ncurses/0002-recognise-uclinux.patch b/package/ncurses/0002-recognise-uclinux.patch
 deleted file mode 100644
-index 57dd4cf..0000000
+index 57dd4cf37f..0000000000
 --- a/package/ncurses/0002-recognise-uclinux.patch
 +++ /dev/null
 @@ -1,29 +0,0 @@
@@ -169,7 +169,7 @@ index 57dd4cf..0000000
 - echo $ECHO_N "checking if we must define _GNU_SOURCE... $ECHO_C" >&6
 diff --git a/package/ncurses/0003-recognise-uclinux.patch b/package/ncurses/0003-recognise-uclinux.patch
 new file mode 100644
-index 0000000..e86546c
+index 0000000000..e86546cc54
 --- /dev/null
 +++ b/package/ncurses/0003-recognise-uclinux.patch
 @@ -0,0 +1,30 @@
@@ -204,7 +204,7 @@ index 0000000..e86546c
 + echo "$as_me:6996: checking if we must define _GNU_SOURCE" >&5
 + echo $ECHO_N "checking if we must define _GNU_SOURCE... $ECHO_C" >&6
 diff --git a/package/ncurses/ncurses.hash b/package/ncurses/ncurses.hash
-index 6bca143..482b2d4 100644
+index 6bca143836..482b2d4853 100644
 --- a/package/ncurses/ncurses.hash
 +++ b/package/ncurses/ncurses.hash
 @@ -1,2 +1,2 @@
@@ -212,7 +212,7 @@ index 6bca143..482b2d4 100644
 -sha256	f551c24b30ce8bfb6e96d9f59b42fbea30fa3a6123384172f9e7284bcf647260	ncurses-6.0.tar.gz
 +sha256	9046298fb440324c9d4135ecea7879ffed8546dd1b58e59430ea07a4633f563b	ncurses-5.9.tar.gz
 diff --git a/package/ncurses/ncurses.mk b/package/ncurses/ncurses.mk
-index cc0c5b4..952be56 100644
+index cc0c5b405a..952be566e8 100644
 --- a/package/ncurses/ncurses.mk
 +++ b/package/ncurses/ncurses.mk
 @@ -4,13 +4,13 @@
@@ -261,5 +261,5 @@ index cc0c5b4..952be56 100644
  
  ifneq ($(BR2_ENABLE_DEBUG),y)
 -- 
-2.10.1
+2.14.1
 

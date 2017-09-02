@@ -1,0 +1,1183 @@
+From a83d55c564ce83f496bd3caddde8ad013a0eecc1 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Thu, 3 Aug 2017 19:13:58 -0700
+Subject: [PATCH] Revert "binutils: remove support for 2.26"
+
+This reverts commit 0b5dc3192306409113adbb0dfbcaa62bbcdf4fb4.
+---
+ Config.in.legacy                                   |   8 -
+ package/binutils/2.26.1/0120-sh-conf.patch         |  46 ++++
+ package/binutils/2.26.1/0300-ld-makefile.patch     |  41 +++
+ .../2.26.1/0301-check-ldrunpath-length.patch       |  36 +++
+ .../0500-add-sysroot-fix-from-bug-3049.patch       |  52 ++++
+ .../2.26.1/0600-poison-system-directories.patch    | 306 +++++++++++++++++++++
+ package/binutils/2.26.1/0800-microblaze-musl.patch |  23 ++
+ ...900-Correct-nios2-_gp-address-computation.patch | 108 ++++++++
+ ...on-reduce-number-of-messages-about-FDE-en.patch |  67 +++++
+ ...-xtensa-fix-signedness-of-gas-relocations.patch | 101 +++++++
+ ...03-xtensa-fix-.init-.fini-literals-moving.patch | 149 ++++++++++
+ .../binutils/2.26.1/0904-bfin-fdpic-upstream.patch |  30 ++
+ .../binutils/2.26.1/0905-bfin-rofixup-bug.patch    |  21 ++
+ .../binutils/2.26.1/0906-microblaze-pr21180.patch  |  33 +++
+ package/binutils/Config.in.host                    |   4 +
+ package/binutils/binutils.hash                     |   1 +
+ 16 files changed, 1018 insertions(+), 8 deletions(-)
+ create mode 100644 package/binutils/2.26.1/0120-sh-conf.patch
+ create mode 100644 package/binutils/2.26.1/0300-ld-makefile.patch
+ create mode 100644 package/binutils/2.26.1/0301-check-ldrunpath-length.patch
+ create mode 100644 package/binutils/2.26.1/0500-add-sysroot-fix-from-bug-3049.patch
+ create mode 100644 package/binutils/2.26.1/0600-poison-system-directories.patch
+ create mode 100644 package/binutils/2.26.1/0800-microblaze-musl.patch
+ create mode 100644 package/binutils/2.26.1/0900-Correct-nios2-_gp-address-computation.patch
+ create mode 100644 package/binutils/2.26.1/0901-Fix-assertion-reduce-number-of-messages-about-FDE-en.patch
+ create mode 100644 package/binutils/2.26.1/0902-xtensa-fix-signedness-of-gas-relocations.patch
+ create mode 100644 package/binutils/2.26.1/0903-xtensa-fix-.init-.fini-literals-moving.patch
+ create mode 100644 package/binutils/2.26.1/0904-bfin-fdpic-upstream.patch
+ create mode 100644 package/binutils/2.26.1/0905-bfin-rofixup-bug.patch
+ create mode 100644 package/binutils/2.26.1/0906-microblaze-pr21180.patch
+
+diff --git a/Config.in.legacy b/Config.in.legacy
+index d35b409423..78b9f9a4fe 100644
+--- a/Config.in.legacy
++++ b/Config.in.legacy
+@@ -158,14 +158,6 @@ config BR2_PACKAGE_SIMICSFS
+ 	  work. Users should move to the user mode Simics agent
+ 	  instead.
+ 
+-config BR2_BINUTILS_VERSION_2_26_X
+-	bool "binutils version 2.26 support removed"
+-	select BR2_LEGACY
+-	help
+-	  Support for binutils version 2.26 has been removed. The
+-	  current default version (2.28 or later) has been selected
+-	  instead.
+-
+ config BR2_XTENSA_OVERLAY_DIR
+ 	string "The BR2_XTENSA_OVERLAY_DIR option has been removed"
+ 	help
+diff --git a/package/binutils/2.26.1/0120-sh-conf.patch b/package/binutils/2.26.1/0120-sh-conf.patch
+new file mode 100644
+index 0000000000..cc14ef4029
+--- /dev/null
++++ b/package/binutils/2.26.1/0120-sh-conf.patch
+@@ -0,0 +1,46 @@
++From 1ceee199e9a32034c6def7700fdbb26335ca76a3 Mon Sep 17 00:00:00 2001
++From: Romain Naour <romain.naour@gmail.com>
++Date: Fri, 25 Dec 2015 11:38:13 +0100
++Subject: [PATCH] sh-conf
++
++Likewise, binutils has no idea about any of these new targets either, so we
++fix that up too.. now we're able to actually build a real toolchain for
++sh2a_nofpu- and other more ineptly named toolchains (and yes, there are more
++inept targets than that one, really. Go look, I promise).
++
++[Romain: rebase on top of 2.26]
++Signed-off-by: Romain Naour <romain.naour@gmail.com>
++---
++ configure    | 2 +-
++ configure.ac | 2 +-
++ 2 files changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/configure b/configure
++index 34b66f7..905bc7b 100755
++--- a/configure
+++++ b/configure
++@@ -3939,7 +3939,7 @@ case "${target}" in
++   or1k*-*-*)
++     noconfigdirs="$noconfigdirs gdb"
++     ;;
++-  sh-*-* | sh64-*-*)
+++  sh*-*-* | sh64-*-*)
++     case "${target}" in
++       sh*-*-elf)
++          ;;
++diff --git a/configure.ac b/configure.ac
++index 4977d97..1e69ee2 100644
++--- a/configure.ac
+++++ b/configure.ac
++@@ -1276,7 +1276,7 @@ case "${target}" in
++   or1k*-*-*)
++     noconfigdirs="$noconfigdirs gdb"
++     ;;
++-  sh-*-* | sh64-*-*)
+++  sh*-*-* | sh64-*-*)
++     case "${target}" in
++       sh*-*-elf)
++          ;;
++-- 
++2.4.3
++
+diff --git a/package/binutils/2.26.1/0300-ld-makefile.patch b/package/binutils/2.26.1/0300-ld-makefile.patch
+new file mode 100644
+index 0000000000..73cc098024
+--- /dev/null
++++ b/package/binutils/2.26.1/0300-ld-makefile.patch
+@@ -0,0 +1,41 @@
++From d76a7549b43974fe8564971a3f40459bc495a8a7 Mon Sep 17 00:00:00 2001
++From: Romain Naour <romain.naour@gmail.com>
++Date: Fri, 25 Dec 2015 11:40:53 +0100
++Subject: [PATCH] ld-makefile
++
++[Romain: rebase on top of 2.26]
++Signed-off-by: Romain Naour <romain.naour@gmail.com>
++---
++ ld/Makefile.am | 2 +-
++ ld/Makefile.in | 2 +-
++ 2 files changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/ld/Makefile.am b/ld/Makefile.am
++index 0b3b049..3871c74 100644
++--- a/ld/Makefile.am
+++++ b/ld/Makefile.am
++@@ -57,7 +57,7 @@ endif
++ # We put the scripts in the directory $(scriptdir)/ldscripts.
++ # We can't put the scripts in $(datadir) because the SEARCH_DIR
++ # directives need to be different for native and cross linkers.
++-scriptdir = $(tooldir)/lib
+++scriptdir = $(libdir)
++ 
++ EMUL = @EMUL@
++ EMULATION_OFILES = @EMULATION_OFILES@
++diff --git a/ld/Makefile.in b/ld/Makefile.in
++index ed98f87..530e4c9 100644
++--- a/ld/Makefile.in
+++++ b/ld/Makefile.in
++@@ -413,7 +413,7 @@ AM_CFLAGS = $(WARN_CFLAGS) $(ELF_CLFAGS)
++ # We put the scripts in the directory $(scriptdir)/ldscripts.
++ # We can't put the scripts in $(datadir) because the SEARCH_DIR
++ # directives need to be different for native and cross linkers.
++-scriptdir = $(tooldir)/lib
+++scriptdir = $(libdir)
++ BASEDIR = $(srcdir)/..
++ BFDDIR = $(BASEDIR)/bfd
++ INCDIR = $(BASEDIR)/include
++-- 
++2.4.3
++
+diff --git a/package/binutils/2.26.1/0301-check-ldrunpath-length.patch b/package/binutils/2.26.1/0301-check-ldrunpath-length.patch
+new file mode 100644
+index 0000000000..3b4c204c7f
+--- /dev/null
++++ b/package/binutils/2.26.1/0301-check-ldrunpath-length.patch
+@@ -0,0 +1,36 @@
++From ebe1cba46df52d7bf86def3d681271fd05fb453b Mon Sep 17 00:00:00 2001
++From: Romain Naour <romain.naour@gmail.com>
++Date: Fri, 25 Dec 2015 11:41:47 +0100
++Subject: [PATCH] check-ldrunpath-length
++
++[Romain: rebase on top of 2.26]
++Signed-off-by: Romain Naour <romain.naour@gmail.com>
++---
++ ld/emultempl/elf32.em | 4 ++++
++ 1 file changed, 4 insertions(+)
++
++diff --git a/ld/emultempl/elf32.em b/ld/emultempl/elf32.em
++index 0405d4f..efd3300 100644
++--- a/ld/emultempl/elf32.em
+++++ b/ld/emultempl/elf32.em
++@@ -1242,6 +1242,8 @@ fragment <<EOF
++ 	      && command_line.rpath == NULL)
++ 	    {
++ 	      lib_path = (const char *) getenv ("LD_RUN_PATH");
+++	      if ((lib_path) && (strlen (lib_path) == 0))
+++	      	lib_path = NULL;
++ 	      if (gld${EMULATION_NAME}_search_needed (lib_path, &n,
++ 						      force))
++ 		break;
++@@ -1523,6 +1525,8 @@ gld${EMULATION_NAME}_before_allocation (void)
++   rpath = command_line.rpath;
++   if (rpath == NULL)
++     rpath = (const char *) getenv ("LD_RUN_PATH");
+++  if ((rpath) && (strlen (rpath) == 0))
+++  	rpath = NULL;
++ 
++   for (abfd = link_info.input_bfds; abfd; abfd = abfd->link.next)
++     if (bfd_get_flavour (abfd) == bfd_target_elf_flavour)
++-- 
++2.4.3
++
+diff --git a/package/binutils/2.26.1/0500-add-sysroot-fix-from-bug-3049.patch b/package/binutils/2.26.1/0500-add-sysroot-fix-from-bug-3049.patch
+new file mode 100644
+index 0000000000..f67a43efdf
+--- /dev/null
++++ b/package/binutils/2.26.1/0500-add-sysroot-fix-from-bug-3049.patch
+@@ -0,0 +1,52 @@
++From 30628870e583375f8927c04398c7219c6e9f703c Mon Sep 17 00:00:00 2001
++From: Romain Naour <romain.naour@gmail.com>
++Date: Fri, 25 Dec 2015 11:42:48 +0100
++Subject: [PATCH] add sysroot fix from bug #3049
++
++Always try to prepend the sysroot prefix to absolute filenames first.
++
++http://bugs.gentoo.org/275666
++http://sourceware.org/bugzilla/show_bug.cgi?id=10340
++
++Signed-off-by: Sven Rebhan <odinshorse@googlemail.com>
++[Romain: rebase on top of 2.26]
++Signed-off-by: Romain Naour <romain.naour@gmail.com>
++---
++ ld/ldfile.c | 11 +++++++++--
++ 1 file changed, 9 insertions(+), 2 deletions(-)
++
++diff --git a/ld/ldfile.c b/ld/ldfile.c
++index 96f9ecc..1439309 100644
++--- a/ld/ldfile.c
+++++ b/ld/ldfile.c
++@@ -335,18 +335,25 @@ ldfile_open_file_search (const char *arch,
++      directory first.  */
++   if (! entry->flags.maybe_archive)
++     {
++-      if (entry->flags.sysrooted && IS_ABSOLUTE_PATH (entry->filename))
+++      /* For absolute pathnames, try to always open the file in the
+++	 sysroot first. If this fails, try to open the file at the
+++	 given location.  */
+++      entry->flags.sysrooted = is_sysrooted_pathname (entry->filename);
+++      if (!entry->flags.sysrooted && IS_ABSOLUTE_PATH (entry->filename)
+++	  && ld_sysroot)
++ 	{
++ 	  char *name = concat (ld_sysroot, entry->filename,
++ 			       (const char *) NULL);
++ 	  if (ldfile_try_open_bfd (name, entry))
++ 	    {
++ 	      entry->filename = name;
+++	      entry->flags.sysrooted = TRUE;
++ 	      return TRUE;
++ 	    }
++ 	  free (name);
++ 	}
++-      else if (ldfile_try_open_bfd (entry->filename, entry))
+++
+++      if (ldfile_try_open_bfd (entry->filename, entry))
++ 	return TRUE;
++ 
++       if (IS_ABSOLUTE_PATH (entry->filename))
++-- 
++2.4.3
++
+diff --git a/package/binutils/2.26.1/0600-poison-system-directories.patch b/package/binutils/2.26.1/0600-poison-system-directories.patch
+new file mode 100644
+index 0000000000..d16994ec0c
+--- /dev/null
++++ b/package/binutils/2.26.1/0600-poison-system-directories.patch
+@@ -0,0 +1,306 @@
++From be366461dd49e760440fb28eaee5164eb281adcc Mon Sep 17 00:00:00 2001
++From: Romain Naour <romain.naour@gmail.com>
++Date: Fri, 25 Dec 2015 11:45:38 +0100
++Subject: [PATCH] poison-system-directories
++
++Patch adapted to binutils 2.23.2 and extended to use
++BR_COMPILER_PARANOID_UNSAFE_PATH by Thomas Petazzoni.
++
++[Romain: rebase on top of 2.26]
++Signed-off-by: Romain Naour <romain.naour@gmail.com>
++[Gustavo: adapt to binutils 2.25]
++Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
++Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
++
++Upstream-Status: Inappropriate [distribution: codesourcery]
++
++Patch originally created by Mark Hatle, forward-ported to
++binutils 2.21 by Scott Garman.
++
++purpose:  warn for uses of system directories when cross linking
++
++Code Merged from Sourcery G++ binutils 2.19 - 4.4-277
++
++2008-07-02  Joseph Myers  <joseph@codesourcery.com>
++
++    ld/
++    * ld.h (args_type): Add error_poison_system_directories.
++    * ld.texinfo (--error-poison-system-directories): Document.
++    * ldfile.c (ldfile_add_library_path): Check
++    command_line.error_poison_system_directories.
++    * ldmain.c (main): Initialize
++    command_line.error_poison_system_directories.
++    * lexsup.c (enum option_values): Add
++    OPTION_ERROR_POISON_SYSTEM_DIRECTORIES.
++    (ld_options): Add --error-poison-system-directories.
++    (parse_args): Handle new option.
++
++2007-06-13  Joseph Myers  <joseph@codesourcery.com>
++
++    ld/
++    * config.in: Regenerate.
++    * ld.h (args_type): Add poison_system_directories.
++    * ld.texinfo (--no-poison-system-directories): Document.
++    * ldfile.c (ldfile_add_library_path): Check
++    command_line.poison_system_directories.
++    * ldmain.c (main): Initialize
++    command_line.poison_system_directories.
++    * lexsup.c (enum option_values): Add
++    OPTION_NO_POISON_SYSTEM_DIRECTORIES.
++    (ld_options): Add --no-poison-system-directories.
++    (parse_args): Handle new option.
++
++2007-04-20  Joseph Myers  <joseph@codesourcery.com>
++
++    Merge from Sourcery G++ binutils 2.17:
++
++    2007-03-20  Joseph Myers  <joseph@codesourcery.com>
++    Based on patch by Mark Hatle <mark.hatle@windriver.com>.
++    ld/
++    * configure.ac (--enable-poison-system-directories): New option.
++    * configure, config.in: Regenerate.
++    * ldfile.c (ldfile_add_library_path): If
++    ENABLE_POISON_SYSTEM_DIRECTORIES defined, warn for use of /lib,
++    /usr/lib, /usr/local/lib or /usr/X11R6/lib.
++
++Signed-off-by: Mark Hatle <mark.hatle@windriver.com>
++Signed-off-by: Scott Garman <scott.a.garman@intel.com>
++---
++ ld/config.in    |  3 +++
++ ld/configure    | 14 ++++++++++++++
++ ld/configure.ac | 10 ++++++++++
++ ld/ld.h         |  8 ++++++++
++ ld/ld.texinfo   | 12 ++++++++++++
++ ld/ldfile.c     | 17 +++++++++++++++++
++ ld/ldlex.h      |  2 ++
++ ld/ldmain.c     |  2 ++
++ ld/lexsup.c     | 21 +++++++++++++++++++++
++ 9 files changed, 89 insertions(+)
++
++diff --git a/ld/config.in b/ld/config.in
++index 276fb77..35c58eb 100644
++--- a/ld/config.in
+++++ b/ld/config.in
++@@ -14,6 +14,9 @@
++    language is requested. */
++ #undef ENABLE_NLS
++ 
+++/* Define to warn for use of native system library directories */
+++#undef ENABLE_POISON_SYSTEM_DIRECTORIES
+++
++ /* Additional extension a shared object might have. */
++ #undef EXTRA_SHLIB_EXTENSION
++ 
++diff --git a/ld/configure b/ld/configure
++index a446283..d1f9504 100755
++--- a/ld/configure
+++++ b/ld/configure
++@@ -786,6 +786,7 @@ with_lib_path
++ enable_targets
++ enable_64_bit_bfd
++ with_sysroot
+++enable_poison_system_directories
++ enable_gold
++ enable_got
++ enable_compressed_debug_sections
++@@ -1442,6 +1443,8 @@ Optional Features:
++   --disable-largefile     omit support for large files
++   --enable-targets        alternative target configurations
++   --enable-64-bit-bfd     64-bit support (on hosts with narrower word sizes)
+++  --enable-poison-system-directories
+++                          warn for use of native system library directories
++   --enable-gold[=ARG]     build gold [ARG={default,yes,no}]
++   --enable-got=<type>     GOT handling scheme (target, single, negative,
++                           multigot)
++@@ -15491,7 +15494,18 @@ else
++ fi
++ 
++ 
+++# Check whether --enable-poison-system-directories was given.
+++if test "${enable_poison_system_directories+set}" = set; then :
+++  enableval=$enable_poison_system_directories;
+++else
+++  enable_poison_system_directories=no
+++fi
+++
+++if test "x${enable_poison_system_directories}" = "xyes"; then
++ 
+++$as_echo "#define ENABLE_POISON_SYSTEM_DIRECTORIES 1" >>confdefs.h
+++
+++fi
++ 
++ # Check whether --enable-got was given.
++ if test "${enable_got+set}" = set; then :
++diff --git a/ld/configure.ac b/ld/configure.ac
++index 188172d..2cd8443 100644
++--- a/ld/configure.ac
+++++ b/ld/configure.ac
++@@ -95,6 +95,16 @@ AC_SUBST(use_sysroot)
++ AC_SUBST(TARGET_SYSTEM_ROOT)
++ AC_SUBST(TARGET_SYSTEM_ROOT_DEFINE)
++ 
+++AC_ARG_ENABLE([poison-system-directories],
+++         AS_HELP_STRING([--enable-poison-system-directories],
+++                [warn for use of native system library directories]),,
+++         [enable_poison_system_directories=no])
+++if test "x${enable_poison_system_directories}" = "xyes"; then
+++  AC_DEFINE([ENABLE_POISON_SYSTEM_DIRECTORIES],
+++       [1],
+++       [Define to warn for use of native system library directories])
+++fi
+++
++ dnl Use --enable-gold to decide if this linker should be the default.
++ dnl "install_as_default" is set to false if gold is the default linker.
++ dnl "installed_linker" is the installed BFD linker name.
++diff --git a/ld/ld.h b/ld/ld.h
++index d84ec4e..3476b26 100644
++--- a/ld/ld.h
+++++ b/ld/ld.h
++@@ -164,6 +164,14 @@ typedef struct {
++   /* If set, display the target memory usage (per memory region).  */
++   bfd_boolean print_memory_usage;
++ 
+++  /* If TRUE (the default) warn for uses of system directories when
+++     cross linking.  */
+++  bfd_boolean poison_system_directories;
+++
+++  /* If TRUE (default FALSE) give an error for uses of system
+++     directories when cross linking instead of a warning.  */
+++  bfd_boolean error_poison_system_directories;
+++
++   /* Big or little endian as set on command line.  */
++   enum endian_enum endian;
++ 
++diff --git a/ld/ld.texinfo b/ld/ld.texinfo
++index 1dd7492..fb1438e 100644
++--- a/ld/ld.texinfo
+++++ b/ld/ld.texinfo
++@@ -2332,6 +2332,18 @@ string identifying the original linked file does not change.
++ 
++ Passing @code{none} for @var{style} disables the setting from any
++ @code{--build-id} options earlier on the command line.
+++
+++@kindex --no-poison-system-directories
+++@item --no-poison-system-directories
+++Do not warn for @option{-L} options using system directories such as
+++@file{/usr/lib} when cross linking.  This option is intended for use
+++in chroot environments when such directories contain the correct
+++libraries for the target system rather than the host.
+++
+++@kindex --error-poison-system-directories
+++@item --error-poison-system-directories
+++Give an error instead of a warning for @option{-L} options using
+++system directories when cross linking.
++ @end table
++ 
++ @c man end
++diff --git a/ld/ldfile.c b/ld/ldfile.c
++index 1439309..086b354 100644
++--- a/ld/ldfile.c
+++++ b/ld/ldfile.c
++@@ -114,6 +114,23 @@ ldfile_add_library_path (const char *name, bfd_boolean cmdline)
++     new_dirs->name = concat (ld_sysroot, name + 1, (const char *) NULL);
++   else
++     new_dirs->name = xstrdup (name);
+++
+++#ifdef ENABLE_POISON_SYSTEM_DIRECTORIES
+++  if (command_line.poison_system_directories
+++  && ((!strncmp (name, "/lib", 4))
+++      || (!strncmp (name, "/usr/lib", 8))
+++      || (!strncmp (name, "/usr/local/lib", 14))
+++      || (!strncmp (name, "/usr/X11R6/lib", 14))))
+++   {
+++     if (command_line.error_poison_system_directories)
+++       einfo (_("%X%P: error: library search path \"%s\" is unsafe for "
+++            "cross-compilation\n"), name);
+++     else
+++       einfo (_("%P: warning: library search path \"%s\" is unsafe for "
+++            "cross-compilation\n"), name);
+++   }
+++#endif
+++
++ }
++ 
++ /* Try to open a BFD for a lang_input_statement.  */
++diff --git a/ld/ldlex.h b/ld/ldlex.h
++index 6f11e7b..0ca3110 100644
++--- a/ld/ldlex.h
+++++ b/ld/ldlex.h
++@@ -144,6 +144,8 @@ enum option_values
++   OPTION_PRINT_MEMORY_USAGE,
++   OPTION_REQUIRE_DEFINED_SYMBOL,
++   OPTION_ORPHAN_HANDLING,
+++  OPTION_NO_POISON_SYSTEM_DIRECTORIES,
+++  OPTION_ERROR_POISON_SYSTEM_DIRECTORIES,
++ };
++ 
++ /* The initial parser states.  */
++diff --git a/ld/ldmain.c b/ld/ldmain.c
++index bb0b9cc..a23c56c 100644
++--- a/ld/ldmain.c
+++++ b/ld/ldmain.c
++@@ -257,6 +257,8 @@ main (int argc, char **argv)
++   command_line.warn_mismatch = TRUE;
++   command_line.warn_search_mismatch = TRUE;
++   command_line.check_section_addresses = -1;
+++  command_line.poison_system_directories = TRUE;
+++  command_line.error_poison_system_directories = FALSE;
++ 
++   /* We initialize DEMANGLING based on the environment variable
++      COLLECT_NO_DEMANGLE.  The gcc collect2 program will demangle the
++diff --git a/ld/lexsup.c b/ld/lexsup.c
++index 4cad209..be7d584 100644
++--- a/ld/lexsup.c
+++++ b/ld/lexsup.c
++@@ -530,6 +530,14 @@ static const struct ld_option ld_options[] =
++   { {"orphan-handling", required_argument, NULL, OPTION_ORPHAN_HANDLING},
++     '\0', N_("=MODE"), N_("Control how orphan sections are handled."),
++     TWO_DASHES },
+++  { {"no-poison-system-directories", no_argument, NULL,
+++    OPTION_NO_POISON_SYSTEM_DIRECTORIES},
+++    '\0', NULL, N_("Do not warn for -L options using system directories"),
+++    TWO_DASHES },
+++  { {"error-poison-system-directories", no_argument, NULL,
+++    OPTION_ERROR_POISON_SYSTEM_DIRECTORIES},
+++    '\0', NULL, N_("Give an error for -L options using system directories"),
+++    TWO_DASHES },
++ };
++ 
++ #define OPTION_COUNT ARRAY_SIZE (ld_options)
++@@ -542,6 +550,7 @@ parse_args (unsigned argc, char **argv)
++   int ingroup = 0;
++   char *default_dirlist = NULL;
++   char *shortopts;
+++  char *BR_paranoid_env;
++   struct option *longopts;
++   struct option *really_longopts;
++   int last_optind;
++@@ -1516,6 +1525,14 @@ parse_args (unsigned argc, char **argv)
++           }
++           break;
++ 
+++	case OPTION_NO_POISON_SYSTEM_DIRECTORIES:
+++	  command_line.poison_system_directories = FALSE;
+++	  break;
+++
+++	case OPTION_ERROR_POISON_SYSTEM_DIRECTORIES:
+++	  command_line.error_poison_system_directories = TRUE;
+++	  break;
+++
++ 	case OPTION_PUSH_STATE:
++ 	  input_flags.pushed = xmemdup (&input_flags,
++ 					sizeof (input_flags),
++@@ -1559,6 +1576,10 @@ parse_args (unsigned argc, char **argv)
++       command_line.soname = NULL;
++     }
++ 
+++  BR_paranoid_env = getenv("BR_COMPILER_PARANOID_UNSAFE_PATH");
+++  if (BR_paranoid_env && strlen(BR_paranoid_env) > 0)
+++    command_line.error_poison_system_directories = TRUE;
+++
++   while (ingroup)
++     {
++       lang_leave_group ();
++-- 
++2.4.3
++
+diff --git a/package/binutils/2.26.1/0800-microblaze-musl.patch b/package/binutils/2.26.1/0800-microblaze-musl.patch
+new file mode 100644
+index 0000000000..5e45058f6c
+--- /dev/null
++++ b/package/binutils/2.26.1/0800-microblaze-musl.patch
+@@ -0,0 +1,23 @@
++Fix the genetation of GOT entries for the Microblaze target.
++
++PR target/19516
++* elf32-microblaze.c (microblaze_elf_finish_dynamic_symbol):
++Always produce a RELATIVE reloc for a local symbol.
++
++[Taken from https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=47993b4af18c6ef1cad300f6393bf896d3cb5e5c.]
++Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
++
++diff -Nur binutils-2.26.1.orig/bfd/elf32-microblaze.c binutils-2.26.1/bfd/elf32-microblaze.c
++--- binutils-2.26.1.orig/bfd/elf32-microblaze.c	2015-11-13 09:27:40.000000000 +0100
+++++ binutils-2.26.1/bfd/elf32-microblaze.c	2016-10-20 19:06:58.655565765 +0200
++@@ -3296,8 +3296,8 @@
++          The entry in the global offset table will already have been
++          initialized in the relocate_section function.  */
++       if (bfd_link_pic (info)
++-          && (info->symbolic || h->dynindx == -1)
++-          && h->def_regular)
+++	  && ((info->symbolic && h->def_regular)
+++		|| h->dynindx == -1))
++         {
++           asection *sec = h->root.u.def.section;
++           microblaze_elf_output_dynamic_relocation (output_bfd,
+diff --git a/package/binutils/2.26.1/0900-Correct-nios2-_gp-address-computation.patch b/package/binutils/2.26.1/0900-Correct-nios2-_gp-address-computation.patch
+new file mode 100644
+index 0000000000..81986f51b9
+--- /dev/null
++++ b/package/binutils/2.26.1/0900-Correct-nios2-_gp-address-computation.patch
+@@ -0,0 +1,108 @@
++From 5eeb7401eed2f26d5fc255de816ca70a2cb9374e Mon Sep 17 00:00:00 2001
++From: Sandra Loosemore <sandra@codesourcery.com>
++Date: Sun, 27 Dec 2015 12:30:26 -0800
++Subject: [PATCH 900/901] Correct nios2 _gp address computation.
++
++2015-12-27  Sandra Loosemore  <sandra@codesourcery.com>
++
++	bfd/
++	* elf32-nios2.c (nios2_elf_assign_gp): Correct computation of _gp
++	address.
++	(nios2_elf32_relocate_section): Tidy code for R_NIOS2_GPREL error
++	messages.
++
++[Romain:
++  - backport upstream patch on 2.26
++  - drop bfd/ChangeLog entry]
++Signed-off-by: Romain Naour <romain.naour@gmail.com>
++---
++ bfd/elf32-nios2.c | 31 +++++++++++++++++++++----------
++ 1 file changed, 21 insertions(+), 10 deletions(-)
++
++diff --git a/bfd/elf32-nios2.c b/bfd/elf32-nios2.c
++index 6b29d8b..01ebd6e 100644
++--- a/bfd/elf32-nios2.c
+++++ b/bfd/elf32-nios2.c
++@@ -3086,7 +3086,15 @@ lookup:
++ 	case bfd_link_hash_defined:
++ 	case bfd_link_hash_defweak:
++ 	  gp_found = TRUE;
++-	  *pgp = lh->u.def.value;
+++	  {
+++	    asection *sym_sec = lh->u.def.section;
+++	    bfd_vma sym_value = lh->u.def.value;
+++
+++	    if (sym_sec->output_section)
+++	      sym_value = (sym_value + sym_sec->output_offset
+++			   + sym_sec->output_section->vma);
+++	    *pgp = sym_value;
+++	  }
++ 	  break;
++ 	case bfd_link_hash_indirect:
++ 	case bfd_link_hash_warning:
++@@ -3719,7 +3727,6 @@ nios2_elf32_relocate_section (bfd *output_bfd,
++       struct elf32_nios2_link_hash_entry *eh;
++       bfd_vma relocation;
++       bfd_vma gp;
++-      bfd_vma reloc_address;
++       bfd_reloc_status_type r = bfd_reloc_ok;
++       const char *name = NULL;
++       int r_type;
++@@ -3762,12 +3769,6 @@ nios2_elf32_relocate_section (bfd *output_bfd,
++       if (bfd_link_relocatable (info))
++ 	continue;
++ 
++-      if (sec && sec->output_section)
++-	reloc_address = (sec->output_section->vma + sec->output_offset
++-			 + rel->r_offset);
++-      else
++-	reloc_address = 0;
++-
++       if (howto)
++ 	{
++ 	  switch (howto->type)
++@@ -3816,6 +3817,15 @@ nios2_elf32_relocate_section (bfd *output_bfd,
++ 	      /* Turns an absolute address into a gp-relative address.  */
++ 	      if (!nios2_elf_assign_gp (output_bfd, &gp, info))
++ 		{
+++		  bfd_vma reloc_address;
+++
+++		  if (sec && sec->output_section)
+++		    reloc_address = (sec->output_section->vma
+++				     + sec->output_offset
+++				     + rel->r_offset);
+++		  else
+++		    reloc_address = 0;
+++
++ 		  format = _("global pointer relative relocation at address "
++ 			     "0x%08x when _gp not defined\n");
++ 		  sprintf (msgbuf, format, reloc_address);
++@@ -3825,7 +3835,7 @@ nios2_elf32_relocate_section (bfd *output_bfd,
++ 	      else
++ 		{
++ 		  bfd_vma symbol_address = rel->r_addend + relocation;
++-		  relocation = relocation + rel->r_addend - gp;
+++		  relocation = symbol_address - gp;
++ 		  rel->r_addend = 0;
++ 		  if (((signed) relocation < -32768
++ 		       || (signed) relocation > 32767)
++@@ -3833,6 +3843,8 @@ nios2_elf32_relocate_section (bfd *output_bfd,
++ 			  || h->root.type == bfd_link_hash_defined
++ 			  || h->root.type == bfd_link_hash_defweak))
++ 		    {
+++		      if (h)
+++			name = h->root.root.string;
++ 		      format = _("Unable to reach %s (at 0x%08x) from the "
++ 				 "global pointer (at 0x%08x) because the "
++ 				 "offset (%d) is out of the allowed range, "
++@@ -3848,7 +3860,6 @@ nios2_elf32_relocate_section (bfd *output_bfd,
++ 						  rel->r_offset, relocation,
++ 						  rel->r_addend);
++ 		}
++-
++ 	      break;
++ 	    case R_NIOS2_UJMP:
++ 	      r = nios2_elf32_do_ujmp_relocate (input_bfd, howto,
++-- 
++2.4.3
++
+diff --git a/package/binutils/2.26.1/0901-Fix-assertion-reduce-number-of-messages-about-FDE-en.patch b/package/binutils/2.26.1/0901-Fix-assertion-reduce-number-of-messages-about-FDE-en.patch
+new file mode 100644
+index 0000000000..a490780f7e
+--- /dev/null
++++ b/package/binutils/2.26.1/0901-Fix-assertion-reduce-number-of-messages-about-FDE-en.patch
+@@ -0,0 +1,67 @@
++From 39c481c2fb0e7fb127a15facf70b55d517462809 Mon Sep 17 00:00:00 2001
++From: Romain Naour <romain.naour@gmail.com>
++Date: Sat, 6 Feb 2016 00:35:31 +0100
++Subject: [PATCH 901/901] Fix assertion, reduce number of messages about FDE
++ encoding
++
++Patch by Nick Clifton [1]
++
++[1] https://sourceware.org/bugzilla/show_bug.cgi?id=19405
++
++Signed-off-by: Romain Naour <romain.naour@gmail.com>
++---
++ bfd/elf-eh-frame.c | 17 ++++++++++++++---
++ bfd/elf32-nios2.c  |  4 ++--
++ 2 files changed, 16 insertions(+), 5 deletions(-)
++
++diff --git a/bfd/elf-eh-frame.c b/bfd/elf-eh-frame.c
++index e303189..e79bff0 100644
++--- a/bfd/elf-eh-frame.c
+++++ b/bfd/elf-eh-frame.c
++@@ -1369,14 +1369,25 @@ _bfd_elf_discard_section_eh_frame
++ 		     && ent->make_relative == 0)
++ 		    || (ent->fde_encoding & 0x70) == DW_EH_PE_aligned))
++ 	      {
+++		static int num_warnings_issued = 0;
++ 		/* If a shared library uses absolute pointers
++ 		   which we cannot turn into PC relative,
++ 		   don't create the binary search table,
++ 		   since it is affected by runtime relocations.  */
++ 		hdr_info->u.dwarf.table = FALSE;
++-		(*info->callbacks->einfo)
++-		  (_("%P: FDE encoding in %B(%A) prevents .eh_frame_hdr"
++-		     " table being created.\n"), abfd, sec);
+++		if (num_warnings_issued < 10)
+++		  {
+++		    (*info->callbacks->einfo)
+++		      (_("%P: FDE encoding in %B(%A) prevents .eh_frame_hdr"
+++			 " table being created.\n"), abfd, sec);
+++		    num_warnings_issued ++;
+++		  }
+++		else if (num_warnings_issued == 10)
+++		  {
+++		    (*info->callbacks->einfo)
+++		      (_("%P: Further warnings about FDE encoding preventing .eh_frame_hdr generation dropped.\n"));
+++		    num_warnings_issued ++;
+++		  }
++ 	      }
++ 	    ent->removed = 0;
++ 	    hdr_info->u.dwarf.fde_count++;
++diff --git a/bfd/elf32-nios2.c b/bfd/elf32-nios2.c
++index 01ebd6e..d1b7f83 100644
++--- a/bfd/elf32-nios2.c
+++++ b/bfd/elf32-nios2.c
++@@ -1905,8 +1905,8 @@ nios2_elf32_install_imm16 (asection *sec, bfd_vma offset, bfd_vma value)
++ {
++   bfd_vma word = bfd_get_32 (sec->owner, sec->contents + offset);
++ 
++-  BFD_ASSERT(value <= 0xffff);
++-
+++  BFD_ASSERT (value <= 0xffff || ((bfd_signed_vma) value) >= -0xffff);
+++  
++   bfd_put_32 (sec->owner, word | ((value & 0xffff) << 6),
++ 	      sec->contents + offset);
++ }
++-- 
++2.4.3
++
+diff --git a/package/binutils/2.26.1/0902-xtensa-fix-signedness-of-gas-relocations.patch b/package/binutils/2.26.1/0902-xtensa-fix-signedness-of-gas-relocations.patch
+new file mode 100644
+index 0000000000..4ba2f75cc8
+--- /dev/null
++++ b/package/binutils/2.26.1/0902-xtensa-fix-signedness-of-gas-relocations.patch
+@@ -0,0 +1,101 @@
++From eb3e02b484ff75f4a2f54192422a88baa275bdfc Mon Sep 17 00:00:00 2001
++From: Max Filippov <jcmvbkbc@gmail.com>
++Date: Tue, 2 Feb 2016 17:11:38 +0300
++Subject: [PATCH] xtensa: fix signedness of gas relocations
++
++Change 1058c7532d0b "Use signed data type for R_XTENSA_DIFF* relocation
++offsets." changed signedness of BFD_RELOC_XTENSA_DIFF* relocations
++substituted for BFD_RELOC_*. This made it impossible to encode arbitrary
++8-, 16- and 32-bit values, which broke e.g. debug info encoding by .loc
++directive. Revert this part and add test.
++
++gas/
++2016-02-03  Max Filippov  <jcmvbkbc@gmail.com>
++	* config/tc-xtensa.c (md_apply_fix): Mark BFD_RELOC_XTENSA_DIFF*
++	substitutions for BFD_RELOC_* as unsigned.
++
++gas/testsuite/
++2016-02-03  Max Filippov  <jcmvbkbc@gmail.com>
++	* gas/xtensa/all.exp: Add loc to list of xtensa tests.
++	* gas/xtensa/loc.d: New file: loc test result patterns.
++	* gas/xtensa/loc.s: New file: loc test.
++
++Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
++[Rebase on 2.26]
++Signed-off-by: Romain Naour <romain.naour@gmail.com>
++---
++ gas/config/tc-xtensa.c           |  6 +++---
++ gas/testsuite/gas/xtensa/all.exp |  1 +
++ gas/testsuite/gas/xtensa/loc.d   | 10 ++++++++++
++ gas/testsuite/gas/xtensa/loc.s   |  7 +++++++
++ 4 files changed, 21 insertions(+), 3 deletions(-)
++ create mode 100644 gas/testsuite/gas/xtensa/loc.d
++ create mode 100644 gas/testsuite/gas/xtensa/loc.s
++
++diff --git a/gas/config/tc-xtensa.c b/gas/config/tc-xtensa.c
++index d707da8..f623add 100644
++--- a/gas/config/tc-xtensa.c
+++++ b/gas/config/tc-xtensa.c
++@@ -5961,15 +5961,15 @@ md_apply_fix (fixS *fixP, valueT *valP, segT seg)
++ 	    {
++ 	    case BFD_RELOC_8:
++ 	      fixP->fx_r_type = BFD_RELOC_XTENSA_DIFF8;
++-	      fixP->fx_signed = 1;
+++	      fixP->fx_signed = 0;
++ 	      break;
++ 	    case BFD_RELOC_16:
++ 	      fixP->fx_r_type = BFD_RELOC_XTENSA_DIFF16;
++-	      fixP->fx_signed = 1;
+++	      fixP->fx_signed = 0;
++ 	      break;
++ 	    case BFD_RELOC_32:
++ 	      fixP->fx_r_type = BFD_RELOC_XTENSA_DIFF32;
++-	      fixP->fx_signed = 1;
+++	      fixP->fx_signed = 0;
++ 	      break;
++ 	    default:
++ 	      break;
++diff --git a/gas/testsuite/gas/xtensa/all.exp b/gas/testsuite/gas/xtensa/all.exp
++index db39629..4daeff2 100644
++--- a/gas/testsuite/gas/xtensa/all.exp
+++++ b/gas/testsuite/gas/xtensa/all.exp
++@@ -101,6 +101,7 @@ if [istarget xtensa*-*-*] then {
++     run_dump_test "trampoline"
++     run_dump_test "first_frag_align"
++     run_dump_test "auto-litpools"
+++    run_dump_test "loc"
++ }
++ 
++ if [info exists errorInfo] then {
++diff --git a/gas/testsuite/gas/xtensa/loc.d b/gas/testsuite/gas/xtensa/loc.d
++new file mode 100644
++index 0000000..71983cc
++--- /dev/null
+++++ b/gas/testsuite/gas/xtensa/loc.d
++@@ -0,0 +1,10 @@
+++#as:
+++#objdump: -r
+++#name: .loc directive relocs
+++
+++.*: +file format .*xtensa.*
+++
+++RELOCATION RECORDS FOR \[\.debug_line\]:
+++#...
+++.*R_XTENSA_DIFF16.*\.text\+0x00009c42
+++#...
++diff --git a/gas/testsuite/gas/xtensa/loc.s b/gas/testsuite/gas/xtensa/loc.s
++new file mode 100644
++index 0000000..029e14e
++--- /dev/null
+++++ b/gas/testsuite/gas/xtensa/loc.s
++@@ -0,0 +1,7 @@
+++	.text
+++	.file 1 "loc.s"
+++	.loc 1 3
+++	nop
+++	.space 40000
+++	.loc 1 5
+++	nop
++-- 
++2.4.3
++
+diff --git a/package/binutils/2.26.1/0903-xtensa-fix-.init-.fini-literals-moving.patch b/package/binutils/2.26.1/0903-xtensa-fix-.init-.fini-literals-moving.patch
+new file mode 100644
+index 0000000000..ead3e42b75
+--- /dev/null
++++ b/package/binutils/2.26.1/0903-xtensa-fix-.init-.fini-literals-moving.patch
+@@ -0,0 +1,149 @@
++From 7db2accc3fdea0aaa0c3a76a413d8e8030e022c3 Mon Sep 17 00:00:00 2001
++From: Max Filippov <jcmvbkbc@gmail.com>
++Date: Tue, 16 Feb 2016 02:23:28 +0300
++Subject: [PATCH] xtensa: fix .init/.fini literals moving
++
++Despite the documentation and the comment in xtensa_move_literals, in
++the presence of --text-section-literals and --auto-litpools literals are
++moved from the separate literal sections into .init and .fini, because
++the check in the xtensa_move_literals is incorrect.
++
++This moving was broken with introduction of auto litpools: some literals
++now may be lost. This happens because literal frags emitted from .init
++and .fini are not closed when new .literal_position marks new literal
++pool. Then frag_align(2, 0, 0) changes type of the last literal frag to
++rs_align. rs_align frags are skipped in the xtensa_move_literals. As a
++result fixups against such literals are not moved out of .init.literal/
++.fini.literal sections producing the following assembler error:
++
++  test.S: Warning: fixes not all moved from .init.literal
++  test.S: Internal error!
++
++Fix check for .init.literal/.fini.literal in the xtensa_move_literals
++and don't let it move literals from there in the presence of
++--text-section-literals or --auto-litpools.
++
++2016-02-17  Max Filippov  <jcmvbkbc@gmail.com>
++gas/
++	* config/tc-xtensa.c (xtensa_move_literals): Fix check for
++	.init.literal/.fini.literal section name.
++	* testsuite/gas/xtensa/all.exp: Add init-fini-literals to the
++	list of xtensa tests.
++	* testsuite/gas/xtensa/init-fini-literals.d: New file:
++	init-fini-literals test result patterns.
++	* testsuite/gas/xtensa/init-fini-literals.s: New file:
++	init-fini-literals test.
++
++Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
++---
++Backported from: 4111950f363221c4641dc2f33bea61cc94f34906
++
++ gas/config/tc-xtensa.c                        | 12 ++++++++++--
++ gas/testsuite/gas/xtensa/all.exp              |  1 +
++ gas/testsuite/gas/xtensa/init-fini-literals.d | 24 ++++++++++++++++++++++++
++ gas/testsuite/gas/xtensa/init-fini-literals.s | 19 +++++++++++++++++++
++ 4 files changed, 54 insertions(+), 2 deletions(-)
++ create mode 100644 gas/testsuite/gas/xtensa/init-fini-literals.d
++ create mode 100644 gas/testsuite/gas/xtensa/init-fini-literals.s
++
++diff --git a/gas/config/tc-xtensa.c b/gas/config/tc-xtensa.c
++index 36a06cc..5773634 100644
++--- a/gas/config/tc-xtensa.c
+++++ b/gas/config/tc-xtensa.c
++@@ -11061,6 +11061,10 @@ xtensa_move_literals (void)
++   fixS *fix, *next_fix, **fix_splice;
++   sym_list *lit;
++   struct litpool_seg *lps;
+++  const char *init_name = INIT_SECTION_NAME;
+++  const char *fini_name = FINI_SECTION_NAME;
+++  int init_name_len = strlen(init_name);
+++  int fini_name_len = strlen(fini_name);
++ 
++   mark_literal_frags (literal_head->next);
++ 
++@@ -11171,9 +11175,13 @@ xtensa_move_literals (void)
++ 
++   for (segment = literal_head->next; segment; segment = segment->next)
++     {
+++      const char *seg_name = segment_name (segment->seg);
+++
++       /* Keep the literals for .init and .fini in separate sections.  */
++-      if (!strcmp (segment_name (segment->seg), INIT_SECTION_NAME)
++-	  || !strcmp (segment_name (segment->seg), FINI_SECTION_NAME))
+++      if ((!memcmp (seg_name, init_name, init_name_len) &&
+++	   !strcmp (seg_name + init_name_len, ".literal")) ||
+++	  (!memcmp (seg_name, fini_name, fini_name_len) &&
+++	   !strcmp (seg_name + fini_name_len, ".literal")))
++ 	continue;
++ 
++       frchain_from = seg_info (segment->seg)->frchainP;
++diff --git a/gas/testsuite/gas/xtensa/all.exp b/gas/testsuite/gas/xtensa/all.exp
++index 7ff7bd7..6b67320 100644
++--- a/gas/testsuite/gas/xtensa/all.exp
+++++ b/gas/testsuite/gas/xtensa/all.exp
++@@ -102,6 +102,7 @@ if [istarget xtensa*-*-*] then {
++     run_dump_test "first_frag_align"
++     run_dump_test "auto-litpools"
++     run_dump_test "loc"
+++    run_dump_test "init-fini-literals"
++ }
++ 
++ if [info exists errorInfo] then {
++diff --git a/gas/testsuite/gas/xtensa/init-fini-literals.d b/gas/testsuite/gas/xtensa/init-fini-literals.d
++new file mode 100644
++index 0000000..19ed121
++--- /dev/null
+++++ b/gas/testsuite/gas/xtensa/init-fini-literals.d
++@@ -0,0 +1,24 @@
+++#as: --text-section-literals
+++#objdump: -r
+++#name: check that literals for .init and .fini always go to separate sections
+++
+++.*: +file format .*xtensa.*
+++#...
+++RELOCATION RECORDS FOR \[\.init\.literal\]:
+++#...
+++00000000 R_XTENSA_PLT      init
+++#...
+++RELOCATION RECORDS FOR \[\.fini\.literal\]:
+++#...
+++00000000 R_XTENSA_PLT      fini
+++#...
+++RELOCATION RECORDS FOR \[\.init\]:
+++#...
+++.* R_XTENSA_SLOT0_OP  \.init\.literal
+++.* R_XTENSA_SLOT0_OP  \.init\.literal\+0x00000004
+++#...
+++RELOCATION RECORDS FOR \[\.fini\]:
+++#...
+++.* R_XTENSA_SLOT0_OP  \.fini\.literal
+++.* R_XTENSA_SLOT0_OP  \.fini\.literal\+0x00000004
+++#...
++diff --git a/gas/testsuite/gas/xtensa/init-fini-literals.s b/gas/testsuite/gas/xtensa/init-fini-literals.s
++new file mode 100644
++index 0000000..7c9ec17
++--- /dev/null
+++++ b/gas/testsuite/gas/xtensa/init-fini-literals.s
++@@ -0,0 +1,19 @@
+++	.section	.init,"ax",@progbits
+++	.literal_position
+++	.literal .LC0, init@PLT
+++	.literal_position
+++	.literal .LC1, 1
+++	.align	4
+++
+++	l32r	a2, .LC0
+++	l32r	a2, .LC1
+++
+++	.section	.fini,"ax",@progbits
+++	.literal_position
+++	.literal .LC2, fini@PLT
+++	.literal_position
+++	.literal .LC3, 1
+++	.align	4
+++
+++	l32r	a2, .LC2
+++	l32r	a2, .LC3
++-- 
++2.1.4
++
+diff --git a/package/binutils/2.26.1/0904-bfin-fdpic-upstream.patch b/package/binutils/2.26.1/0904-bfin-fdpic-upstream.patch
+new file mode 100644
+index 0000000000..ffbacc4c0e
+--- /dev/null
++++ b/package/binutils/2.26.1/0904-bfin-fdpic-upstream.patch
+@@ -0,0 +1,30 @@
++From ed3056ebdb9795446157af03d3e08fbb93c1b01d Mon Sep 17 00:00:00 2001
++From: Nick Clifton <nickc@redhat.com>
++Date: Tue, 29 Mar 2016 10:24:16 +0100
++Subject: [PATCH] Relax assertion in BFIN linker to allow for discard GOT relocs.
++
++	PR 17334
++	* elf32-bfin.c (elf32_bfinfdpic_finish_dynamic_sections): Relax
++	assertion on the size of the got section to allow it to be bigger
++	than the number of relocs.
++diff --git a/bfd/elf32-bfin.c b/bfd/elf32-bfin.c
++index 7cc8b6d..b2fcf38 100644
++--- a/bfd/elf32-bfin.c
+++++ b/bfd/elf32-bfin.c
++@@ -4457,7 +4457,13 @@ elf32_bfinfdpic_finish_dynamic_sections (bfd *output_bfd,
++   if (bfinfdpic_got_section (info))
++     {
++       BFD_ASSERT (bfinfdpic_gotrel_section (info)->size
++-		  == (bfinfdpic_gotrel_section (info)->reloc_count
+++		  /* PR 17334: It appears that the GOT section can end up
+++		     being bigger than the number of relocs.  Presumably
+++		     because some relocs have been deleted.  A test case has
+++		     yet to be generated for verify this, but in the meantime
+++		     the test below has been changed from == to >= so that
+++		     applications can continue to be built.  */
+++		  >= (bfinfdpic_gotrel_section (info)->reloc_count
++ 		      * sizeof (Elf32_External_Rel)));
++ 
++       if (bfinfdpic_gotfixup_section (info))
++-- 
++1.7.1
+diff --git a/package/binutils/2.26.1/0905-bfin-rofixup-bug.patch b/package/binutils/2.26.1/0905-bfin-rofixup-bug.patch
+new file mode 100644
+index 0000000000..da9d586551
+--- /dev/null
++++ b/package/binutils/2.26.1/0905-bfin-rofixup-bug.patch
+@@ -0,0 +1,21 @@
++Fixes: LINKER BUG: .rofixup section size mismatch
++
++Workaround from adi-toolchain commit:
++af414ec1fb628ddb1562f062f3db49823ca14ca2
++[#6798] binutils-2.21/bfd: temp workaround for rofixup mismatch errors.
++
++Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
++
++diff -Nur binutils-2.26.1.orig/bfd/elf32-bfin.c binutils-2.26.1/bfd/elf32-bfin.c
++--- binutils-2.26.1.orig/bfd/elf32-bfin.c	2015-11-13 09:27:40.000000000 +0100
+++++ binutils-2.26.1/bfd/elf32-bfin.c	2016-07-31 00:50:48.357995132 +0200
++@@ -4879,7 +4879,8 @@
++ 
++ 	case R_BFIN_FUNCDESC:
++ 	  picrel->fd++;
++-	  picrel->relocsfd++;
+++	  if (bfd_get_section_flags (abfd, sec) & SEC_ALLOC)
+++	    picrel->relocsfd++;
++ 	  break;
++ 
++         /* This relocation describes the C++ object vtable hierarchy.
+diff --git a/package/binutils/2.26.1/0906-microblaze-pr21180.patch b/package/binutils/2.26.1/0906-microblaze-pr21180.patch
+new file mode 100644
+index 0000000000..8104db3462
+--- /dev/null
++++ b/package/binutils/2.26.1/0906-microblaze-pr21180.patch
+@@ -0,0 +1,33 @@
++Fix ld segfault for microblaze when --gc-sections is used
++Upstream: pending
++https://sourceware.org/bugzilla/show_bug.cgi?id=21180
++
++Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
++
++diff -Nur binutils-2.26.1.orig/bfd/elf32-microblaze.c binutils-2.26.1/bfd/elf32-microblaze.c
++--- binutils-2.26.1.orig/bfd/elf32-microblaze.c	2015-11-13 09:27:40.000000000 +0100
+++++ binutils-2.26.1/bfd/elf32-microblaze.c	2017-02-23 19:43:18.536542964 +0100
++@@ -3300,13 +3300,20 @@
++           && h->def_regular)
++         {
++           asection *sec = h->root.u.def.section;
+++	  bfd_vma value;
+++
+++	  value = h->root.u.def.value;
+++	  if (sec->output_section != NULL)
+++	    /* PR 21180: If the output section is NULL, then the symbol is no
+++	       longer needed, and in theory the GOT entry is redundant.  But
+++	       it is too late to change our minds now...  */
+++	    value += sec->output_section->vma + sec->output_offset;
+++
++           microblaze_elf_output_dynamic_relocation (output_bfd,
++                                                     srela, srela->reloc_count++,
++                                                     /* symindex= */ 0,
++                                                     R_MICROBLAZE_REL, offset,
++-                                                    h->root.u.def.value
++-                                                    + sec->output_section->vma
++-                                                    + sec->output_offset);
+++                                                    value);
++         }
++       else
++         {
+diff --git a/package/binutils/Config.in.host b/package/binutils/Config.in.host
+index 48d3ea1d74..ef6aadb5ba 100644
+--- a/package/binutils/Config.in.host
++++ b/package/binutils/Config.in.host
+@@ -7,6 +7,9 @@ choice
+ 	help
+ 	  Select the version of binutils you wish to use.
+ 
++config BR2_BINUTILS_VERSION_2_26_X
++	bool "binutils 2.26.1"
++
+ config BR2_BINUTILS_VERSION_2_27_X
+ 	bool "binutils 2.27"
+ 	# binutils 2.27 triggers a bug in elf2flt on ARM/noMMU
+@@ -23,6 +26,7 @@ endchoice
+ config BR2_BINUTILS_VERSION
+ 	string
+ 	default "arc-2017.03"	if BR2_arc
++	default "2.26.1"	if BR2_BINUTILS_VERSION_2_26_X
+ 	default "2.27"		if BR2_BINUTILS_VERSION_2_27_X
+ 	default "2.28.1"	if BR2_BINUTILS_VERSION_2_28_X
+ 	default "2.29"		if BR2_BINUTILS_VERSION_2_29_X
+diff --git a/package/binutils/binutils.hash b/package/binutils/binutils.hash
+index 4630a26fef..f6ac10d2fd 100644
+--- a/package/binutils/binutils.hash
++++ b/package/binutils/binutils.hash
+@@ -1,4 +1,5 @@
+ # From ftp://gcc.gnu.org/pub/binutils/releases/sha512.sum
++sha512  9d9165609fd3b0f20d616f9891fc8e2b466eb13e2bfce40125e12427f8f201d20e2b8322bb6cb2b45e8df812f0e8ac059149f8a1f69ba3ed9d86a35c6a540b67  binutils-2.26.1.tar.bz2
+ sha512	cf276f84935312361a2ca077e04d0b469d23a3aed979d8ba5d92ea590904ffb2c2e7ed12cc842822bfc402836be86f479660cef3791aa62f3753d8a1a6f564cb  binutils-2.27.tar.bz2
+ sha512	dc5b6872ae01c07c12d38f3bb7ead06effc6da3265ac872e2d9c6104304f89f85f2645b029a43f308a7938a7299b1928d385205d0a2245674a621649032a138d  binutils-2.28.1.tar.xz
+ sha512  bb227c7af65133a61bbde8be4104a543f4185fce8c8e7be22c36d92d121d28b5413d42f18c7e987d035d6312c542d0e2aaca8930386a4ce26d7c9d7248145398  binutils-2.29.tar.xz
+-- 
+2.14.1
+

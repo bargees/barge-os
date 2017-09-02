@@ -1,4 +1,4 @@
-From e3396839fa7b420298b8f6ca1f0ebcf097bb4546 Mon Sep 17 00:00:00 2001
+From 936d8aad8ad1c3043fd4aee8ef4aa1e79ceecefb Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 8 May 2017 08:35:29 -0700
 Subject: [PATCH] docker-engine: use v1.10.3
@@ -12,7 +12,7 @@ therefor the hash has been changed.
  3 files changed, 13 insertions(+), 19 deletions(-)
 
 diff --git a/package/docker-engine/Config.in b/package/docker-engine/Config.in
-index 05670a7..2ffd3f6 100644
+index 05670a716e..2ffd3f65fc 100644
 --- a/package/docker-engine/Config.in
 +++ b/package/docker-engine/Config.in
 @@ -14,10 +14,6 @@ if BR2_PACKAGE_DOCKER_ENGINE
@@ -27,23 +27,23 @@ index 05670a7..2ffd3f6 100644
  	  Build the Docker system daemon.
  	  If not selected, will build client only.
 diff --git a/package/docker-engine/docker-engine.hash b/package/docker-engine/docker-engine.hash
-index aa7c3ac..515f697 100644
+index 6c0ed338a5..515f697e86 100644
 --- a/package/docker-engine/docker-engine.hash
 +++ b/package/docker-engine/docker-engine.hash
 @@ -1,2 +1,2 @@
  # Locally calculated
--sha256	b6ee0aa93ecea44e956d3627907e10557b3ec37d13ddfb40e436656e5037c640	docker-engine-v17.04.0-ce.tar.gz
+-sha256	4716df117d867b82ddab2e82395cd40aa3d0925a689eedcec8919729e4c9f121	docker-engine-v17.05.0-ce.tar.gz
 +sha256	668a571a2406024423f11b4cd150f97b4d7bc3ee39407a0ac7df6e5db1437385	docker-engine-1.10.3.tar.gz
 diff --git a/package/docker-engine/docker-engine.mk b/package/docker-engine/docker-engine.mk
-index 0176f51..1cb6e5f 100644
+index 8928f072e7..d460235871 100644
 --- a/package/docker-engine/docker-engine.mk
 +++ b/package/docker-engine/docker-engine.mk
 @@ -4,16 +4,16 @@
  #
  ################################################################################
  
--DOCKER_ENGINE_VERSION = v17.04.0-ce
--DOCKER_ENGINE_COMMIT = 4845c567eb35d68f35b0b1713a09b0c8d47fe67e
+-DOCKER_ENGINE_VERSION = v17.05.0-ce
+-DOCKER_ENGINE_COMMIT = 89658bed64c2a8fe05a978e5b87dbec409d57a0f
 -DOCKER_ENGINE_SITE = $(call github,docker,docker,$(DOCKER_ENGINE_VERSION))
 +DOCKER_ENGINE_VERSION = 1.10.3
 +DOCKER_ENGINE_GITCOMMIT = 20f81dd
@@ -110,7 +110,7 @@ index 0176f51..1cb6e5f 100644
 -		cd $(@D)/gopath/src/github.com/docker/docker; \
 -		$(DOCKER_ENGINE_MAKE_ENV) \
 +		cd $(@D); $(DOCKER_ENGINE_MAKE_ENV) \
- 		$(HOST_DIR)/usr/bin/go build -v \
+ 		$(HOST_DIR)/bin/go build -v \
  			-o $(@D)/bin/$(target) \
  			-tags "$(DOCKER_ENGINE_BUILD_TAGS)" \
  			-ldflags "$(DOCKER_ENGINE_GLDFLAGS) $(DOCKER_ENGINE_GLDFLAGS_$(call UPPERCASE,$(target)))" \
@@ -120,5 +120,5 @@ index 0176f51..1cb6e5f 100644
  endef
  
 -- 
-2.10.1
+2.14.1
 
