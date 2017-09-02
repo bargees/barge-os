@@ -1,4 +1,4 @@
-From 920f25f50fb5ea48e085889ef5b95d62f76815bc Mon Sep 17 00:00:00 2001
+From a83d55c564ce83f496bd3caddde8ad013a0eecc1 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 3 Aug 2017 19:13:58 -0700
 Subject: [PATCH] Revert "binutils: remove support for 2.26"
@@ -37,12 +37,12 @@ This reverts commit 0b5dc3192306409113adbb0dfbcaa62bbcdf4fb4.
  create mode 100644 package/binutils/2.26.1/0906-microblaze-pr21180.patch
 
 diff --git a/Config.in.legacy b/Config.in.legacy
-index 693dc95d74..d2e63252e7 100644
+index d35b409423..78b9f9a4fe 100644
 --- a/Config.in.legacy
 +++ b/Config.in.legacy
-@@ -145,14 +145,6 @@ endif
- ###############################################################################
- comment "Legacy options removed in 2017.08"
+@@ -158,14 +158,6 @@ config BR2_PACKAGE_SIMICSFS
+ 	  work. Users should move to the user mode Simics agent
+ 	  instead.
  
 -config BR2_BINUTILS_VERSION_2_26_X
 -	bool "binutils version 2.26 support removed"
