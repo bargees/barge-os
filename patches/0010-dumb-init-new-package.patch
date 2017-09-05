@@ -1,0 +1,84 @@
+From 64e0b5e010bcbfade5d6d7361729772542d0ec62 Mon Sep 17 00:00:00 2001
+From: Christian Stewart <christian@paral.in>
+Date: Tue, 17 May 2016 14:10:00 -0700
+Subject: [PATCH] dumb-init: new package
+
+dumb-init is an extremely minimal PID 0 init process. It is designed to
+run within Docker containers to solve the complexities of signal
+handling at PID 0.
+
+Signed-off-by: Christian Stewart <christian@paral.in>
+---
+ package/Config.in                |  1 +
+ package/dumb-init/Config.in      |  7 +++++++
+ package/dumb-init/dumb-init.hash |  2 ++
+ package/dumb-init/dumb-init.mk   | 22 ++++++++++++++++++++++
+ 4 files changed, 32 insertions(+)
+ create mode 100644 package/dumb-init/Config.in
+ create mode 100644 package/dumb-init/dumb-init.hash
+ create mode 100644 package/dumb-init/dumb-init.mk
+
+diff --git a/package/Config.in b/package/Config.in
+index ba101dba46..74e580617a 100644
+--- a/package/Config.in
++++ b/package/Config.in
+@@ -1824,6 +1824,7 @@ comment "Utilities"
+ 	source "package/crudini/Config.in"
+ 	source "package/dialog/Config.in"
+ 	source "package/dtach/Config.in"
++	source "package/dumb-init/Config.in"
+ 	source "package/file/Config.in"
+ 	source "package/easy-rsa/Config.in"
+ 	source "package/gnupg/Config.in"
+diff --git a/package/dumb-init/Config.in b/package/dumb-init/Config.in
+new file mode 100644
+index 0000000000..1bd21b313f
+--- /dev/null
++++ b/package/dumb-init/Config.in
+@@ -0,0 +1,7 @@
++config BR2_PACKAGE_DUMB_INIT
++	bool "dumb-init"
++	help
++    dumb-init is a tiny init binary to make PID 0 safe
++    inside Docker containers.
++
++	  https://github.com/Yelp/dumb-init
+diff --git a/package/dumb-init/dumb-init.hash b/package/dumb-init/dumb-init.hash
+new file mode 100644
+index 0000000000..9d401cc062
+--- /dev/null
++++ b/package/dumb-init/dumb-init.hash
+@@ -0,0 +1,2 @@
++# Locally computed
++sha256 37ebb2fdd233d18f191929a4758990eb5e7759e470637b6325e4aefb3c266333  v1.0.2.tar.gz
+diff --git a/package/dumb-init/dumb-init.mk b/package/dumb-init/dumb-init.mk
+new file mode 100644
+index 0000000000..7ffd0c3abd
+--- /dev/null
++++ b/package/dumb-init/dumb-init.mk
+@@ -0,0 +1,22 @@
++################################################################################
++#
++# dumb-init
++#
++################################################################################
++
++DUMB_INIT_VERSION = v1.0.2
++DUMB_INIT_SITE = https://github.com/Yelp/dumb-init/archive
++DUMB_INIT_SOURCE = $(DUMB_INIT_VERSION).tar.gz
++
++DUMB_INIT_LICENSE = MIT
++DUMB_INIT_LICENSE_FILES = LICENSE
++
++define DUMB_INIT_BUILD_CMDS
++	$(TARGET_CC) -std=gnu99 -static -s -Wall -O3 -o $(@D)/dumb-init $(@D)/dumb-init.c
++endef
++
++define DUMB_INIT_INSTALL_TARGET_CMDS
++	$(INSTALL) -D -m 0755 $(@D)/dumb-init $(TARGET_DIR)/usr/bin/dumb-init
++endef
++
++$(eval $(generic-package))
+-- 
+2.14.1
+
