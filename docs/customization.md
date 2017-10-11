@@ -14,7 +14,7 @@ Ex.) `$ sudo mkfs.ext4 -b 4096 -i 4096 -F -L BARGE-DATA /dev/xxx`
 Note) You can use any numbers for `-b 4096 -i 4096`, but pay attention to excessive inode usage because Barge uses overlay for Docker storage.
 
 Cf.)  
-- https://github.com/bargees/barge-packer/blob/master/box/template.json
+- https://github.com/bargees/barge-packer/blob/master/virtualbox/box/template.json
 - https://github.com/bargees/barge-xhyve/blob/master/contrib/makehdd/makehdd.sh
 
 And also you can create a swap disk with the label **BARGE-SWAP** to be activated automatically.
@@ -54,7 +54,7 @@ DOCKER_HOST="-H unix:// -H tcp://0.0.0.0:2375"
 
 Cf.)  
 - https://github.com/bargees/barge-os/blob/master/overlay/init
-- https://github.com/bargees/barge-packer/blob/master/box/assets/profile
+- https://github.com/bargees/barge-packer/blob/master/assets/profile
 - https://github.com/bargees/barge-xhyve/blob/master/contrib/makehdd/makehdd.sh
 
 ## Customizing init scripts on booting up
@@ -67,7 +67,7 @@ You can customize init scripts in three ways as below.
 
 Cf.)  
 - https://github.com/bargees/barge-os/blob/master/overlay/init
-- https://github.com/bargees/barge-packer/blob/master/box/assets/init.sh
+- https://github.com/bargees/barge-packer/blob/master/assets/init.sh
 - https://github.com/bargees/barge-xhyve/blob/master/contrib/makehdd/makehdd.sh
 
 And also you can edit any files in `/etc`, because `/etc` is mounted at the persistent disk with overlay if the disk exists.
