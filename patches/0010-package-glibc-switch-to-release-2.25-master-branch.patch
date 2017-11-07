@@ -1,0 +1,47 @@
+From 9bf6dc021ae63149ef0062f02c56a3929dcf770d Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Tue, 7 Nov 2017 13:52:44 -0800
+Subject: [PATCH] package/glibc: switch to release/2.25/master branch
+
+---
+ package/glibc/glibc.hash | 2 +-
+ package/glibc/glibc.mk   | 7 +++----
+ 2 files changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/package/glibc/glibc.hash b/package/glibc/glibc.hash
+index 5910dda72d..812f9789cd 100644
+--- a/package/glibc/glibc.hash
++++ b/package/glibc/glibc.hash
+@@ -1,4 +1,4 @@
+ # Locally calculated (fetched from Github)
+-sha256  f1f2566fea1518dd7244d322882242bbd654eb215fba51a7ab001b8fd2c9bcbe     glibc-glibc-2.26-73-g4b692dffb95ac4812b161eb6a16113d7e824982e.tar.gz
++sha256  c75286df9b3029dbf2c8e7b17f19892fd5523dcf0c3e6b1bce61b0df46857406     glibc-0fc015b6db6a1591d2beecb98362f5de175a077f.tar.gz
+ # Locally calculated (fetched from Github)
+ sha256  5aa9adeac09727db0b8a52794186563771e74d70410e9fd86431e339953fd4bb     glibc-arc-2017.09-release.tar.gz
+diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
+index 5911dfec5f..b15ff61285 100644
+--- a/package/glibc/glibc.mk
++++ b/package/glibc/glibc.mk
+@@ -10,16 +10,15 @@ GLIBC_SITE = $(call github,foss-for-synopsys-dwc-arc-processors,glibc,$(GLIBC_VE
+ GLIBC_SOURCE = glibc-$(GLIBC_VERSION).tar.gz
+ else
+ # Generate version string using:
+-#   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master
+-GLIBC_VERSION = glibc-2.26-73-g4b692dffb95ac4812b161eb6a16113d7e824982e
++#   git describe --match 'glibc-*' --abbrev=40 origin/release/2.25/master
++GLIBC_VERSION = 0fc015b6db6a1591d2beecb98362f5de175a077f
+ # Upstream doesn't officially provide an https download link.
+ # There is one (https://sourceware.org/git/glibc.git) but it's not reliable,
+ # sometimes the connection times out. So use an unofficial github mirror.
+ # When updating the version, check it on the official repository;
+ # *NEVER* decide on a version string by looking at the mirror.
+ # Then check that the mirror has been synced already (happens once a day.)
+-GLIBC_SITE = https://github.com/bminor/glibc.git
+-GLIBC_SITE_METHOD = git
++GLIBC_SITE = $(call github,bminor,glibc,$(GLIBC_VERSION))
+ endif
+ 
+ GLIBC_SRC_SUBDIR = .
+-- 
+2.14.1
+
