@@ -1,0 +1,25 @@
+From 0b0490f56fffac0482970e0500aba6a079cb16c3 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Mon, 15 May 2017 15:52:29 -0700
+Subject: [PATCH] libopenssl: Remove debug information to reduce its footprint
+
+---
+ package/libopenssl/libopenssl.mk | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/package/libopenssl/libopenssl.mk b/package/libopenssl/libopenssl.mk
+index 8cccb9c606..091b13611d 100644
+--- a/package/libopenssl/libopenssl.mk
++++ b/package/libopenssl/libopenssl.mk
+@@ -89,6 +89,8 @@ define LIBOPENSSL_CONFIGURE_CMDS
+ 			enable-tlsext \
+ 			$(if $(BR2_STATIC_LIBS),zlib,zlib-dynamic) \
+ 			$(if $(BR2_STATIC_LIBS),no-dso) \
++			no-err \
++			no-filenames \
+ 	)
+ 	$(SED) "s#-march=[-a-z0-9] ##" -e "s#-mcpu=[-a-z0-9] ##g" $(@D)/Makefile
+ 	$(SED) "s#-O[0-9]#$(LIBOPENSSL_CFLAGS)#" $(@D)/Makefile
+-- 
+2.14.1
+
