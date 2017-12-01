@@ -4,7 +4,7 @@ ENV TERM xterm
 
 RUN apt-get -q update && \
     apt-get -q -y install --no-install-recommends ca-certificates \
-      bc build-essential cpio file python unzip rsync wget \
+      bc build-essential cpio file git python unzip rsync wget \
       syslinux xorriso dosfstools mtools && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -14,7 +14,7 @@ ENV SRC_DIR=/build \
     BR_ROOT=/build/buildroot
 RUN mkdir -p ${SRC_DIR} ${OVERLAY}
 
-ENV BR_VERSION 2017.08.1
+ENV BR_VERSION 2017.11
 RUN wget -qO- https://buildroot.org/downloads/buildroot-${BR_VERSION}.tar.bz2 | tar xj && \
     mv buildroot-${BR_VERSION} ${BR_ROOT}
 
@@ -47,7 +47,7 @@ RUN mkdir -p usr/bin && \
     wget -qO usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DINIT_VERSION}/dumb-init_${DINIT_VERSION}_amd64 && \
     chmod +x usr/bin/dumb-init
 
-ENV VERSION 2.6.2
+ENV VERSION 2.7.0-rc2
 RUN mkdir -p etc && \
     echo "Welcome to Barge ${VERSION}, Docker version ${DOCKER_VERSION}" > etc/motd && \
     echo "NAME=\"Barge\"" > etc/os-release && \

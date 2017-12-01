@@ -1,4 +1,4 @@
-From b6d49b7afb856b9405f9ff28d369d5e45cd320ed Mon Sep 17 00:00:00 2001
+From fc36e83c2cea8a6182d68fb41122181f6bfc1548 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 14 May 2017 15:56:47 -0700
 Subject: [PATCH] Revert "busybox: preserve ncurses progs/tools"

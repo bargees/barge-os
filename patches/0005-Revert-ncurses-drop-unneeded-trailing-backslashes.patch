@@ -1,4 +1,4 @@
-From 6a8736216230bbaa8dfa4a93db11e7c23679a917 Mon Sep 17 00:00:00 2001
+From a2d0dd339a1b6bcda09870c588815ade81e4bd96 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 14 May 2017 15:56:59 -0700
 Subject: [PATCH] Revert "ncurses: drop unneeded trailing backslashes"

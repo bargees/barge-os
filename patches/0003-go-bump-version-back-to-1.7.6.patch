@@ -1,30 +1,31 @@
-From effa2a19a909b57378ac6c6fa910cd2b47a06c6d Mon Sep 17 00:00:00 2001
+From 6f5d09976333b5b240f3606d188f65fb260ac8ca Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 29 Dec 2016 15:37:26 -0800
 Subject: [PATCH] go: bump version back to 1.7.6
 
 ---
- package/go/go.hash | 2 +-
+ package/go/go.hash | 4 ++--
  package/go/go.mk   | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/package/go/go.hash b/package/go/go.hash
-index 1836af2482..3c8116cbc0 100644
+index 445a0b7c20..3c8116cbc0 100644
 --- a/package/go/go.hash
 +++ b/package/go/go.hash
 @@ -1,2 +1,2 @@
- # Locally computed:
--sha256	5f5dea2447e7dcfdc50fa6b94c512e58bfba5673c039259fd843f68829d99fa6	go1.8.3.src.tar.gz
+-# From https://golang.org/dl/
+-sha256	a4ab229028ed167ba1986825751463605264e44868362ca8e7accc8be057e993	go1.9.src.tar.gz
++# Locally computed:
 +sha256	1a67a4e688673fdff7ba41e73482b0e59ac5bd0f7acf703bc6d50cc775c5baba	go1.7.6.src.tar.gz
 diff --git a/package/go/go.mk b/package/go/go.mk
-index 0781dff035..5a4c265d78 100644
+index 23facbdd81..65020fe32c 100644
 --- a/package/go/go.mk
 +++ b/package/go/go.mk
 @@ -4,7 +4,7 @@
  #
  ################################################################################
  
--GO_VERSION = 1.8.3
+-GO_VERSION = 1.9
 +GO_VERSION = 1.7.6
  GO_SITE = https://storage.googleapis.com/golang
  GO_SOURCE = go$(GO_VERSION).src.tar.gz

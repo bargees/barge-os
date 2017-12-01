@@ -1,0 +1,76 @@
+From 79222d6d99b0f15bc51f46721f68a8b9a6091a01 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Mon, 6 Nov 2017 15:19:04 -0800
+Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
+
+---
+ ...e-the-default-PATH-with-opt-bin-for-Barge.patch | 42 ++++++++++++++++++++++
+ package/openssh/openssh.mk                         |  3 +-
+ 2 files changed, 44 insertions(+), 1 deletion(-)
+ create mode 100644 package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
+
+diff --git a/package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch b/package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
+new file mode 100644
+index 0000000000..39f8d592dc
+--- /dev/null
++++ b/package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
+@@ -0,0 +1,42 @@
++From 0cd7c0a8d62efaf9e43ecafc0038ce8b244f5668 Mon Sep 17 00:00:00 2001
++From: "A.I" <ailis@paw.zone>
++Date: Sun, 12 Nov 2017 12:08:29 -0800
++Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
++
++---
++ include/libbb.h  | 4 ++--
++ libbb/messages.c | 2 +-
++ 2 files changed, 3 insertions(+), 3 deletions(-)
++
++diff --git a/include/libbb.h b/include/libbb.h
++index 8eccd8170..c6e3e02a8 100644
++--- a/include/libbb.h
+++++ b/include/libbb.h
++@@ -1952,9 +1952,9 @@ extern const char bb_path_wtmp_file[] ALIGN1;
++ extern const char bb_busybox_exec_path[] ALIGN1;
++ /* util-linux manpage says /sbin:/bin:/usr/sbin:/usr/bin,
++  * but I want to save a few bytes here */
++-extern const char bb_PATH_root_path[] ALIGN1; /* "PATH=/sbin:/usr/sbin:/bin:/usr/bin" */
+++extern const char bb_PATH_root_path[] ALIGN1; /* "PATH=/usr/sbin:/sbin:/opt/bin:/usr/bin:/bin" */
++ #define bb_default_root_path (bb_PATH_root_path + sizeof("PATH"))
++-#define bb_default_path      (bb_PATH_root_path + sizeof("PATH=/sbin:/usr/sbin"))
+++#define bb_default_path      (bb_PATH_root_path + sizeof("PATH=/usr/sbin:/sbin"))
++ 
++ extern const int const_int_0;
++ //extern const int const_int_1;
++diff --git a/libbb/messages.c b/libbb/messages.c
++index cb0836de8..35a1b3511 100644
++--- a/libbb/messages.c
+++++ b/libbb/messages.c
++@@ -40,7 +40,7 @@ const char bb_default_login_shell[] ALIGN1 = LIBBB_DEFAULT_LOGIN_SHELL;
++ /* util-linux manpage says /sbin:/bin:/usr/sbin:/usr/bin,
++  * but I want to save a few bytes here. Check libbb.h before changing! */
++ const char bb_PATH_root_path[] ALIGN1 =
++-	"PATH=/sbin:/usr/sbin:/bin:/usr/bin" BB_ADDITIONAL_PATH;
+++	"PATH=/usr/sbin:/sbin:/opt/bin:/usr/bin:/bin" BB_ADDITIONAL_PATH;
++ 
++ 
++ //const int const_int_1 = 1;
++-- 
++2.14.1
++
+diff --git a/package/openssh/openssh.mk b/package/openssh/openssh.mk
+index 6b7ac22c19..0fbd9d23a0 100644
+--- a/package/openssh/openssh.mk
++++ b/package/openssh/openssh.mk
+@@ -20,7 +20,8 @@ OPENSSH_CONF_OPTS = \
+ 	--disable-utmpx \
+ 	--disable-wtmp \
+ 	--disable-wtmpx \
+-	--disable-strip
++	--disable-strip \
++	--with-default-path=/usr/sbin:/sbin:/opt/bin:/usr/bin:/bin
+ 
+ define OPENSSH_USERS
+ 	sshd -1 sshd -1 * - - - SSH drop priv user
+-- 
+2.14.1
+
