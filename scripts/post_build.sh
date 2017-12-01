@@ -100,6 +100,10 @@ ln -s docker S60docker
 if ! grep -q "^UseDNS no" ${ROOTFS}/etc/ssh/sshd_config; then
   echo "UseDNS no" >> ${ROOTFS}/etc/ssh/sshd_config
 fi
+# Permit SSH User Environment (~/.ssh/environment)
+if ! grep -q "^PermitUserEnvironment yes" ${ROOTFS}/etc/ssh/sshd_config; then
+  echo "PermitUserEnvironment yes" >> ${ROOTFS}/etc/ssh/sshd_config
+fi
 
 # Disable ARP probing at local network for speed up
 if ! grep -q "^noarp" ${ROOTFS}/etc/dhcpcd.conf; then
