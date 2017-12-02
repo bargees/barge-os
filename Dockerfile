@@ -42,7 +42,7 @@ ENV DOCKER_VERSION 1.10.3
 RUN wget -qO usr/share/bash-completion/completions/docker https://raw.githubusercontent.com/docker/docker/v${DOCKER_VERSION}/contrib/completion/bash/docker
 
 # Add dumb-init
-ENV DINIT_VERSION 1.2.0
+ENV DINIT_VERSION 1.2.1
 RUN mkdir -p usr/bin && \
     wget -qO usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DINIT_VERSION}/dumb-init_${DINIT_VERSION}_amd64 && \
     chmod +x usr/bin/dumb-init
