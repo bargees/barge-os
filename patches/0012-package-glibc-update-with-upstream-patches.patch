@@ -1,0 +1,37 @@
+From d5c4eb44215d74e611fd4da7bc76cb87dace4d94 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Thu, 7 Dec 2017 23:11:28 -0800
+Subject: [PATCH] package/glibc: update with upstream patches
+
+https://github.com/bminor/glibc/tree/release/2.25/master
+---
+ package/glibc/glibc.hash | 2 +-
+ package/glibc/glibc.mk   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/package/glibc/glibc.hash b/package/glibc/glibc.hash
+index 9209bee43f..de42dc1fee 100644
+--- a/package/glibc/glibc.hash
++++ b/package/glibc/glibc.hash
+@@ -1,4 +1,4 @@
+ # Locally calculated (fetched from Github)
+-sha256  a86c54f71f77890d36d983a8f2b0e59fdfae82a80d0419ddbc67cc4857fbe42f     glibc-b0afcf5db758747c2e563a1db0af6db7a1927746.tar.gz
++sha256  cfee09ff7921744c29d16ad1ab77e68c03a8e18263c255f86c0ad3fed5991a73     glibc-4444f6a92b83f7e044705b43b11dcdb0dbe97fe1.tar.gz
+ # Locally calculated (fetched from Github)
+ sha256  5aa9adeac09727db0b8a52794186563771e74d70410e9fd86431e339953fd4bb     glibc-arc-2017.09-release.tar.gz
+diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
+index 196b632485..18e9d34b90 100644
+--- a/package/glibc/glibc.mk
++++ b/package/glibc/glibc.mk
+@@ -11,7 +11,7 @@ GLIBC_SOURCE = glibc-$(GLIBC_VERSION).tar.gz
+ else
+ # Generate version string using:
+ #   git describe --match 'glibc-*' --abbrev=40 origin/release/2.25/master
+-GLIBC_VERSION = b0afcf5db758747c2e563a1db0af6db7a1927746
++GLIBC_VERSION = 4444f6a92b83f7e044705b43b11dcdb0dbe97fe1
+ # Upstream doesn't officially provide an https download link.
+ # There is one (https://sourceware.org/git/glibc.git) but it's not reliable,
+ # sometimes the connection times out. So use an unofficial github mirror.
+-- 
+2.14.1
+
