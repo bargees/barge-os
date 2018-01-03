@@ -1,4 +1,4 @@
-From 72d488a6715c89f5c234e71e92d44560e35e3a3e Mon Sep 17 00:00:00 2001
+From 57ae94073171cfb20dc0c009af2b95f2c766dd81 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 15 May 2017 15:52:29 -0700
 Subject: [PATCH] libopenssl: Remove debug information to reduce its footprint
@@ -8,7 +8,7 @@ Subject: [PATCH] libopenssl: Remove debug information to reduce its footprint
  1 file changed, 2 insertions(+)
 
 diff --git a/package/libopenssl/libopenssl.mk b/package/libopenssl/libopenssl.mk
-index 8cccb9c606..091b13611d 100644
+index 5a78676c64..931e8307d5 100644
 --- a/package/libopenssl/libopenssl.mk
 +++ b/package/libopenssl/libopenssl.mk
 @@ -89,6 +89,8 @@ define LIBOPENSSL_CONFIGURE_CMDS
