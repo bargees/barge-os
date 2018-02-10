@@ -1,4 +1,4 @@
-From 5cd7f3dcc2d8eb7373f5f50e028526a4cdb04cd5 Mon Sep 17 00:00:00 2001
+From a9803f04d2d150de8ecf8944888420d9ce80922e Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Tue, 7 Nov 2017 13:52:44 -0800
 Subject: [PATCH] package/glibc: switch to release/2.25/master branch
@@ -19,11 +19,11 @@ index f3a6577d2a..9209bee43f 100644
  # Locally calculated (fetched from Github)
  sha256  5aa9adeac09727db0b8a52794186563771e74d70410e9fd86431e339953fd4bb     glibc-arc-2017.09-release.tar.gz
 diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
-index cb3a84a9a7..196b632485 100644
+index fd79d84f15..10bb768c7e 100644
 --- a/package/glibc/glibc.mk
 +++ b/package/glibc/glibc.mk
-@@ -10,8 +10,8 @@ GLIBC_SITE = $(call github,foss-for-synopsys-dwc-arc-processors,glibc,$(GLIBC_VE
- GLIBC_SOURCE = glibc-$(GLIBC_VERSION).tar.gz
+@@ -9,8 +9,8 @@ GLIBC_VERSION =  arc-2017.09-release
+ GLIBC_SITE = $(call github,foss-for-synopsys-dwc-arc-processors,glibc,$(GLIBC_VERSION))
  else
  # Generate version string using:
 -#   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master
