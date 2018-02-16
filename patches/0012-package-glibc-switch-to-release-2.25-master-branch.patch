@@ -1,0 +1,39 @@
+From 1167f798488584ad3c1afb6ea4f6bd26199492b3 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Tue, 7 Nov 2017 13:52:44 -0800
+Subject: [PATCH] package/glibc: switch to release/2.25/master branch
+
+https://github.com/bminor/glibc/tree/release/2.25/master
+---
+ package/glibc/glibc.hash | 2 +-
+ package/glibc/glibc.mk   | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/package/glibc/glibc.hash b/package/glibc/glibc.hash
+index 3311be665c..eaf618cab3 100644
+--- a/package/glibc/glibc.hash
++++ b/package/glibc/glibc.hash
+@@ -1,4 +1,4 @@
+ # Locally calculated (fetched from Github)
+-sha256  d0d44c2c7a46922376c08a1d45ae7bcbf9abd8f05603dd76637c8b74e6693e9e     glibc-glibc-2.26-144-gbbabb868cd248763373d0db763bacd84ce27ede8.tar.gz
++sha256  024b0db4ef1728a7bd49c7856a9d622f2842a729caeb14238ad1995dd780ec57     glibc-71616d59ec97fe798b69f749e7fb424bd6d2432b.tar.gz
+ # Locally calculated (fetched from Github)
+ sha256  5aa9adeac09727db0b8a52794186563771e74d70410e9fd86431e339953fd4bb     glibc-arc-2017.09-release.tar.gz
+diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
+index 9126d8725f..bcb32eae19 100644
+--- a/package/glibc/glibc.mk
++++ b/package/glibc/glibc.mk
+@@ -9,8 +9,8 @@ GLIBC_VERSION =  arc-2017.09-release
+ GLIBC_SITE = $(call github,foss-for-synopsys-dwc-arc-processors,glibc,$(GLIBC_VERSION))
+ else
+ # Generate version string using:
+-#   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master
+-GLIBC_VERSION = glibc-2.26-144-gbbabb868cd248763373d0db763bacd84ce27ede8
++#   git describe --match 'glibc-*' --abbrev=40 origin/release/2.25/master
++GLIBC_VERSION = 71616d59ec97fe798b69f749e7fb424bd6d2432b
+ # Upstream doesn't officially provide an https download link.
+ # There is one (https://sourceware.org/git/glibc.git) but it's not reliable,
+ # sometimes the connection times out. So use an unofficial github mirror.
+-- 
+2.14.1
+
