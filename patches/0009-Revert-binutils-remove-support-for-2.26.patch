@@ -1,4 +1,4 @@
-From 7b05a03b09ab4795aa907e89028eef615782fc4d Mon Sep 17 00:00:00 2001
+From c5ec6b419d0b1c5bd2ea42c532abb89738152eba Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 3 Aug 2017 19:13:58 -0700
 Subject: [PATCH] Revert "binutils: remove support for 2.26"

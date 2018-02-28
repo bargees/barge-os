@@ -1,4 +1,4 @@
-From a8efa6c4c46edbde8f6cf9d4e280ba3ee0ce5ca1 Mon Sep 17 00:00:00 2001
+From 0ea1f6cc66b72816e602c35fb4add347dde4bd94 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 15 May 2017 15:52:29 -0700
 Subject: [PATCH] libopenssl: Remove debug information to reduce its footprint
