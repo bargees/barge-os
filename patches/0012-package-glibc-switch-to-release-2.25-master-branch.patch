@@ -1,4 +1,4 @@
-From ca5d0bfb6371a00bd792047f7610f97762904cf3 Mon Sep 17 00:00:00 2001
+From 6d07d2b156b4fedc0e214aff509551656d691d6e Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Tue, 7 Nov 2017 13:52:44 -0800
 Subject: [PATCH] package/glibc: switch to release/2.25/master branch
