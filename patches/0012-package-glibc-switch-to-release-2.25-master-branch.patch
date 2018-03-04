@@ -1,35 +1,36 @@
-From 5cd7f3dcc2d8eb7373f5f50e028526a4cdb04cd5 Mon Sep 17 00:00:00 2001
+From 96664816965817ccc24e9ffcb191e0c2a9c729ff Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Tue, 7 Nov 2017 13:52:44 -0800
 Subject: [PATCH] package/glibc: switch to release/2.25/master branch
 
+https://github.com/bminor/glibc/tree/release/2.25/master
 ---
  package/glibc/glibc.hash | 2 +-
  package/glibc/glibc.mk   | 4 ++--
  2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/package/glibc/glibc.hash b/package/glibc/glibc.hash
-index f3a6577d2a..9209bee43f 100644
+index 3dab1e1516..eaf618cab3 100644
 --- a/package/glibc/glibc.hash
 +++ b/package/glibc/glibc.hash
 @@ -1,4 +1,4 @@
  # Locally calculated (fetched from Github)
--sha256  0766875391224153502c5542a71b6e46db53b44691078b3130e1a0df41586430     glibc-glibc-2.26-107-g73a92363619e52c458146e903dfb9b1ba823aa40.tar.gz
-+sha256  a86c54f71f77890d36d983a8f2b0e59fdfae82a80d0419ddbc67cc4857fbe42f     glibc-b0afcf5db758747c2e563a1db0af6db7a1927746.tar.gz
+-sha256  00fbc845678a96f4acc574c4bda4be76506ecd8bafb2d08c58bfa3507625c81a     glibc-glibc-2.26-146-gd300041c533a3d837c9f37a099bcc95466860e98.tar.gz
++sha256  024b0db4ef1728a7bd49c7856a9d622f2842a729caeb14238ad1995dd780ec57     glibc-71616d59ec97fe798b69f749e7fb424bd6d2432b.tar.gz
  # Locally calculated (fetched from Github)
  sha256  5aa9adeac09727db0b8a52794186563771e74d70410e9fd86431e339953fd4bb     glibc-arc-2017.09-release.tar.gz
 diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
-index cb3a84a9a7..196b632485 100644
+index 0351433e6a..bcb32eae19 100644
 --- a/package/glibc/glibc.mk
 +++ b/package/glibc/glibc.mk
-@@ -10,8 +10,8 @@ GLIBC_SITE = $(call github,foss-for-synopsys-dwc-arc-processors,glibc,$(GLIBC_VE
- GLIBC_SOURCE = glibc-$(GLIBC_VERSION).tar.gz
+@@ -9,8 +9,8 @@ GLIBC_VERSION =  arc-2017.09-release
+ GLIBC_SITE = $(call github,foss-for-synopsys-dwc-arc-processors,glibc,$(GLIBC_VERSION))
  else
  # Generate version string using:
 -#   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master
--GLIBC_VERSION = glibc-2.26-107-g73a92363619e52c458146e903dfb9b1ba823aa40
+-GLIBC_VERSION = glibc-2.26-146-gd300041c533a3d837c9f37a099bcc95466860e98
 +#   git describe --match 'glibc-*' --abbrev=40 origin/release/2.25/master
-+GLIBC_VERSION = b0afcf5db758747c2e563a1db0af6db7a1927746
++GLIBC_VERSION = 71616d59ec97fe798b69f749e7fb424bd6d2432b
  # Upstream doesn't officially provide an https download link.
  # There is one (https://sourceware.org/git/glibc.git) but it's not reliable,
  # sometimes the connection times out. So use an unofficial github mirror.

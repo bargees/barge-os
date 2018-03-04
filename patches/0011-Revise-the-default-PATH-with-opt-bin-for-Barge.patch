@@ -1,4 +1,4 @@
-From 3b241d61afc226cd81483e2c4561ade8a6fde479 Mon Sep 17 00:00:00 2001
+From dedb3974978cf7f4242bb4837017f5e2e7d66db3 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 6 Nov 2017 15:19:04 -0800
 Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
@@ -7,13 +7,13 @@ Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
  ...e-the-default-PATH-with-opt-bin-for-Barge.patch | 42 ++++++++++++++++++++++
  package/openssh/openssh.mk                         |  3 +-
  2 files changed, 44 insertions(+), 1 deletion(-)
- create mode 100644 package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
+ create mode 100644 package/busybox/0008-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
 
-diff --git a/package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch b/package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
+diff --git a/package/busybox/0008-Revise-the-default-PATH-with-opt-bin-for-Barge.patch b/package/busybox/0008-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
 new file mode 100644
 index 0000000000..39f8d592dc
 --- /dev/null
-+++ b/package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
++++ b/package/busybox/0008-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
 @@ -0,0 +1,42 @@
 +From 0cd7c0a8d62efaf9e43ecafc0038ce8b244f5668 Mon Sep 17 00:00:00 2001
 +From: "A.I" <ailis@paw.zone>

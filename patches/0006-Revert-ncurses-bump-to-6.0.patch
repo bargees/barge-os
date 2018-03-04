@@ -1,4 +1,4 @@
-From 831ca9a666745ea9c86d23208ef3d6a35cb0db24 Mon Sep 17 00:00:00 2001
+From 50bb32938649ad70efa4f27c8e53157389a2c334 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 14 May 2017 15:57:09 -0700
 Subject: [PATCH] Revert "ncurses: bump to 6.0"
@@ -212,7 +212,7 @@ index 6bca143836..482b2d4853 100644
 -sha256	f551c24b30ce8bfb6e96d9f59b42fbea30fa3a6123384172f9e7284bcf647260	ncurses-6.0.tar.gz
 +sha256	9046298fb440324c9d4135ecea7879ffed8546dd1b58e59430ea07a4633f563b	ncurses-5.9.tar.gz
 diff --git a/package/ncurses/ncurses.mk b/package/ncurses/ncurses.mk
-index cc0c5b405a..952be566e8 100644
+index 0105a7365a..20c82c05fe 100644
 --- a/package/ncurses/ncurses.mk
 +++ b/package/ncurses/ncurses.mk
 @@ -4,13 +4,13 @@
@@ -243,15 +243,12 @@ index cc0c5b405a..952be566e8 100644
  
  # Install after busybox for the full-blown versions
  ifeq ($(BR2_PACKAGE_BUSYBOX),y)
-@@ -103,6 +101,7 @@ NCURSES_LINK_STAGING_LIBS = \
+@@ -106,10 +104,13 @@ NCURSES_LINK_STAGING_LIBS = \
  NCURSES_LINK_STAGING_PC = $(call NCURSES_LINK_PC)
  
  NCURSES_CONF_OPTS += --enable-ext-colors
 +NCURSES_ABI_VERSION = 6
- NCURSES_TERMINFO_FILES += \
- 	p/putty-256color \
- 	x/xterm+256color \
-@@ -111,6 +110,8 @@ NCURSES_TERMINFO_FILES += \
+ 
  NCURSES_POST_INSTALL_STAGING_HOOKS += NCURSES_LINK_STAGING_LIBS
  NCURSES_POST_INSTALL_STAGING_HOOKS += NCURSES_LINK_STAGING_PC
  

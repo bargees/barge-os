@@ -1,4 +1,4 @@
-From c0795808eeaeba66e4b72a55e40ad9daa7847b8e Mon Sep 17 00:00:00 2001
+From e80dc619dcc454f2435f6ce22c67010803052cfb Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 3 Aug 2017 12:03:27 -0700
 Subject: [PATCH] ncurses: drop an unneeded trailing backslash
@@ -8,12 +8,12 @@ Subject: [PATCH] ncurses: drop an unneeded trailing backslash
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/package/ncurses/ncurses.mk b/package/ncurses/ncurses.mk
-index 952be566e8..cc3f81b107 100644
+index 20c82c05fe..ad7f802287 100644
 --- a/package/ncurses/ncurses.mk
 +++ b/package/ncurses/ncurses.mk
-@@ -64,7 +64,7 @@ NCURSES_TERMINFO_FILES = \
- 	v/vt220 \
- 	x/xterm \
+@@ -67,7 +67,7 @@ NCURSES_TERMINFO_FILES = \
+ 	x/xterm+256color \
+ 	x/xterm-256color \
  	x/xterm-color \
 -	x/xterm-xfree86 \
 +	x/xterm-xfree86

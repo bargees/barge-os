@@ -1,0 +1,33 @@
+From ef8970ad6cec896f8a446a4fd65944da7a3287fd Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Sat, 10 Feb 2018 11:48:42 +0900
+Subject: [PATCH] package/binutils: support bz2-compressed tarball for 2.26.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+revert “package/binutils: remove support for 2.27”
+SHA: 453d29f1f45736d0156071930a09015def68994a
+---
+ package/binutils/binutils.mk | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/package/binutils/binutils.mk b/package/binutils/binutils.mk
+index 1bd01ecefc..a8f119b1c6 100644
+--- a/package/binutils/binutils.mk
++++ b/package/binutils/binutils.mk
+@@ -21,7 +21,11 @@ BINUTILS_SOURCE = binutils-$(BINUTILS_VERSION).tar.gz
+ BINUTILS_FROM_GIT = y
+ endif
+ BINUTILS_SITE ?= $(BR2_GNU_MIRROR)/binutils
++ifeq ($(BINUTILS_VERSION),2.26.1)
++BINUTILS_SOURCE ?= binutils-$(BINUTILS_VERSION).tar.bz2
++else
+ BINUTILS_SOURCE ?= binutils-$(BINUTILS_VERSION).tar.xz
++endif
+ BINUTILS_EXTRA_CONFIG_OPTIONS = $(call qstrip,$(BR2_BINUTILS_EXTRA_CONFIG_OPTIONS))
+ BINUTILS_INSTALL_STAGING = YES
+ BINUTILS_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES)
+-- 
+2.14.1
+
