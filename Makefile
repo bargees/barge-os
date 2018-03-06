@@ -1,4 +1,4 @@
-KERNEL_VERSION  := 4.14.24
+KERNEL_VERSION  := 80a14a56dacb7cc2b40d5f37d00bedb0ceace130
 BUSYBOX_VERSION := 1.27.2
 
 OUTPUTS := output/images
