@@ -1,0 +1,46 @@
+From 6a34c4918a5184f3d9b954c95bd6198421f1222a Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Wed, 5 Oct 2016 17:00:48 -0700
+Subject: [PATCH] dumb-init: bump to version 1.2.0
+
+---
+ package/dumb-init/dumb-init.hash |  2 +-
+ package/dumb-init/dumb-init.mk   | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/package/dumb-init/dumb-init.hash b/package/dumb-init/dumb-init.hash
+index 9d401cc062..f36150ef80 100644
+--- a/package/dumb-init/dumb-init.hash
++++ b/package/dumb-init/dumb-init.hash
+@@ -1,2 +1,2 @@
+ # Locally computed
+-sha256 37ebb2fdd233d18f191929a4758990eb5e7759e470637b6325e4aefb3c266333  v1.0.2.tar.gz
++sha256 74486997321bd939cad2ee6af030f481d39751bc9aa0ece84ed55f864e309a3f  dumb-init-v1.2.0.tar.gz
+diff --git a/package/dumb-init/dumb-init.mk b/package/dumb-init/dumb-init.mk
+index 7ffd0c3abd..f0eb744973 100644
+--- a/package/dumb-init/dumb-init.mk
++++ b/package/dumb-init/dumb-init.mk
+@@ -4,15 +4,15 @@
+ #
+ ################################################################################
+ 
+-DUMB_INIT_VERSION = v1.0.2
+-DUMB_INIT_SITE = https://github.com/Yelp/dumb-init/archive
+-DUMB_INIT_SOURCE = $(DUMB_INIT_VERSION).tar.gz
+-
++DUMB_INIT_VERSION = v1.2.0
++DUMB_INIT_SITE = $(call github,Yelp,dumb-init,$(DUMB_INIT_VERSION))
+ DUMB_INIT_LICENSE = MIT
+ DUMB_INIT_LICENSE_FILES = LICENSE
+ 
++DUMB_INIT_MAKE_OPTS = CC="$(TARGET_CC) $(TARGET_CFLAGS) $(TARGET_LDFLAGS)"
++
+ define DUMB_INIT_BUILD_CMDS
+-	$(TARGET_CC) -std=gnu99 -static -s -Wall -O3 -o $(@D)/dumb-init $(@D)/dumb-init.c
++	$(TARGET_MAKE_ENV) $(MAKE) $(DUMB_INIT_MAKE_OPTS) -C $(@D)
+ endef
+ 
+ define DUMB_INIT_INSTALL_TARGET_CMDS
+-- 
+2.14.1
+
