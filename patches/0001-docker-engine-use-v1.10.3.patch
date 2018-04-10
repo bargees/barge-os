@@ -1,4 +1,4 @@
-From 1e5f28d480c2421a314d8ecb8b5365f5907e51dd Mon Sep 17 00:00:00 2001
+From 975641c28f0be653af15b85749f6a3240ff794ca Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 8 May 2017 08:35:29 -0700
 Subject: [PATCH] docker-engine: use v1.10.3
@@ -6,21 +6,22 @@ Subject: [PATCH] docker-engine: use v1.10.3
 It has been moved to https://github.com/moby/moby,
 therefor the hash has been changed.
 ---
- package/docker-engine/Config.in          |  4 ----
+ package/docker-engine/Config.in          |  5 -----
  package/docker-engine/docker-engine.hash |  2 +-
  package/docker-engine/docker-engine.mk   | 26 ++++++++++++--------------
- 3 files changed, 13 insertions(+), 19 deletions(-)
+ 3 files changed, 13 insertions(+), 20 deletions(-)
 
 diff --git a/package/docker-engine/Config.in b/package/docker-engine/Config.in
-index 05670a716e..2ffd3f65fc 100644
+index 8feb11b48c..2ffd3f65fc 100644
 --- a/package/docker-engine/Config.in
 +++ b/package/docker-engine/Config.in
-@@ -14,10 +14,6 @@ if BR2_PACKAGE_DOCKER_ENGINE
+@@ -14,11 +14,6 @@ if BR2_PACKAGE_DOCKER_ENGINE
  config BR2_PACKAGE_DOCKER_ENGINE_DAEMON
  	bool "docker daemon"
  	default y
 -	depends on BR2_USE_MMU # docker-containerd
 -	select BR2_PACKAGE_DOCKER_CONTAINERD # runtime dependency
+-	select BR2_PACKAGE_DOCKER_PROXY # runtime dependency
 -	select BR2_PACKAGE_IPTABLES # runtime dependency
 -	select BR2_PACKAGE_SQLITE # runtime dependency
  	help

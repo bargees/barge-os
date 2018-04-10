@@ -1,4 +1,4 @@
-From 7d304b54cbcd6f2dcc6a1015b3fb53eaf67a63a8 Mon Sep 17 00:00:00 2001
+From 5c44c81979f4ac394a916a6e64b9872765f53be8 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 29 Dec 2016 15:37:26 -0800
 Subject: [PATCH] go: bump version back to 1.7.6
