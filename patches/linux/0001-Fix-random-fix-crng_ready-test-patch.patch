@@ -1,0 +1,43 @@
+From 75ef3b1b469f0b7f4f9fcb1f6e02342d999cf8bf Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Thu, 3 May 2018 23:47:55 -0700
+Subject: [PATCH] Fix "random: fix crng_ready() test" patch
+
+---
+ drivers/char/random.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index ddc493d976fd..5a4fdad5ac90 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -1089,7 +1089,7 @@ void add_device_randomness(const void *buf, unsigned int size)
+ 	unsigned long time = random_get_entropy() ^ jiffies;
+ 	unsigned long flags;
+ 
+-	if (!crng_ready() && size)
++	if (unlikely(crng_init > 0) && size)
+ 		crng_slow_load(buf, size);
+ 
+ 	trace_add_device_randomness(size, _RET_IP_);
+@@ -1247,7 +1247,7 @@ void add_interrupt_randomness(int irq, int irq_flags)
+ 	fast_mix(fast_pool);
+ 	add_interrupt_bench(cycles);
+ 
+-	if (unlikely(crng_init == 0)) {
++	if (unlikely(crng_init > 0)) {
+ 		if ((fast_pool->count >= 64) &&
+ 		    crng_fast_load((char *) fast_pool->pool,
+ 				   sizeof(fast_pool->pool))) {
+@@ -2316,7 +2316,7 @@ void add_hwgenerator_randomness(const char *buffer, size_t count,
+ {
+ 	struct entropy_store *poolp = &input_pool;
+ 
+-	if (unlikely(crng_init == 0)) {
++	if (unlikely(crng_init > 0)) {
+ 		crng_fast_load(buffer, count);
+ 		return;
+ 	}
+-- 
+2.14.1
+
