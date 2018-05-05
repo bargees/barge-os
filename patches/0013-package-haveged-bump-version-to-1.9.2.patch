@@ -1,0 +1,35 @@
+From 9ef5b07651a3eb95340f23874f23bca05ef6626b Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Fri, 4 May 2018 17:12:05 -0700
+Subject: [PATCH] package/haveged: bump version to 1.9.2
+
+---
+ package/haveged/haveged.hash | 4 ++--
+ package/haveged/haveged.mk   | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/package/haveged/haveged.hash b/package/haveged/haveged.hash
+index d1133b6931..05d0469e78 100644
+--- a/package/haveged/haveged.hash
++++ b/package/haveged/haveged.hash
+@@ -1,2 +1,2 @@
+-# From http://www.issihosts.com/haveged/verify/haveged-1.9.1.sha1
+-sha1	ab7234b7f57dbb7d500a5ab3cbf0494715ce6499	haveged-1.9.1.tar.gz
++# From http://www.issihosts.com/haveged/verify/haveged-1.9.2.sha1
++sha1	503cb7e61b6ad40f9337ba15f620f107e31234f8	haveged-1.9.2.tar.gz
+diff --git a/package/haveged/haveged.mk b/package/haveged/haveged.mk
+index a645557bc4..6a457c0627 100644
+--- a/package/haveged/haveged.mk
++++ b/package/haveged/haveged.mk
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-HAVEGED_VERSION = 1.9.1
++HAVEGED_VERSION = 1.9.2
+ HAVEGED_SITE = http://www.issihosts.com/haveged
+ HAVEGED_LICENSE = GPL-3.0+
+ HAVEGED_LICENSE_FILES = COPYING
+-- 
+2.14.1
+
