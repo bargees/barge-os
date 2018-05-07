@@ -1,0 +1,323 @@
+#!/bin/sh
+export PATH=/opt/bin:$PATH
+
+if [ "$(id -u)" != "0" ]; then
+  echo "$(basename $0): Operation not permitted, must be root." >&2
+  exit 1
+fi
+
+source /etc/os-release
+
+DOCKER_DAEMON="docker"
+DOCKER_DAEMON_COMMAND="daemon"
+DOCKER_BIN_DIR="/usr/bin"
+if [ -f "${DOCKER_BIN_DIR}/dockerd" ]; then
+  DOCKER_DAEMON="dockerd"
+  DOCKER_DAEMON_COMMAND=""
+fi
+if [ -f "/opt/bin/dockerd" ]; then
+  DOCKER_DAEMON="dockerd"
+  DOCKER_DAEMON_COMMAND=""
+fi
+DOCKER="/opt/bin/docker"
+DOCKERD="/opt/bin/${DOCKER_DAEMON}"
+if [ ! -f "${DOCKERD}" ]; then
+  mkdir -p /opt/bin
+  for i in docker docker-containerd docker-containerd-ctr docker-containerd-shim docker-init \
+    docker-proxy docker-runc dockerd ; do
+    rm -f "/opt/bin/$i"
+    if [ -f "${DOCKER_BIN_DIR}/$i" ]; then
+      ln -s "${DOCKER_BIN_DIR}/$i" "/opt/bin/$i"
+    fi
+  done
+  rm -f "/etc/bash_completion.d/docker"
+fi
+DOCKER_SWITCHING=false
+
+ROOT_SWITCHED=false
+if grep -qw "tmpfs / tmpfs" /proc/mounts; then
+  ROOT_SWITCHED=true
+fi
+
+configure() {
+  if [ -f /etc/default/docker ]; then
+    logger -s -p user.info -t "docker[$$]" "Loading /etc/default/docker"
+    source /etc/default/docker
+  fi
+
+  : ${DOCKER_STORAGE:="overlay"}
+  : ${DOCKER_DIR:="/var/lib/docker"}
+  : ${DOCKER_HOST:="-H unix://"}
+  : ${DOCKER_EXTRA_ARGS:="--userland-proxy=false"}
+  : ${DOCKER_ULIMITS:=1048576}
+  : ${DOCKER_LOGFILE:="/var/log/docker/docker.log"}
+  : ${DOCKER_TIMEOUT:=5}
+}
+
+start() {
+  if check; then
+    echo "$(${DOCKERD} -v) is running." >&2
+    exit 1
+  fi
+
+  mkdir -p /sys/fs/cgroup
+  if ! mountpoint -q /sys/fs/cgroup; then
+    mount -t tmpfs cgroup /sys/fs/cgroup
+  fi
+  for i in $(awk '!/^#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
+    mkdir -p /sys/fs/cgroup/$i
+    if ! mountpoint -q /sys/fs/cgroup/$i; then
+      mount -t cgroup -o $i cgroup /sys/fs/cgroup/$i
+    fi
+  done
+
+  mkdir -p /var/lib/docker
+  mkdir -p /var/log/docker
+  MOUNT_POINT="/mnt/data"
+  if mountpoint -q "${MOUNT_POINT}"; then
+    if [ ! -L /var/lib/docker ]; then
+      if [ ! -d "${MOUNT_POINT}/var/lib/docker" ]; then
+        mkdir -p "${MOUNT_POINT}/var/lib"
+        mv /var/lib/docker "${MOUNT_POINT}/var/lib/docker"
+      else
+        rm -rf /var/lib/docker
+      fi
+      ln -s "${MOUNT_POINT}/var/lib/docker" /var/lib/docker
+    fi
+    if [ ! -L /var/log/docker ]; then
+      if [ ! -d "${MOUNT_POINT}/var/log/docker" ]; then
+        mkdir -p "${MOUNT_POINT}/var/log"
+        mv /var/log/docker "${MOUNT_POINT}/var/log/docker"
+      else
+        rm -rf /var/log/docker
+      fi
+      ln -s "${MOUNT_POINT}/var/log/docker" /var/log/docker
+    fi
+  fi
+
+  logger -s -p user.info -t "docker[$$]" "Setting ulimit ${DOCKER_ULIMITS}"
+  ulimit -n ${DOCKER_ULIMITS}
+  ulimit -u ${DOCKER_ULIMITS}
+
+  mkdir -p /etc/logrotate.d
+  cat <<EOF > /etc/logrotate.d/docker
+${DOCKER_LOGFILE} {
+  rotate 7
+  daily
+  maxsize 1M
+  delaycompress
+  missingok
+  copytruncate
+}
+EOF
+
+  # Top secret option...
+  if ! ${ROOT_SWITCHED} ; then
+    export DOCKER_RAMDISK=true
+  fi
+  logger -s -p user.info -t "docker[$$]" "DOCKER_RAMDISK=${DOCKER_RAMDISK}"
+
+  echo -n 1 > /sys/fs/cgroup/memory/memory.use_hierarchy
+
+  local params="-D -s ${DOCKER_STORAGE} -g \"${DOCKER_DIR}\" ${DOCKER_HOST} ${DOCKER_EXTRA_ARGS}"
+
+  if ${DOCKER_SWITCHING} ; then
+    for i in docker docker-containerd docker-containerd-ctr docker-containerd-shim docker-init \
+      docker-proxy docker-runc dockerd ; do
+      rm -f "/opt/bin/$i"
+      if [ -f "${DOCKER_BIN_DIR}/$i" ]; then
+        ln -s "${DOCKER_BIN_DIR}/$i" "/opt/bin/$i"
+      fi
+    done
+    rm -f "/etc/bash_completion.d/docker"
+    if [ -f "${DOCKER_BIN_DIR}/docker.bash-completion" ]; then
+      ln -s "${DOCKER_BIN_DIR}/docker.bash-completion" "/etc/bash_completion.d/docker"
+    fi
+  fi
+
+  echo "Welcome to ${PRETTY_NAME}, $(${DOCKERD} -v)" > /etc/motd
+
+  logger -s -p user.info -t "docker[$$]" "$(${DOCKERD} -v)"
+  echo "----- $(${DOCKERD} -v) -----" >> "${DOCKER_LOGFILE}"
+
+  logger -s -p user.info -t "docker[$$]" "Starting Docker daemon ${params}"
+  echo "Starting Docker daemon ${params}" >> "${DOCKER_LOGFILE}"
+  if [ "$$" == "1" ]; then
+    eval "exec ${DOCKERD} ${DOCKER_DAEMON_COMMAND} ${params} >> \"${DOCKER_LOGFILE}\" 2>&1"
+  else
+    eval "${DOCKERD} ${DOCKER_DAEMON_COMMAND} ${params} >> \"${DOCKER_LOGFILE}\" 2>&1 &"
+  fi
+}
+
+stop() {
+  if check; then
+    if [ "$(cat /var/run/docker.pid)" == "1" ]; then
+      echo "$(basename $0): Operation not permitted, can't kill PID 1." >&2
+      exit 1
+    else
+      local containers="$(${DOCKER} ps -q)"
+      containers=$(echo ${containers})
+      if [ -n "${containers}" ]; then
+        logger -s -p user.info -t "docker[$$]" "Stopping containers"
+        if [ -n "${DOCKER_TIMEOUT}" ]; then
+          DOCKER_TIMEOUT="-t ${DOCKER_TIMEOUT}"
+        fi
+        ${DOCKER} stop ${DOCKER_TIMEOUT} ${containers}
+      fi
+      logger -s -p user.info -t "docker[$$]" "Stopping Docker daemon"
+      kill $(cat /var/run/docker.pid)
+      local timeout=11
+      while [ $(( timeout-- )) -gt 0 ] && check; do
+        sleep 1
+      done
+
+      for i in $(awk '!/^#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
+        umount /sys/fs/cgroup/$i
+      done
+      umount /sys/fs/cgroup
+    fi
+  fi
+}
+
+restart() {
+  if check; then
+    stop
+    start
+  else
+    start
+  fi
+}
+
+check() {
+  [ -f /var/run/docker.pid ] && ps -A -o pid | grep -q "^\s*$(cat /var/run/docker.pid 2>/dev/null)$"
+}
+
+status() {
+  if check; then
+    echo "$(${DOCKERD} -v) is running."
+    exit 0
+  else
+    echo "$(${DOCKERD} -v) is not running."
+    exit 1
+  fi
+}
+
+switch() {
+  local version="$1"
+  local docker_repo="moby/moby"
+  local completion="contrib/completion/bash/docker"
+
+  DOCKER_DAEMON="docker"
+  DOCKER_DAEMON_COMMAND="daemon"
+  DOCKERD="/opt/bin/${DOCKER_DAEMON}"
+
+  if [ "${version}" = "default" ]; then
+    DOCKER_BIN_DIR="/usr/bin"
+    DOCKER_SWITCHING=true
+    return
+  elif [ "${version}" = "latest" ]; then
+    version=$(wget -qO- https://api.github.com/repos/docker/docker-ce/releases/latest \
+      | awk -F'"' '/tag_name/ { print $4 }')
+    if [ "${version}" = "" ]; then
+      version=$(wget -qO- https://api.github.com/repos/moby/moby/releases/latest \
+        | awk -F'"' '/tag_name/ { print $4 }')
+    fi
+  fi
+
+  version="${version/#v/}"
+
+  DOCKER_BIN_DIR="/opt/docker/v${version}"
+
+  local base_url="https://get.docker.io/builds/Linux/x86_64"
+  if [[ "${version}" == *"-rc"* ]]; then
+    base_url="https://test.docker.com/builds/Linux/x86_64"
+  fi
+
+  local versions=($(echo ${version} | tr -s '.' ' '))
+  if [[ ${versions[0]} -lt 1 ]]; then
+    echo "Docker v${version} is too old." >&2 && exit 1
+  elif [[ (${versions[0]} -eq 1) && (${versions[1]#0} -lt 8) ]]; then
+    echo "Docker v${version} is too old." >&2 && exit 1
+  elif [[ (${versions[0]} -eq 1) && (${versions[1]#0} -lt 12) ]]; then
+    :
+  else
+    echo -n "[38;5;1m" >&2
+    echo "WARNING: Possible Forward-Incompatibility of libnetwork" >&2
+    echo "Once you upgrade Docker to v1.12 or newer, if you downgrade back," >&2
+    echo "you may need to initialize ${DOCKER_DIR}/network/files/local-kv.db." >&2
+    echo -n "[39m" >&2
+    DOCKER_DAEMON="dockerd"
+    DOCKER_DAEMON_COMMAND=""
+    DOCKERD="/opt/bin/${DOCKER_DAEMON}"
+
+    local patches=($(echo ${versions[2]} | tr -s '-' ' '))
+    if [[ (${versions[0]} -eq 17) && (${versions[1]#0} -eq 3) && (${patches[0]} -eq 0) \
+      && ("${version}" == *"-rc"*) ]]; then
+      :
+    elif [[ ${versions[0]} -ge 17 ]]; then
+      local channel="edge"
+      if ! ((${versions[1]#0} % 3)); then
+        channel="stable"
+      fi
+      if [[ "${version}" == *"-rc"* ]]; then
+        channel="test"
+      fi
+      base_url="https://download.docker.com/linux/static/${channel}/x86_64"
+
+      if [[ (${versions[0]} -gt 17) || (${versions[1]#0} -ge 6) ]]; then
+        docker_repo="docker/docker-ce"
+        completion="components/cli/contrib/completion/bash/docker"
+      fi
+    fi
+  fi
+
+  if [ ! -f "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" ]; then
+    echo -n "Downloading v${version} ..."
+    trap "rm -rf \"${DOCKER_BIN_DIR}\"" ERR
+    mkdir -p "${DOCKER_BIN_DIR}"
+    wget -qO- "${base_url}/docker-${version}.tgz" | \
+      tar zxf - -C "${DOCKER_BIN_DIR}" 2>/dev/null || \
+        wget -qO- "${base_url}/docker-${version}-x86_64.tgz" | \
+          tar zxf - -C "${DOCKER_BIN_DIR}" 2>/dev/null
+    if [ -d "${DOCKER_BIN_DIR}/usr/local/bin" ]; then
+      mv -f "${DOCKER_BIN_DIR}/usr/local/bin"/* "${DOCKER_BIN_DIR}"
+      rm -rf "${DOCKER_BIN_DIR}/usr"
+    elif [ -d "${DOCKER_BIN_DIR}/docker" ]; then
+      mv -f "${DOCKER_BIN_DIR}/docker" "${DOCKER_BIN_DIR}/bin"
+      mv -f "${DOCKER_BIN_DIR}/bin"/* "${DOCKER_BIN_DIR}"
+      rm -rf "${DOCKER_BIN_DIR}/bin"
+    fi
+    wget -qO "${DOCKER_BIN_DIR}/docker.bash-completion" "https://raw.githubusercontent.com/${docker_repo}/v${version}/${completion}" 2>/dev/null
+    if [ ! -f "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" ]; then
+      echo " not found."
+      exit 1
+    fi
+    echo
+  fi
+
+  DOCKER_SWITCHING=true
+}
+
+case $1 in
+  start)
+    configure
+    [ -n "$2" ] && switch $2
+    start
+    ;;
+  stop)
+    configure
+    stop
+    ;;
+  restart)
+    configure
+    [ -n "$2" ] && switch $2
+    restart
+    ;;
+  status)
+    status
+    ;;
+  *)
+    echo "Usage $0 {start|stop|restart|status} [<version>|latest|default]"
+    exit 1
+    ;;
+esac

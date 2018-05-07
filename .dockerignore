@@ -5,6 +5,7 @@
 .gitignore
 .vagrant/
 
+contrib/
 docs/
 output/
 LICENSE

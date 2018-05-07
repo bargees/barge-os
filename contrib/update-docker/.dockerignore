@@ -1,0 +1,5 @@
+.vagrant/
+
+Makefile
+README.md
+Vagrantfile
