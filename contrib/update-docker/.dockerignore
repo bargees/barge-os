@@ -1,10 +1,5 @@
-.git/
 .vagrant/
 
-contrib/
-docs/
-output/
-LICENSE
 Makefile
 README.md
 Vagrantfile
