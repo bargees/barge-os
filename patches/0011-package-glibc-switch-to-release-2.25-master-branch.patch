@@ -1,4 +1,4 @@
-From 3f3a3c119e6c985318c6eb4d967aab59fe8080f6 Mon Sep 17 00:00:00 2001
+From 48fa85845ecebd5fe9585cbebdfb17b661984a9b Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Tue, 7 Nov 2017 13:52:44 -0800
 Subject: [PATCH] package/glibc: switch to release/2.25/master branch
@@ -10,25 +10,26 @@ https://github.com/bminor/glibc/tree/release/2.25/master
  2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/package/glibc/glibc.hash b/package/glibc/glibc.hash
-index 3dab1e1516..eaf618cab3 100644
+index 5a90e612b9..9bc9cdf3ca 100644
 --- a/package/glibc/glibc.hash
 +++ b/package/glibc/glibc.hash
-@@ -1,4 +1,4 @@
+@@ -1,5 +1,5 @@
  # Locally calculated (fetched from Github)
--sha256  00fbc845678a96f4acc574c4bda4be76506ecd8bafb2d08c58bfa3507625c81a     glibc-glibc-2.26-146-gd300041c533a3d837c9f37a099bcc95466860e98.tar.gz
+-sha256  a74489d14f4017bee6a6c6fe76f1de0dbf7d66c8695116de5aadd141c4757892     glibc-glibc-2.27.tar.gz
 +sha256  024b0db4ef1728a7bd49c7856a9d622f2842a729caeb14238ad1995dd780ec57     glibc-71616d59ec97fe798b69f749e7fb424bd6d2432b.tar.gz
  # Locally calculated (fetched from Github)
- sha256  5aa9adeac09727db0b8a52794186563771e74d70410e9fd86431e339953fd4bb     glibc-arc-2017.09-release.tar.gz
+ sha256  d88f60081285b639122a49425e5fcf8c8cbb0f05efde7a3cb206089fae53c232     glibc-arc-2018.03-rc1.tar.gz
+ 
 diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
-index 0351433e6a..bcb32eae19 100644
+index 3ab673c0cc..a60604a55a 100644
 --- a/package/glibc/glibc.mk
 +++ b/package/glibc/glibc.mk
-@@ -9,8 +9,8 @@ GLIBC_VERSION =  arc-2017.09-release
+@@ -9,8 +9,8 @@ GLIBC_VERSION =  arc-2018.03-rc1
  GLIBC_SITE = $(call github,foss-for-synopsys-dwc-arc-processors,glibc,$(GLIBC_VERSION))
  else
  # Generate version string using:
 -#   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master
--GLIBC_VERSION = glibc-2.26-146-gd300041c533a3d837c9f37a099bcc95466860e98
+-GLIBC_VERSION = glibc-2.27
 +#   git describe --match 'glibc-*' --abbrev=40 origin/release/2.25/master
 +GLIBC_VERSION = 71616d59ec97fe798b69f749e7fb424bd6d2432b
  # Upstream doesn't officially provide an https download link.
