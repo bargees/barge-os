@@ -38,6 +38,7 @@ cd ${ROOTFS}
 rm -rf linuxrc
 rm -rf lib/bash
 rm -rf lib/pkgconfig
+rm -f  etc/sudoers.dist
 
 # Remove unnecessary libraries
 rm -f usr/lib/libevent.so
