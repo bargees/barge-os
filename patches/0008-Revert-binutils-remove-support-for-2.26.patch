@@ -1,4 +1,4 @@
-From 403554a6ce52143ee876e48559ba74462802967a Mon Sep 17 00:00:00 2001
+From 3e7f5597acef859d08586ca1b9fb767478484094 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 3 Aug 2017 19:13:58 -0700
 Subject: [PATCH] Revert "binutils: remove support for 2.26"
@@ -1147,10 +1147,10 @@ index 0000000000..8104db3462
 +       else
 +         {
 diff --git a/package/binutils/Config.in.host b/package/binutils/Config.in.host
-index 03b228168f..987c02c4e6 100644
+index de229895c1..8edfb73502 100644
 --- a/package/binutils/Config.in.host
 +++ b/package/binutils/Config.in.host
-@@ -7,6 +7,9 @@ choice
+@@ -9,6 +9,9 @@ choice
  	help
  	  Select the version of binutils you wish to use.
  
@@ -1160,7 +1160,7 @@ index 03b228168f..987c02c4e6 100644
  config BR2_BINUTILS_VERSION_2_28_X
  	bool "binutils 2.28.1"
  	depends on !BR2_arc
-@@ -25,6 +28,7 @@ endchoice
+@@ -27,6 +30,7 @@ endchoice
  config BR2_BINUTILS_VERSION
  	string
  	default "arc-2018.03-rc2"	if BR2_BINUTILS_VERSION_ARC
