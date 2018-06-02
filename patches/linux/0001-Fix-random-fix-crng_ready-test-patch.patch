@@ -1,25 +1,16 @@
-From 75ef3b1b469f0b7f4f9fcb1f6e02342d999cf8bf Mon Sep 17 00:00:00 2001
+From fe197431b70503d0faf1088ca837b24f64ad3547 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 3 May 2018 23:47:55 -0700
 Subject: [PATCH] Fix "random: fix crng_ready() test" patch
 
 ---
- drivers/char/random.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/char/random.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/char/random.c b/drivers/char/random.c
-index ddc493d976fd..5a4fdad5ac90 100644
+index ddc493d976fd..a44bd3fae908 100644
 --- a/drivers/char/random.c
 +++ b/drivers/char/random.c
-@@ -1089,7 +1089,7 @@ void add_device_randomness(const void *buf, unsigned int size)
- 	unsigned long time = random_get_entropy() ^ jiffies;
- 	unsigned long flags;
- 
--	if (!crng_ready() && size)
-+	if (unlikely(crng_init > 0) && size)
- 		crng_slow_load(buf, size);
- 
- 	trace_add_device_randomness(size, _RET_IP_);
 @@ -1247,7 +1247,7 @@ void add_interrupt_randomness(int irq, int irq_flags)
  	fast_mix(fast_pool);
  	add_interrupt_bench(cycles);

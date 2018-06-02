@@ -1,31 +1,78 @@
-From 5c44c81979f4ac394a916a6e64b9872765f53be8 Mon Sep 17 00:00:00 2001
+From 79ee5ff969216625894697d5513891f8126e4f96 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 29 Dec 2016 15:37:26 -0800
 Subject: [PATCH] go: bump version back to 1.7.6
 
 ---
- package/go/go.hash | 4 ++--
- package/go/go.mk   | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ ...d.go-explicit-option-for-crosscompilation.patch | 40 ----------------------
+ package/go/go.hash                                 |  2 +-
+ package/go/go.mk                                   |  2 +-
+ 3 files changed, 2 insertions(+), 42 deletions(-)
+ delete mode 100644 package/go/0001-build.go-explicit-option-for-crosscompilation.patch
 
+diff --git a/package/go/0001-build.go-explicit-option-for-crosscompilation.patch b/package/go/0001-build.go-explicit-option-for-crosscompilation.patch
+deleted file mode 100644
+index f76c5b1d03..0000000000
+--- a/package/go/0001-build.go-explicit-option-for-crosscompilation.patch
++++ /dev/null
+@@ -1,40 +0,0 @@
+-From e1382a731a726293e30901038c6870fa77ef6095 Mon Sep 17 00:00:00 2001
+-From: Angelo Compagnucci <angelo@amarulasolutions.com>
+-Date: Tue, 8 May 2018 16:08:44 +0200
+-Subject: [PATCH] build.go: explicit option for crosscompilation
+-
+-Actually if GOHOSTOS == GOOS || GOHOSTARCH == GOARCH the go build system
+-assume it's not cross compiling and uses the same toolchain also for the
+-bootstrap.  This is a problem in case the cross compilation mandates a
+-different toolchain for bootstrap and target.  This patch adds
+-GO_ASSUME_CROSSCOMPILING varible to assure that in case of cross
+-compilation CC_FOR_TARGET can be different from CC.
+-
+-Signed-off-by: Angelo Compagnucci <angelo@amarulasolutions.com>
+-Signed-off-by: Anisse Astier <anisse@astier.eu>
+----
+- src/cmd/dist/build.go | 3 ++-
+- 1 file changed, 2 insertions(+), 1 deletion(-)
+-
+-diff --git a/src/cmd/dist/build.go b/src/cmd/dist/build.go
+-index 99d1db5..eb4097f 100644
+---- a/src/cmd/dist/build.go
+-+++ b/src/cmd/dist/build.go
+-@@ -252,12 +252,13 @@ func xinit() {
+- // $CC_FOR_goos_goarch, if set, applies only to goos/goarch.
+- func compilerEnv(envName, def string) map[string]string {
+- 	m := map[string]string{"": def}
+-+	crosscompiling := os.Getenv("GO_ASSUME_CROSSCOMPILING")
+- 
+- 	if env := os.Getenv(envName); env != "" {
+- 		m[""] = env
+- 	}
+- 	if env := os.Getenv(envName + "_FOR_TARGET"); env != "" {
+--		if gohostos != goos || gohostarch != goarch {
+-+		if gohostos != goos || gohostarch != goarch || crosscompiling == "1" {
+- 			m[gohostos+"/"+gohostarch] = m[""]
+- 		}
+- 		m[""] = env
+--- 
+-2.7.4
+-
 diff --git a/package/go/go.hash b/package/go/go.hash
-index 445a0b7c20..3c8116cbc0 100644
+index 9f5b80e9f5..ff914a48bf 100644
 --- a/package/go/go.hash
 +++ b/package/go/go.hash
 @@ -1,2 +1,2 @@
--# From https://golang.org/dl/
--sha256	a4ab229028ed167ba1986825751463605264e44868362ca8e7accc8be057e993	go1.9.src.tar.gz
-+# Locally computed:
+ # From https://golang.org/dl/
+-sha256	6264609c6b9cd8ed8e02ca84605d727ce1898d74efa79841660b2e3e985a98bd	go1.10.2.src.tar.gz
 +sha256	1a67a4e688673fdff7ba41e73482b0e59ac5bd0f7acf703bc6d50cc775c5baba	go1.7.6.src.tar.gz
 diff --git a/package/go/go.mk b/package/go/go.mk
-index 23facbdd81..65020fe32c 100644
+index 73f14cc78f..111995f8dc 100644
 --- a/package/go/go.mk
 +++ b/package/go/go.mk
 @@ -4,7 +4,7 @@
  #
  ################################################################################
  
--GO_VERSION = 1.9
+-GO_VERSION = 1.10.2
 +GO_VERSION = 1.7.6
  GO_SITE = https://storage.googleapis.com/golang
  GO_SOURCE = go$(GO_VERSION).src.tar.gz

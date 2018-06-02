@@ -1,19 +1,19 @@
-From cad7964eb8c898fb80da95006111d847538497ed Mon Sep 17 00:00:00 2001
+From 79ca46da8b5759da521a87746ca698f0cd907ed0 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 14 May 2017 15:56:59 -0700
 Subject: [PATCH] Revert "ncurses: drop unneeded trailing backslashes"
 
 This reverts commit 734363aeaa976955457925ca130ebd3787c8b820.
 ---
- package/ncurses/ncurses.mk | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ package/ncurses/ncurses.mk | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/package/ncurses/ncurses.mk b/package/ncurses/ncurses.mk
-index 677d7940c0..0105a7365a 100644
+index 08f2526a5b..11f505b6e7 100644
 --- a/package/ncurses/ncurses.mk
 +++ b/package/ncurses/ncurses.mk
-@@ -27,7 +27,8 @@ NCURSES_CONF_OPTS = \
- 	--enable-pc-files \
+@@ -28,7 +28,8 @@ NCURSES_CONF_OPTS = \
+ 	--disable-stripping \
  	--with-pkg-config-libdir="/usr/lib/pkgconfig" \
  	$(if $(BR2_PACKAGE_NCURSES_TARGET_PROGS),,--without-progs) \
 -	--without-manpages
@@ -22,15 +22,6 @@ index 677d7940c0..0105a7365a 100644
  
  # Install after busybox for the full-blown versions
  ifeq ($(BR2_PACKAGE_BUSYBOX),y)
-@@ -68,7 +69,7 @@ NCURSES_TERMINFO_FILES = \
- 	x/xterm+256color \
- 	x/xterm-256color \
- 	x/xterm-color \
--	x/xterm-xfree86
-+	x/xterm-xfree86 \
- 
- ifeq ($(BR2_PACKAGE_NCURSES_WCHAR),y)
- NCURSES_CONF_OPTS += --enable-widec
 -- 
 2.14.1
 

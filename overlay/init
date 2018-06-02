@@ -36,12 +36,20 @@ logger -s -p user.info -t "init[$$]" "Start init"
 trap 'logger -s -p user.info -t "init[$$]" "trapped at line ${LINENO}"' ERR
 
 mkdir -p /dev/pts
+mkdir -p /dev/shm
 
 logger -s -p user.info -t "init[$$]" "Mounting system"
 mount -t devpts devpts /dev/pts
+mount -t tmpfs tmpfs /dev/shm
 mount -t proc proc /proc
 mount -t tmpfs tmpfs /run
 mount -t sysfs sysfs /sys
+
+# Create /dev/fd and /dev/std* without udev
+ln -sf /proc/self/fd /dev/fd
+ln -sf /proc/self/fd/0 /dev/stdin
+ln -sf /proc/self/fd/1 /dev/stdout
+ln -sf /proc/self/fd/2 /dev/stderr
 
 # Lock the root account
 passwd -l root

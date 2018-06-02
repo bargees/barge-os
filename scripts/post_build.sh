@@ -38,13 +38,19 @@ cd ${ROOTFS}
 rm -rf linuxrc
 rm -rf lib/bash
 rm -rf lib/pkgconfig
+rm -f  etc/sudoers.dist
 
 # Remove unnecessary libraries
 rm -f usr/lib/libevent.so
 rm -f usr/lib/libevent-*
+rm -f usr/lib/libevent_extra.so
+rm -f usr/lib/libevent_extra-*
+rm -f usr/lib/libevent_openssl.so
+rm -f usr/lib/libevent_openssl-*
 rm -f usr/lib/libform.so*
 rm -f usr/lib/libmenu.so*
 rm -f usr/lib/libpanel.so*
+rm -f usr/lib/libss.so*
 
 # Remove unnecessary binaries from e2fsprogs
 rm -f bin/chattr
@@ -118,6 +124,8 @@ STAGING_DIR=${ROOTFS}/../staging
 
 # Install locale command
 install -m 0755 -D ${STAGING_DIR}/usr/bin/locale ${ROOTFS}/usr/bin/locale
+STRIP=${GNU_TARGET_NAME}-strip
+${STRIP} --remove-section=.comment --remove-section=.note ${ROOTFS}/usr/bin/locale
 
 # Install C.UTF-8 locale
 mkdir -p ${ROOTFS}/usr/lib/locale

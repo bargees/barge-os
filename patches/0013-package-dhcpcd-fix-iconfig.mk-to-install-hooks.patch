@@ -1,0 +1,44 @@
+From 6834be63c22beb36caa1ec8fbe0324b12192f143 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Sun, 27 May 2018 20:51:38 -0700
+Subject: [PATCH] package/dhcpcd: fix iconfig.mk to install hooks
+
+---
+ .../0001-fix-iconfig.mk-to-install-hooks.patch     | 25 ++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 package/dhcpcd/0001-fix-iconfig.mk-to-install-hooks.patch
+
+diff --git a/package/dhcpcd/0001-fix-iconfig.mk-to-install-hooks.patch b/package/dhcpcd/0001-fix-iconfig.mk-to-install-hooks.patch
+new file mode 100644
+index 0000000000..5de38f5457
+--- /dev/null
++++ b/package/dhcpcd/0001-fix-iconfig.mk-to-install-hooks.patch
+@@ -0,0 +1,25 @@
++From 9b8ad3b6f4c0d16cb27f1191fb0ec6f4be640f30 Mon Sep 17 00:00:00 2001
++From: "A.I" <ailis@paw.zone>
++Date: Sun, 27 May 2018 19:44:27 -0700
++Subject: [PATCH] fix iconfig.mk to install hooks
++
++---
++ iconfig.mk | 3 +--
++ 1 file changed, 1 insertion(+), 2 deletions(-)
++
++diff --git a/iconfig.mk b/iconfig.mk
++index 465e02ea..1c28b36f 100644
++--- a/iconfig.mk
+++++ b/iconfig.mk
++@@ -1,7 +1,6 @@
++ # Nasty hack so that make clean works without configure being run
++ # Requires gmake4
++ TOP?=		.
++-_CONFIG_MK!=	test -e ${TOP}/config.mk && \
++-		    echo config.mk || echo config-null.mk
+++_CONFIG_MK=	$(shell test -e ${TOP}/config.mk && echo config.mk || echo config-null.mk)
++ CONFIG_MK?=	${_CONFIG_MK}
++ include		${TOP}/${CONFIG_MK}
++-- 
++2.14.1
++
+-- 
+2.14.1
+

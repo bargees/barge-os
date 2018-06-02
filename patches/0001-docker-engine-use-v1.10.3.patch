@@ -1,15 +1,13 @@
-From 975641c28f0be653af15b85749f6a3240ff794ca Mon Sep 17 00:00:00 2001
+From 671fd08b6a70682cc291e7899d98011d1fa54851 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 8 May 2017 08:35:29 -0700
 Subject: [PATCH] docker-engine: use v1.10.3
 
-It has been moved to https://github.com/moby/moby,
-therefor the hash has been changed.
 ---
  package/docker-engine/Config.in          |  5 -----
  package/docker-engine/docker-engine.hash |  2 +-
- package/docker-engine/docker-engine.mk   | 26 ++++++++++++--------------
- 3 files changed, 13 insertions(+), 20 deletions(-)
+ package/docker-engine/docker-engine.mk   | 23 +++++++++++++----------
+ 3 files changed, 14 insertions(+), 16 deletions(-)
 
 diff --git a/package/docker-engine/Config.in b/package/docker-engine/Config.in
 index 8feb11b48c..2ffd3f65fc 100644
@@ -36,10 +34,10 @@ index 6c0ed338a5..515f697e86 100644
 -sha256	4716df117d867b82ddab2e82395cd40aa3d0925a689eedcec8919729e4c9f121	docker-engine-v17.05.0-ce.tar.gz
 +sha256	668a571a2406024423f11b4cd150f97b4d7bc3ee39407a0ac7df6e5db1437385	docker-engine-1.10.3.tar.gz
 diff --git a/package/docker-engine/docker-engine.mk b/package/docker-engine/docker-engine.mk
-index 8928f072e7..d460235871 100644
+index ba84b4cf0a..eae7d372a3 100644
 --- a/package/docker-engine/docker-engine.mk
 +++ b/package/docker-engine/docker-engine.mk
-@@ -4,16 +4,16 @@
+@@ -4,25 +4,29 @@
  #
  ################################################################################
  
@@ -49,52 +47,44 @@ index 8928f072e7..d460235871 100644
 +DOCKER_ENGINE_VERSION = 1.10.3
 +DOCKER_ENGINE_GITCOMMIT = 20f81dd
 +DOCKER_ENGINE_SITE = $(call github,moby,moby,v$(DOCKER_ENGINE_VERSION))
++
++DOCKER_ENGINE_SRC_SUBDIR = github.com/docker/docker
++DOCKER_ENGINE_WORKSPACE = vendor
  
  DOCKER_ENGINE_LICENSE = Apache-2.0
  DOCKER_ENGINE_LICENSE_FILES = LICENSE
  
  DOCKER_ENGINE_DEPENDENCIES = host-go host-pkgconf
  
--DOCKER_ENGINE_GOPATH = "$(@D)/gopath"
-+DOCKER_ENGINE_GOPATH = "$(@D)/vendor"
- DOCKER_ENGINE_MAKE_ENV = $(HOST_GO_TARGET_ENV) \
- 	CGO_ENABLED=1 \
- 	CGO_NO_EMULATION=1 \
-@@ -22,8 +22,8 @@ DOCKER_ENGINE_MAKE_ENV = $(HOST_GO_TARGET_ENV) \
- 	PKG_CONFIG="$(PKG_CONFIG_HOST_BINARY)" \
- 	$(TARGET_MAKE_ENV)
- 
--DOCKER_ENGINE_GLDFLAGS = \
+-DOCKER_ENGINE_LDFLAGS = \
 -	-X main.GitCommit=$(DOCKER_ENGINE_VERSION) \
-+DOCKER_ENGINE_GLDFLAGS = -w -s \
++DOCKER_ENGINE_LDFLAGS = -w -s \
 +	-X main.GitCommit=$(DOCKER_ENGINE_GITCOMMIT) \
  	-X main.Version=$(DOCKER_ENGINE_VERSION)
  
- ifeq ($(BR2_STATIC_LIBS),y)
-@@ -34,7 +34,8 @@ DOCKER_ENGINE_GLDFLAGS_DOCKER += -extldflags '-static'
- endif
+ ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_STATIC_CLIENT),y)
+ DOCKER_ENGINE_LDFLAGS += -extldflags '-static'
  endif
  
--DOCKER_ENGINE_BUILD_TAGS = cgo exclude_graphdriver_zfs autogen
-+DOCKER_ENGINE_BUILD_TAGS = cgo exclude_graphdriver_zfs exclude_graphdriver_aufs autogen \
+-DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs autogen
+-DOCKER_ENGINE_BUILD_TARGETS = cmd/docker
++DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs exclude_graphdriver_aufs autogen \
 +	sqlite_omit_load_extension
- DOCKER_ENGINE_BUILD_TARGETS = docker
++DOCKER_ENGINE_BUILD_TARGETS = docker
  
  ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
-@@ -49,7 +50,6 @@ endif
+ DOCKER_ENGINE_TAGS += seccomp
+@@ -36,7 +40,6 @@ endif
  
  ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_DAEMON),y)
- DOCKER_ENGINE_BUILD_TAGS += daemon
--DOCKER_ENGINE_BUILD_TARGETS += dockerd
+ DOCKER_ENGINE_TAGS += daemon
+-DOCKER_ENGINE_BUILD_TARGETS += cmd/dockerd
  endif
  
  ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_EXPERIMENTAL),y)
-@@ -75,12 +75,11 @@ DOCKER_ENGINE_BUILD_TAGS += exclude_graphdriver_vfs
- endif
+@@ -65,9 +68,9 @@ DOCKER_ENGINE_INSTALL_BINS = $(notdir $(DOCKER_ENGINE_BUILD_TARGETS))
  
- define DOCKER_ENGINE_CONFIGURE_CMDS
--	mkdir -p $(DOCKER_ENGINE_GOPATH)/src/github.com/docker
- 	ln -fs $(@D) $(DOCKER_ENGINE_GOPATH)/src/github.com/docker/docker
+ define DOCKER_ENGINE_RUN_AUTOGEN
  	cd $(@D) && \
 -		GITCOMMIT="$$(echo $(DOCKER_ENGINE_COMMIT) | head -c7)" \
 +		GITCOMMIT="$(DOCKER_ENGINE_GITCOMMIT)" \
@@ -104,22 +94,6 @@ index 8928f072e7..d460235871 100644
  		PKG_CONFIG="$(PKG_CONFIG_HOST_BINARY)" $(TARGET_MAKE_ENV) \
  		bash ./hack/make/.go-autogen
  endef
-@@ -105,13 +104,12 @@ endif
- 
- define DOCKER_ENGINE_BUILD_CMDS
- 	$(foreach target,$(DOCKER_ENGINE_BUILD_TARGETS), \
--		cd $(@D)/gopath/src/github.com/docker/docker; \
--		$(DOCKER_ENGINE_MAKE_ENV) \
-+		cd $(@D); $(DOCKER_ENGINE_MAKE_ENV) \
- 		$(HOST_DIR)/bin/go build -v \
- 			-o $(@D)/bin/$(target) \
- 			-tags "$(DOCKER_ENGINE_BUILD_TAGS)" \
- 			-ldflags "$(DOCKER_ENGINE_GLDFLAGS) $(DOCKER_ENGINE_GLDFLAGS_$(call UPPERCASE,$(target)))" \
--			github.com/docker/docker/cmd/$(target)
-+			./$(target)
- 	)
- endef
- 
 -- 
 2.14.1
 

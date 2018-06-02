@@ -1,4 +1,4 @@
-From b66f4e6bce85d14078a4b94a64c52ba877f4135c Mon Sep 17 00:00:00 2001
+From 383ab482021159ec7d64bdd5fbdb5b31217f27ea Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 14 May 2017 15:57:09 -0700
 Subject: [PATCH] Revert "ncurses: bump to 6.0"
@@ -6,15 +6,13 @@ Subject: [PATCH] Revert "ncurses: bump to 6.0"
 This reverts commit b6b5d184b3df81166ac6bd41d10c702682fd80fe.
 ---
  .../ncurses/0001-fixup-pkg-config-handling.patch   | 89 ++++++++++++++++++++++
- ...Klib_gen.patch => 0002-gcc-5.x-MKlib_gen.patch} |  6 +-
- package/ncurses/0002-recognise-uclinux.patch       | 29 -------
+ ...Klib_gen.patch => 0002-gcc-5.x-MKlib_gen.patch} |  9 +--
  package/ncurses/0003-recognise-uclinux.patch       | 30 ++++++++
  package/ncurses/ncurses.hash                       |  2 +-
- package/ncurses/ncurses.mk                         | 11 +--
- 6 files changed, 129 insertions(+), 38 deletions(-)
+ package/ncurses/ncurses.mk                         | 10 ++-
+ 5 files changed, 130 insertions(+), 10 deletions(-)
  create mode 100644 package/ncurses/0001-fixup-pkg-config-handling.patch
- rename package/ncurses/{0001-gcc-5.x-MKlib_gen.patch => 0002-gcc-5.x-MKlib_gen.patch} (87%)
- delete mode 100644 package/ncurses/0002-recognise-uclinux.patch
+ rename package/ncurses/{0001-gcc-5.x-MKlib_gen.patch => 0002-gcc-5.x-MKlib_gen.patch} (82%)
  create mode 100644 package/ncurses/0003-recognise-uclinux.patch
 
 diff --git a/package/ncurses/0001-fixup-pkg-config-handling.patch b/package/ncurses/0001-fixup-pkg-config-handling.patch
@@ -113,60 +111,28 @@ index 0000000000..e1cfc75164
 + AC_SUBST(PKG_CONFIG_LIBDIR)
 + 
 diff --git a/package/ncurses/0001-gcc-5.x-MKlib_gen.patch b/package/ncurses/0002-gcc-5.x-MKlib_gen.patch
-similarity index 87%
+similarity index 82%
 rename from package/ncurses/0001-gcc-5.x-MKlib_gen.patch
 rename to package/ncurses/0002-gcc-5.x-MKlib_gen.patch
-index df7c15fee9..25c2bd02d1 100644
+index 0106e8077f..25c2bd02d1 100644
 --- a/package/ncurses/0001-gcc-5.x-MKlib_gen.patch
 +++ b/package/ncurses/0002-gcc-5.x-MKlib_gen.patch
-@@ -12,9 +12,9 @@ http://ncurses.scripts.mit.edu/?p=ncurses.git;a=commit;h=97bb4678dc03e753290b39b
+@@ -11,11 +11,10 @@ http://ncurses.scripts.mit.edu/?p=ncurses.git;a=commit;h=97bb4678dc03e753290b39b
+ 
  Original author: Thomas E. Dickey <dickey@invisible-island.net>
  Signed-off-by: Mikhail Peselnik <bas@bmail.ru>
- 
+-[Adam Duskett: Refresh for 6.1]
+-Signed-off-by: Adam Duskett <aduskett@gmail.com>
 ---- a/ncurses/base/MKlib_gen.sh 2015-08-06 20:48:24.000000000 -0400
 -+++ b/ncurses/base/MKlib_gen.sh	2017-02-07 10:09:01.293962392 -0500
--@@ -491,11 +491,22 @@
+-@@ -505,11 +505,22 @@
++
 +--- a/ncurses/base/MKlib_gen.sh.orig	2015-07-23 21:52:32.239481505 +0300
 ++++ b/ncurses/base/MKlib_gen.sh	2015-07-23 21:53:20.772966587 +0300
 +@@ -437,11 +437,22 @@
   	-e 's/gen_$//' \
   	-e 's/  / /g' >>$TMP
   
-diff --git a/package/ncurses/0002-recognise-uclinux.patch b/package/ncurses/0002-recognise-uclinux.patch
-deleted file mode 100644
-index 57dd4cf37f..0000000000
---- a/package/ncurses/0002-recognise-uclinux.patch
-+++ /dev/null
-@@ -1,29 +0,0 @@
--aclocal: fix detection for uclinux hosts
--uclinux is just a linux like the others...
--
--Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
--Signed-off-by: "Adam Duskett" <aduskett@gmail.com>
--
----- a/aclocal.m4	2015-08-05 20:46:34.000000000 -0400
--+++ b/aclocal.m4	2017-02-07 09:58:17.770056849 -0500
--@@ -7656,7 +7656,7 @@
-- 	cf_xopen_source="-D_SGI_SOURCE"
-- 	cf_XOPEN_SOURCE=
-- 	;;
---(linux*|gnu*|mint*|k*bsd*-gnu)
--+(linux*|uclinux*|gnu*|mint*|k*bsd*-gnu)
-- 	CF_GNU_SOURCE
-- 	;;
-- (minix*)
--diff -durN a/configure b/configure
----- a/configure	2015-08-05 05:20:32.000000000 -0400
--+++ b/configure	2017-02-07 09:58:52.883886426 -0500
--@@ -7869,7 +7869,7 @@
-- 	cf_xopen_source="-D_SGI_SOURCE"
-- 	cf_XOPEN_SOURCE=
-- 	;;
---(linux*|gnu*|mint*|k*bsd*-gnu)
--+(linux*|uclinux*|gnu*|mint*|k*bsd*-gnu)
-- 
-- echo "$as_me:7874: checking if we must define _GNU_SOURCE" >&5
-- echo $ECHO_N "checking if we must define _GNU_SOURCE... $ECHO_C" >&6
 diff --git a/package/ncurses/0003-recognise-uclinux.patch b/package/ncurses/0003-recognise-uclinux.patch
 new file mode 100644
 index 0000000000..e86546cc54
@@ -204,22 +170,22 @@ index 0000000000..e86546cc54
 + echo "$as_me:6996: checking if we must define _GNU_SOURCE" >&5
 + echo $ECHO_N "checking if we must define _GNU_SOURCE... $ECHO_C" >&6
 diff --git a/package/ncurses/ncurses.hash b/package/ncurses/ncurses.hash
-index 6bca143836..482b2d4853 100644
+index 045625ae3b..482b2d4853 100644
 --- a/package/ncurses/ncurses.hash
 +++ b/package/ncurses/ncurses.hash
 @@ -1,2 +1,2 @@
  # Locally calculated after checking pgp signature
--sha256	f551c24b30ce8bfb6e96d9f59b42fbea30fa3a6123384172f9e7284bcf647260	ncurses-6.0.tar.gz
+-sha256	aa057eeeb4a14d470101eff4597d5833dcef5965331be3528c08d99cebaa0d17	ncurses-6.1.tar.gz
 +sha256	9046298fb440324c9d4135ecea7879ffed8546dd1b58e59430ea07a4633f563b	ncurses-5.9.tar.gz
 diff --git a/package/ncurses/ncurses.mk b/package/ncurses/ncurses.mk
-index 0105a7365a..20c82c05fe 100644
+index 11f505b6e7..92f022dd2a 100644
 --- a/package/ncurses/ncurses.mk
 +++ b/package/ncurses/ncurses.mk
 @@ -4,13 +4,13 @@
  #
  ################################################################################
  
--NCURSES_VERSION = 6.0
+-NCURSES_VERSION = 6.1
 +NCURSES_VERSION = 5.9
  NCURSES_SITE = $(BR2_GNU_MIRROR)/ncurses
  NCURSES_INSTALL_STAGING = YES
@@ -231,11 +197,9 @@ index 0105a7365a..20c82c05fe 100644
  
  NCURSES_CONF_OPTS = \
  	--without-cxx \
-@@ -25,10 +25,8 @@ NCURSES_CONF_OPTS = \
- 	--enable-const \
- 	--enable-overwrite \
- 	--enable-pc-files \
--	--with-pkg-config-libdir="/usr/lib/pkgconfig" \
+@@ -28,8 +28,7 @@ NCURSES_CONF_OPTS = \
+ 	--disable-stripping \
+ 	--with-pkg-config-libdir="/usr/lib/pkgconfig" \
  	$(if $(BR2_PACKAGE_NCURSES_TARGET_PROGS),,--without-progs) \
 -	--without-manpages \
 -
@@ -243,7 +207,7 @@ index 0105a7365a..20c82c05fe 100644
  
  # Install after busybox for the full-blown versions
  ifeq ($(BR2_PACKAGE_BUSYBOX),y)
-@@ -106,10 +104,13 @@ NCURSES_LINK_STAGING_LIBS = \
+@@ -108,10 +107,13 @@ NCURSES_LINK_STAGING_LIBS = \
  NCURSES_LINK_STAGING_PC = $(call NCURSES_LINK_PC)
  
  NCURSES_CONF_OPTS += --enable-ext-colors

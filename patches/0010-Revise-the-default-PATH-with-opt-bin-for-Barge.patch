@@ -1,4 +1,4 @@
-From e4a46248466acf6afd80585adf78c1c6e4c5c785 Mon Sep 17 00:00:00 2001
+From 305cab4148eb4439bf79953880cba487e310075f Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 6 Nov 2017 15:19:04 -0800
 Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
@@ -7,17 +7,17 @@ Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
  ...e-the-default-PATH-with-opt-bin-for-Barge.patch | 42 ++++++++++++++++++++++
  package/openssh/openssh.mk                         |  3 +-
  2 files changed, 44 insertions(+), 1 deletion(-)
- create mode 100644 package/busybox/0008-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
+ create mode 100644 package/busybox/0003-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
 
-diff --git a/package/busybox/0008-Revise-the-default-PATH-with-opt-bin-for-Barge.patch b/package/busybox/0008-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
+diff --git a/package/busybox/0003-Revise-the-default-PATH-with-opt-bin-for-Barge.patch b/package/busybox/0003-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
 new file mode 100644
-index 0000000000..39f8d592dc
+index 0000000000..822f75204b
 --- /dev/null
-+++ b/package/busybox/0008-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
++++ b/package/busybox/0003-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
 @@ -0,0 +1,42 @@
-+From 0cd7c0a8d62efaf9e43ecafc0038ce8b244f5668 Mon Sep 17 00:00:00 2001
++From 8ada2864271de650512e04377e43daf599ac5892 Mon Sep 17 00:00:00 2001
 +From: "A.I" <ailis@paw.zone>
-+Date: Sun, 12 Nov 2017 12:08:29 -0800
++Date: Fri, 11 May 2018 12:28:55 -0700
 +Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
 +
 +---
@@ -26,10 +26,10 @@ index 0000000000..39f8d592dc
 + 2 files changed, 3 insertions(+), 3 deletions(-)
 +
 +diff --git a/include/libbb.h b/include/libbb.h
-+index 8eccd8170..c6e3e02a8 100644
++index 1dbec3d0f..1869f2571 100644
 +--- a/include/libbb.h
 ++++ b/include/libbb.h
-+@@ -1952,9 +1952,9 @@ extern const char bb_path_wtmp_file[] ALIGN1;
++@@ -2008,9 +2008,9 @@ extern const char bb_path_wtmp_file[] ALIGN1;
 + extern const char bb_busybox_exec_path[] ALIGN1;
 + /* util-linux manpage says /sbin:/bin:/usr/sbin:/usr/bin,
 +  * but I want to save a few bytes here */
@@ -42,10 +42,10 @@ index 0000000000..39f8d592dc
 + extern const int const_int_0;
 + //extern const int const_int_1;
 +diff --git a/libbb/messages.c b/libbb/messages.c
-+index cb0836de8..35a1b3511 100644
++index 0a6cf3bf8..371a29698 100644
 +--- a/libbb/messages.c
 ++++ b/libbb/messages.c
-+@@ -40,7 +40,7 @@ const char bb_default_login_shell[] ALIGN1 = LIBBB_DEFAULT_LOGIN_SHELL;
++@@ -37,7 +37,7 @@ const char bb_default_login_shell[] ALIGN1 = LIBBB_DEFAULT_LOGIN_SHELL;
 + /* util-linux manpage says /sbin:/bin:/usr/sbin:/usr/bin,
 +  * but I want to save a few bytes here. Check libbb.h before changing! */
 + const char bb_PATH_root_path[] ALIGN1 =
@@ -58,10 +58,10 @@ index 0000000000..39f8d592dc
 +2.14.1
 +
 diff --git a/package/openssh/openssh.mk b/package/openssh/openssh.mk
-index 6b7ac22c19..0fbd9d23a0 100644
+index b28429e1bb..2e88ced9ae 100644
 --- a/package/openssh/openssh.mk
 +++ b/package/openssh/openssh.mk
-@@ -20,7 +20,8 @@ OPENSSH_CONF_OPTS = \
+@@ -16,7 +16,8 @@ OPENSSH_CONF_OPTS = \
  	--disable-utmpx \
  	--disable-wtmp \
  	--disable-wtmpx \
