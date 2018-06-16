@@ -1,4 +1,4 @@
-From fe197431b70503d0faf1088ca837b24f64ad3547 Mon Sep 17 00:00:00 2001
+From dddca441e5500059c4f05cd28f30451c15f52a2d Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 3 May 2018 23:47:55 -0700
 Subject: [PATCH] Fix "random: fix crng_ready() test" patch
