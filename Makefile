@@ -44,23 +44,13 @@ output:
 	@mkdir -p $@
 
 clean:
-	$(RM) -r output
 	-docker rm -f $(BUILD_CONTAINER)
 
 distclean: clean
 	-docker rmi $(BUILD_IMAGE)
-	vagrant destroy -f
-	$(RM) -r .vagrant
+	$(RM) -r output
 
 .PHONY: all build clean distclean
-
-vagrant:
-	vagrant up barge
-	vagrant ssh barge -c 'sudo mkdir -p $(DL_DIR) $(CCACHE_DIR)'
-
-dev:
-	vagrant up barge-$@
-	vagrant ssh barge-$@ -c 'sudo mkdir -p $(DL_DIR) $(CCACHE_DIR)'
 
 config: | output
 	docker cp $(BUILD_CONTAINER):/build/buildroot/.config output/buildroot.config
@@ -70,12 +60,4 @@ config: | output
 	docker cp $(BUILD_CONTAINER):/build/buildroot/output/build/linux-$(KERNEL_VERSION)/.config output/kernel.config
 	-diff configs/kernel.config output/kernel.config
 
-install:
-	cp output/bzImage ../barge-packer/virtualbox/iso/
-	cp output/rootfs.tar.xz ../barge-packer/virtualbox/iso/
-	cp configs/kernel.config ../barge-packer/virtualbox/iso/
-	cp configs/isolinux.cfg ../barge-packer/virtualbox/iso/
-	cp output/barge.iso ../barge-packer/qemu/
-	cp output/barge.img ../barge-packer/qemu/
-
-.PHONY: vagrant dev config install
+.PHONY: config
