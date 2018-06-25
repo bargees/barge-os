@@ -11,13 +11,23 @@ Or we provide `Vagrantfile` to create a Docker environment in your local machine
 
 ## Building
 
-Primarily this build method assumes that you have Docker client on Mac OS X.
+Primarily this build method assumes that you have Docker client.
 
 ```
 $ git clone https://github.com/bargees/barge
 $ cd barge
-$ vagrant up # if you don't have Docker.
 $ make
+```
+
+Or if you don't have Docker but Vagrant,
+
+```
+$ git clone https://github.com/bargees/barge
+$ cd barge
+$ vagrant up
+$ vagrant ssh
+[bargee@barge ~]$ cd /vagrant/
+[bargee@barge vagrant]$ make
 ```
 
 It will create the following images at `./output/` directory.
@@ -27,7 +37,7 @@ It will create the following images at `./output/` directory.
 - bzImage: Raw Linux kernel image
 - rootfs.tar.xz: Raw Root filesystem including Linux kernel modules and drivers
 
-Or you can use a Docker client manually without `make`.
+Or you can use Docker client manually without `make`.
 
 ```
 $ docker build -t barge-builder .
