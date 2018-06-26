@@ -20,12 +20,9 @@ $(OUTPUTS): build | output
 build:
 	$(eval OLD_IMAGE_ID=$(shell docker inspect -f '{{.ID}}' $(BUILD_IMAGE) 2>/dev/null))
 	docker build -t $(BUILD_IMAGE) .
-	@echo "$(OLD_IMAGE_ID)"
-	@echo "$(IMAGE_ID)"
 	@if [ "$(OLD_IMAGE_ID)" != "$(IMAGE_ID)" ]; then \
 		(docker rm -f $(BUILD_CONTAINER) || true); \
 	fi
-	@echo "$(IS_BUILT)"
 	@if [ "$(IS_BUILT)" = "" ]; then \
 		set -e; \
 		(docker rm -f $(BUILD_CONTAINER) || true); \
