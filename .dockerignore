@@ -1,6 +1,8 @@
 **/.DS_Store
+.ssh_config
 
 .git/
+.gitignore
 .vagrant/
 
 docs/
