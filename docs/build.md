@@ -3,6 +3,7 @@
 ## Requirements
 
 - [Docker](https://www.docker.com/)
+- 2GB Memory to build Buildroot in a container
 
 Or we provide `Vagrantfile` to create a Docker environment in your local machine.
 
