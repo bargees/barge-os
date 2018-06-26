@@ -18,7 +18,7 @@ $(OUTPUTS): build | output
 	docker cp $(BUILD_CONTAINER):/build/buildroot/output/images/$(@F) output/
 
 build:
-	$(eval OLD_IMAGE_ID=$(IMAGE_ID))
+	$(eval OLD_IMAGE_ID=$(shell docker inspect -f '{{.ID}}' $(BUILD_IMAGE) 2>/dev/null))
 	docker build -t $(BUILD_IMAGE) .
 	@echo "$(OLD_IMAGE_ID)"
 	@echo "$(IMAGE_ID)"
