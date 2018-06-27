@@ -19,13 +19,5 @@ Vagrant.configure(2) do |config|
 
   config.vm.hostname = "barge-x-iso"
 
-  config.vm.network :forwarded_port, guest: 2375, host: 2375, auto_correct: true, disabled: true
-
-  config.vm.synced_folder ".", "/vagrant"
-
-  config.vm.provision :docker do |docker|
-    docker.build_image "/vagrant/", args: "-t barge-x"
-    docker.run "barge-x", args: "--rm", cmd: "> /vagrant/barge-x.iso",
-      auto_assign_name: false, daemonize: false, restart: false
-  end
+  config.vm.synced_folder ".", "/vagrant", id: "vagrant"
 end

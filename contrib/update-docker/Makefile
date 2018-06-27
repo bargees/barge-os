@@ -6,14 +6,11 @@ ISO_NAME := barge-x.iso
 
 EXTERNAL_DEPENDENCIES := bzImage rootfs.tar.xz isolinux.cfg docker.tgz docker.bash-completion
 
-VAGRANT := vagrant
-
 iso: $(ISO_NAME)
 
 $(ISO_NAME): Dockerfile docker $(EXTERNAL_DEPENDENCIES)
-	$(VAGRANT) up --no-provision
-	$(VAGRANT) provision
-	$(VAGRANT) suspend
+	docker build -t barge-x .
+	docker run --rm barge-x > $@
 
 bzImage rootfs.tar.xz:
 	curl -L https://github.com/bargees/barge-os/releases/download/$(BARGE_VERSION)/$(@F) -o $@
@@ -28,9 +25,9 @@ docker.bash-completion:
 	curl -L https://raw.githubusercontent.com/docker/docker-ce/v$(DOCKER_VERSION)/components/cli/contrib/completion/bash/docker -o $@
 
 clean:
-	-$(VAGRANT) destroy -f
-	$(RM) -r .vagrant
 	$(RM) $(EXTERNAL_DEPENDENCIES)
+
+distclean: clean
 	$(RM) $(ISO_NAME)
 
-.PHONY: clean
+.PHONY: clean distclean
