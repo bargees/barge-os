@@ -1,4 +1,4 @@
-From 90ec5e736a50395400f59b2ff6c6619169c13689 Mon Sep 17 00:00:00 2001
+From fa32e5687f1d887e01be7820573d855492cfbc68 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Tue, 7 Nov 2017 13:52:44 -0800
 Subject: [PATCH] package/glibc: switch to release/2.25/master branch
@@ -10,7 +10,7 @@ https://github.com/bminor/glibc/tree/release/2.25/master
  2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/package/glibc/glibc.hash b/package/glibc/glibc.hash
-index 1fab3a245c..c98b977902 100644
+index 81dd5ad5ed..2b20091875 100644
 --- a/package/glibc/glibc.hash
 +++ b/package/glibc/glibc.hash
 @@ -1,5 +1,5 @@
@@ -18,13 +18,13 @@ index 1fab3a245c..c98b977902 100644
 -sha256  33189b3f10c88730a1f686fac794bc01f31765f12ffd75bc5e8a0f2a690d217a     glibc-glibc-2.27-57-g6c99e37f6fb640a50a3113b2dbee5d5389843c1e.tar.gz
 +sha256  024b0db4ef1728a7bd49c7856a9d622f2842a729caeb14238ad1995dd780ec57     glibc-71616d59ec97fe798b69f749e7fb424bd6d2432b.tar.gz
  # Locally calculated (fetched from Github)
- sha256  ddc63360393ab88ab6a4a0c81d33481f34c5a9ebd758eec2e6bb35385058b4cb     glibc-arc-2018.03-rc2.tar.gz
+ sha256  e08ab67b2db2d0f0e8f3311d23c54fb8f6d4c1ef6fa0b4047fd5da400e3ce9de     glibc-arc-2018.03-release.tar.gz
  
 diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
-index 8e82eaa1ee..31c85ff858 100644
+index caaa542cea..dc462f0286 100644
 --- a/package/glibc/glibc.mk
 +++ b/package/glibc/glibc.mk
-@@ -9,8 +9,8 @@ GLIBC_VERSION =  arc-2018.03-rc2
+@@ -9,8 +9,8 @@ GLIBC_VERSION =  arc-2018.03-release
  GLIBC_SITE = $(call github,foss-for-synopsys-dwc-arc-processors,glibc,$(GLIBC_VERSION))
  else
  # Generate version string using:
