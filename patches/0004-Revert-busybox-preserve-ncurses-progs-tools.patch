@@ -1,4 +1,4 @@
-From 03eea4a773cfca453f5b28c7bbb3b99cb51d027a Mon Sep 17 00:00:00 2001
+From c451f4951fd05e8aa9d8c35bce000ac14f0c4ae9 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 14 May 2017 15:56:47 -0700
 Subject: [PATCH] Revert "busybox: preserve ncurses progs/tools"
@@ -9,7 +9,7 @@ This reverts commit 33c72344a8686a136c1da6a056ed6c0945bbf8b7.
  1 file changed, 5 insertions(+)
 
 diff --git a/package/ncurses/ncurses.mk b/package/ncurses/ncurses.mk
-index 90cf4a4dc5..08f2526a5b 100644
+index 5b36df564c..1062a8e49b 100644
 --- a/package/ncurses/ncurses.mk
 +++ b/package/ncurses/ncurses.mk
 @@ -30,6 +30,11 @@ NCURSES_CONF_OPTS = \

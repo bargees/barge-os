@@ -1,4 +1,4 @@
-From 36eb659f811086457c863653eaabfa14d89cd8f2 Mon Sep 17 00:00:00 2001
+From 893084a3d80bd6ad863273d2657c7fb6f930136a Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sat, 10 Feb 2018 11:48:42 +0900
 Subject: [PATCH] package/binutils: support bz2-compressed tarball for 2.26.1
@@ -13,7 +13,7 @@ SHA: 453d29f1f45736d0156071930a09015def68994a
  1 file changed, 4 insertions(+)
 
 diff --git a/package/binutils/binutils.mk b/package/binutils/binutils.mk
-index 1c05958f9c..7fe8c8638e 100644
+index cb6022f7fa..8f62c844e9 100644
 --- a/package/binutils/binutils.mk
 +++ b/package/binutils/binutils.mk
 @@ -21,7 +21,11 @@ BINUTILS_SOURCE = binutils-$(BINUTILS_VERSION).tar.gz

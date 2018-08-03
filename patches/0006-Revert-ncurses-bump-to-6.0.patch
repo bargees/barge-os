@@ -1,4 +1,4 @@
-From 383ab482021159ec7d64bdd5fbdb5b31217f27ea Mon Sep 17 00:00:00 2001
+From 474948a072a7f9d8e9a59673a41eb30959637df7 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 14 May 2017 15:57:09 -0700
 Subject: [PATCH] Revert "ncurses: bump to 6.0"
@@ -178,7 +178,7 @@ index 045625ae3b..482b2d4853 100644
 -sha256	aa057eeeb4a14d470101eff4597d5833dcef5965331be3528c08d99cebaa0d17	ncurses-6.1.tar.gz
 +sha256	9046298fb440324c9d4135ecea7879ffed8546dd1b58e59430ea07a4633f563b	ncurses-5.9.tar.gz
 diff --git a/package/ncurses/ncurses.mk b/package/ncurses/ncurses.mk
-index 11f505b6e7..92f022dd2a 100644
+index 9e2fa62646..3eafaab1eb 100644
 --- a/package/ncurses/ncurses.mk
 +++ b/package/ncurses/ncurses.mk
 @@ -4,13 +4,13 @@
