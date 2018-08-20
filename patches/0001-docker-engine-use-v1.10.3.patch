@@ -1,4 +1,4 @@
-From 8d356b60da6c389231a348e0daae0fe921582656 Mon Sep 17 00:00:00 2001
+From e5611706482107fb125961bee849d7ea8e55b2ca Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 8 May 2017 08:35:29 -0700
 Subject: [PATCH] docker-engine: use v1.10.3
