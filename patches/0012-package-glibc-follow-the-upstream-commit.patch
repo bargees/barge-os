@@ -1,4 +1,4 @@
-From c9c29a88126815fb89362ccfa0de3b1511ede60b Mon Sep 17 00:00:00 2001
+From 3362ec79db18a36a56043d8a91549f5282e254cd Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 27 Aug 2018 22:33:50 -0700
 Subject: [PATCH] package/glibc: follow the upstream commit
