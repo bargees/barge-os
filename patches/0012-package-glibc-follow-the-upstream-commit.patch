@@ -1,0 +1,39 @@
+From 3362ec79db18a36a56043d8a91549f5282e254cd Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Mon, 27 Aug 2018 22:33:50 -0700
+Subject: [PATCH] package/glibc: follow the upstream commit
+
+pthread_cond_broadcast: Fix waiters-after-spinning case
+https://github.com/bminor/glibc/commit/1324858a3fd3d0291f9dec45f771881ba7209150
+---
+ package/glibc/glibc.hash | 2 +-
+ package/glibc/glibc.mk   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/package/glibc/glibc.hash b/package/glibc/glibc.hash
+index 2b20091875..5066ad3ab2 100644
+--- a/package/glibc/glibc.hash
++++ b/package/glibc/glibc.hash
+@@ -1,5 +1,5 @@
+ # Locally calculated (fetched from Github)
+-sha256  024b0db4ef1728a7bd49c7856a9d622f2842a729caeb14238ad1995dd780ec57     glibc-71616d59ec97fe798b69f749e7fb424bd6d2432b.tar.gz
++sha256  293c9ce13216e63c4634703a05201e62af19e854eba6e8e7fcca49161e33fa26     glibc-1324858a3fd3d0291f9dec45f771881ba7209150.tar.gz
+ # Locally calculated (fetched from Github)
+ sha256  e08ab67b2db2d0f0e8f3311d23c54fb8f6d4c1ef6fa0b4047fd5da400e3ce9de     glibc-arc-2018.03-release.tar.gz
+ 
+diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
+index db420f5c5f..f3e9fcd7e5 100644
+--- a/package/glibc/glibc.mk
++++ b/package/glibc/glibc.mk
+@@ -10,7 +10,7 @@ GLIBC_SITE = $(call github,foss-for-synopsys-dwc-arc-processors,glibc,$(GLIBC_VE
+ else
+ # Generate version string using:
+ #   git describe --match 'glibc-*' --abbrev=40 origin/release/2.25/master
+-GLIBC_VERSION = 71616d59ec97fe798b69f749e7fb424bd6d2432b
++GLIBC_VERSION = 1324858a3fd3d0291f9dec45f771881ba7209150
+ # Upstream doesn't officially provide an https download link.
+ # There is one (https://sourceware.org/git/glibc.git) but it's not reliable,
+ # sometimes the connection times out. So use an unofficial github mirror.
+-- 
+2.14.1
+

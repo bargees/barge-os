@@ -1,4 +1,4 @@
-From fa32e5687f1d887e01be7820573d855492cfbc68 Mon Sep 17 00:00:00 2001
+From 48ab97500eec43d80520219b9c9e07553712e73e Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Tue, 7 Nov 2017 13:52:44 -0800
 Subject: [PATCH] package/glibc: switch to release/2.25/master branch
@@ -21,7 +21,7 @@ index 81dd5ad5ed..2b20091875 100644
  sha256  e08ab67b2db2d0f0e8f3311d23c54fb8f6d4c1ef6fa0b4047fd5da400e3ce9de     glibc-arc-2018.03-release.tar.gz
  
 diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
-index caaa542cea..dc462f0286 100644
+index d34b42b831..db420f5c5f 100644
 --- a/package/glibc/glibc.mk
 +++ b/package/glibc/glibc.mk
 @@ -9,8 +9,8 @@ GLIBC_VERSION =  arc-2018.03-release

@@ -1,0 +1,66 @@
+From 87f10bec9c096178050bc5a0ba8394138e7ed108 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Mon, 6 Nov 2017 15:19:04 -0800
+Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
+
+---
+ ...e-the-default-PATH-with-opt-bin-for-Barge.patch | 32 ++++++++++++++++++++++
+ package/openssh/openssh.mk                         |  3 +-
+ 2 files changed, 34 insertions(+), 1 deletion(-)
+ create mode 100644 package/busybox/0004-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
+
+diff --git a/package/busybox/0004-Revise-the-default-PATH-with-opt-bin-for-Barge.patch b/package/busybox/0004-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
+new file mode 100644
+index 0000000000..60c650f089
+--- /dev/null
++++ b/package/busybox/0004-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
+@@ -0,0 +1,32 @@
++From e08bac165ab6403c22189cde1ba3dfe4a692fdbf Mon Sep 17 00:00:00 2001
++From: "A.I" <ailis@paw.zone>
++Date: Fri, 11 May 2018 12:28:55 -0700
++Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
++
++---
++ include/libbb.h | 4 ++--
++ 1 file changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/include/libbb.h b/include/libbb.h
++index d4ba031df..ad86bac64 100644
++--- a/include/libbb.h
+++++ b/include/libbb.h
++@@ -2027,13 +2027,13 @@ extern const char bb_busybox_exec_path[] ALIGN1;
++ #ifndef BB_ADDITIONAL_PATH
++ #define BB_ADDITIONAL_PATH ""
++ #endif
++-#define BB_PATH_ROOT_PATH "PATH=/sbin:/usr/sbin:/bin:/usr/bin" BB_ADDITIONAL_PATH
+++#define BB_PATH_ROOT_PATH "PATH=/usr/sbin:/sbin:/opt/bin:/usr/bin:/bin" BB_ADDITIONAL_PATH
++ extern const char bb_PATH_root_path[] ALIGN1; /* BB_PATH_ROOT_PATH */
++ #define bb_default_root_path (bb_PATH_root_path + sizeof("PATH"))
++ /* util-linux manpage says /sbin:/bin:/usr/sbin:/usr/bin,
++  * but I want to save a few bytes here:
++  */
++-#define bb_default_path      (bb_PATH_root_path + sizeof("PATH=/sbin:/usr/sbin"))
+++#define bb_default_path      (bb_PATH_root_path + sizeof("PATH=/usr/sbin:/sbin"))
++ 
++ extern const int const_int_0;
++ //extern const int const_int_1;
++-- 
++2.14.1
++
+diff --git a/package/openssh/openssh.mk b/package/openssh/openssh.mk
+index 45a11ee65e..279d47d1e1 100644
+--- a/package/openssh/openssh.mk
++++ b/package/openssh/openssh.mk
+@@ -16,7 +16,8 @@ OPENSSH_CONF_OPTS = \
+ 	--disable-utmpx \
+ 	--disable-wtmp \
+ 	--disable-wtmpx \
+-	--disable-strip
++	--disable-strip \
++	--with-default-path=/usr/sbin:/sbin:/opt/bin:/usr/bin:/bin
+ 
+ define OPENSSH_USERS
+ 	sshd -1 sshd -1 * - - - SSH drop priv user
+-- 
+2.14.1
+
