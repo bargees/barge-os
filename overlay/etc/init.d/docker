@@ -112,7 +112,7 @@ EOF
 
   if ${DOCKER_SWITCHING} ; then
     for i in docker docker-containerd docker-containerd-ctr docker-containerd-shim docker-init \
-      docker-proxy docker-runc dockerd ; do
+      docker-proxy docker-runc dockerd containerd ctr containerd-shim runc ; do
       rm -f "/opt/bin/$i"
       if [ -f "${DOCKER_BIN_DIR}/$i" ]; then
         ln -s "${DOCKER_BIN_DIR}/$i" "/opt/bin/$i"
@@ -249,6 +249,9 @@ switch() {
         channel="stable"
       fi
       if [[ "${version}" == *"-rc"* ]]; then
+        channel="test"
+      fi
+      if [[ "${version}" == *"-beta"* ]]; then
         channel="test"
       fi
       base_url="https://download.docker.com/linux/static/${channel}/x86_64"
