@@ -1,0 +1,33 @@
+From 5eb07bdc4178f03a09fe526bbe2c6b910a0ef1af Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Thu, 25 Oct 2018 18:20:16 -0700
+Subject: [PATCH] Revert "fs/common: allow custom user table to override
+ package-defined users"
+
+This reverts commit f814dbf52270d50693bb9bbbcbfb700754efc771.
+
+It would assign the different ID to the primary user, like bargee.
+---
+ fs/common.mk | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/common.mk b/fs/common.mk
+index 453da6010a..abf35418cb 100644
+--- a/fs/common.mk
++++ b/fs/common.mk
+@@ -75,11 +75,10 @@ $(ROOTFS_COMMON_TAR): $(ROOTFS_COMMON_DEPENDENCIES) target-finalize
+ 	echo '#!/bin/sh' > $(FAKEROOT_SCRIPT)
+ 	echo "set -e" >> $(FAKEROOT_SCRIPT)
+ 	echo "chown -h -R 0:0 $(TARGET_DIR)" >> $(FAKEROOT_SCRIPT)
+-
+-	$(call PRINTF,$(PACKAGES_USERS)) >> $(USERS_TABLE)
+ ifneq ($(ROOTFS_USERS_TABLES),)
+ 	cat $(ROOTFS_USERS_TABLES) >> $(USERS_TABLE)
+ endif
++	$(call PRINTF,$(PACKAGES_USERS)) >> $(USERS_TABLE)
+ 	PATH=$(BR_PATH) $(TOPDIR)/support/scripts/mkusers $(USERS_TABLE) $(TARGET_DIR) >> $(FAKEROOT_SCRIPT)
+ ifneq ($(ROOTFS_DEVICE_TABLES),)
+ 	cat $(ROOTFS_DEVICE_TABLES) > $(FULL_DEVICE_TABLE)
+-- 
+2.14.1
+
