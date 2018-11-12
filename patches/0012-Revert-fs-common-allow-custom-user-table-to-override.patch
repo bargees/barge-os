@@ -1,4 +1,4 @@
-From 5eb07bdc4178f03a09fe526bbe2c6b910a0ef1af Mon Sep 17 00:00:00 2001
+From 6bb22415c49129b16072a99fcfe77e0cc7b82097 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 25 Oct 2018 18:20:16 -0700
 Subject: [PATCH] Revert "fs/common: allow custom user table to override
@@ -12,10 +12,10 @@ It would assign the different ID to the primary user, like bargee.
  1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/fs/common.mk b/fs/common.mk
-index 453da6010a..abf35418cb 100644
+index 2a5a202a89..84b3e0d38c 100644
 --- a/fs/common.mk
 +++ b/fs/common.mk
-@@ -75,11 +75,10 @@ $(ROOTFS_COMMON_TAR): $(ROOTFS_COMMON_DEPENDENCIES) target-finalize
+@@ -76,11 +76,10 @@ $(ROOTFS_COMMON_TAR): $(ROOTFS_COMMON_DEPENDENCIES) target-finalize
  	echo '#!/bin/sh' > $(FAKEROOT_SCRIPT)
  	echo "set -e" >> $(FAKEROOT_SCRIPT)
  	echo "chown -h -R 0:0 $(TARGET_DIR)" >> $(FAKEROOT_SCRIPT)
