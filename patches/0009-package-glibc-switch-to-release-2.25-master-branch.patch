@@ -1,4 +1,4 @@
-From 764503a1431a2653c496718753a98c2b3d356f8a Mon Sep 17 00:00:00 2001
+From 26f43838af5dafef6fe49dfe7e7e33a89d71366e Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Tue, 7 Nov 2017 13:52:44 -0800
 Subject: [PATCH] package/glibc: switch to release/2.25/master branch
@@ -121,7 +121,7 @@ index febcd36f79..0000000000
 -2.17.0
 -
 diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
-index 708c22f723..e2ab1f86e7 100644
+index 762c040688..1f08ea8be9 100644
 --- a/package/glibc/glibc.mk
 +++ b/package/glibc/glibc.mk
 @@ -9,8 +9,8 @@ GLIBC_VERSION =  arc-2018.03-release

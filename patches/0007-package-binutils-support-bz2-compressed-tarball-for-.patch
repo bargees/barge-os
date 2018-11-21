@@ -1,4 +1,4 @@
-From a2c4ad067cd258fba3468bfbcc21a0df99023135 Mon Sep 17 00:00:00 2001
+From a4880d5c5fd2d24f5e28bf1fd336ab2285194878 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sat, 10 Feb 2018 11:48:42 +0900
 Subject: [PATCH] package/binutils: support bz2-compressed tarball for 2.26.1
