@@ -1,4 +1,4 @@
-From 26f43838af5dafef6fe49dfe7e7e33a89d71366e Mon Sep 17 00:00:00 2001
+From 9cb70b2481d52c9512c71e221f2043da0e561ce4 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Tue, 7 Nov 2017 13:52:44 -0800
 Subject: [PATCH] package/glibc: switch to release/2.25/master branch
@@ -9,27 +9,27 @@ https://github.com/bminor/glibc/tree/release/2.25/master
  ...e754-soft-fp-ignore-maybe-uninitialized-w.patch | 88 ----------------------
  package/glibc/glibc.mk                             |  4 +-
  3 files changed, 3 insertions(+), 91 deletions(-)
- rename package/glibc/{glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab => 7118ba34931d27f538c71c1cd355866f8db83f4e}/glibc.hash (69%)
- delete mode 100644 package/glibc/glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch
+ rename package/glibc/{glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa => 7118ba34931d27f538c71c1cd355866f8db83f4e}/glibc.hash (69%)
+ delete mode 100644 package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch
 
-diff --git a/package/glibc/glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab/glibc.hash b/package/glibc/7118ba34931d27f538c71c1cd355866f8db83f4e/glibc.hash
+diff --git a/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/glibc.hash b/package/glibc/7118ba34931d27f538c71c1cd355866f8db83f4e/glibc.hash
 similarity index 69%
-rename from package/glibc/glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab/glibc.hash
+rename from package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/glibc.hash
 rename to package/glibc/7118ba34931d27f538c71c1cd355866f8db83f4e/glibc.hash
-index a95c990c99..3741d8d725 100644
---- a/package/glibc/glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab/glibc.hash
+index 7429ab3809..3741d8d725 100644
+--- a/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/glibc.hash
 +++ b/package/glibc/7118ba34931d27f538c71c1cd355866f8db83f4e/glibc.hash
 @@ -1,5 +1,5 @@
  # Locally calculated (fetched from Github)
--sha256  6e88cea4002efa7f78d86ea5e98eb92ed423d5a35068751517c4f00f56b8666c  glibc-glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab.tar.gz
+-sha256  b070f746f932cfce107bb9be2d59ded5b44b25ddafb480c9110c52b88cc2dec1  glibc-glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa.tar.gz
 +sha256  ad34ac60df040dd70d8465d1feef58b258773ab17822c5da1c8df328e375b408  glibc-7118ba34931d27f538c71c1cd355866f8db83f4e.tar.gz
  
  # Hashes for license files
  sha256  8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  COPYING
-diff --git a/package/glibc/glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch b/package/glibc/glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch
+diff --git a/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch b/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch
 deleted file mode 100644
 index febcd36f79..0000000000
---- a/package/glibc/glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch
+--- a/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch
 +++ /dev/null
 @@ -1,88 +0,0 @@
 -From 4a06ceea33ecc220bbfe264d8f1e74de2f04e90d Mon Sep 17 00:00:00 2001
@@ -121,7 +121,7 @@ index febcd36f79..0000000000
 -2.17.0
 -
 diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
-index 762c040688..1f08ea8be9 100644
+index 88178d7eb9..1f08ea8be9 100644
 --- a/package/glibc/glibc.mk
 +++ b/package/glibc/glibc.mk
 @@ -9,8 +9,8 @@ GLIBC_VERSION =  arc-2018.03-release
@@ -129,7 +129,7 @@ index 762c040688..1f08ea8be9 100644
  else
  # Generate version string using:
 -#   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master
--GLIBC_VERSION = glibc-2.28-18-g2339d6a55eb7a7e040ae888e906adc49eeb59eab
+-GLIBC_VERSION = glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa
 +#   git describe --match 'glibc-*' --abbrev=40 origin/release/2.25/master
 +GLIBC_VERSION = 7118ba34931d27f538c71c1cd355866f8db83f4e
  # Upstream doesn't officially provide an https download link.

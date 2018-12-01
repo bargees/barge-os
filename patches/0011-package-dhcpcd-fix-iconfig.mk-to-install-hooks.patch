@@ -1,4 +1,4 @@
-From e4357ba505fab0a3624b89fa4cf605bd5c9139a0 Mon Sep 17 00:00:00 2001
+From 20e15261b01bc894249b97a286a3dd7657a0e78f Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 27 May 2018 20:51:38 -0700
 Subject: [PATCH] package/dhcpcd: fix iconfig.mk to install hooks

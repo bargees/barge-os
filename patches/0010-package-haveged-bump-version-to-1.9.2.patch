@@ -1,4 +1,4 @@
-From 6b8877835756679f2d18db1019d72153645037cc Mon Sep 17 00:00:00 2001
+From ddc3b6df4a85c858f9f887e815f3a304ae2c0212 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Fri, 4 May 2018 17:12:05 -0700
 Subject: [PATCH] package/haveged: bump version to 1.9.2
