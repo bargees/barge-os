@@ -16,7 +16,7 @@ It's inspired by the following projects.
 
 ## Features
 
-- Built with Buildroot 2018.08.2 with Linux kernel v4.14.78 and glibc.
+- Built with Buildroot 2018.11 with Linux kernel v4.14.78 and glibc.
 - Strip down the Linux kernel modules and drivers
 - Busybox + the following utilities from Buildroot
 	- sudo, bash, wget, xz, sntp, logrotate

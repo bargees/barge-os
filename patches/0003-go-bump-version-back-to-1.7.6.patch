@@ -1,13 +1,13 @@
-From f2d6afb387f435940685567e0ec4c75f8bdec5c0 Mon Sep 17 00:00:00 2001
+From a7077aa31a02a6508ac05553f9deaa9ef4988787 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 29 Dec 2016 15:37:26 -0800
 Subject: [PATCH] go: bump version back to 1.7.6
 
 ---
  ...d.go-explicit-option-for-crosscompilation.patch | 40 ----------------------
- package/go/go.hash                                 |  2 +-
+ package/go/go.hash                                 |  3 +-
  package/go/go.mk                                   |  2 +-
- 3 files changed, 2 insertions(+), 42 deletions(-)
+ 3 files changed, 2 insertions(+), 43 deletions(-)
  delete mode 100644 package/go/0001-build.go-explicit-option-for-crosscompilation.patch
 
 diff --git a/package/go/0001-build.go-explicit-option-for-crosscompilation.patch b/package/go/0001-build.go-explicit-option-for-crosscompilation.patch
@@ -57,22 +57,23 @@ index f76c5b1d03..0000000000
 -2.7.4
 -
 diff --git a/package/go/go.hash b/package/go/go.hash
-index 9f5b80e9f5..ff914a48bf 100644
+index bd6af0358f..516a2398b2 100644
 --- a/package/go/go.hash
 +++ b/package/go/go.hash
-@@ -1,2 +1,2 @@
+@@ -1,3 +1,2 @@
  # From https://golang.org/dl/
--sha256	6264609c6b9cd8ed8e02ca84605d727ce1898d74efa79841660b2e3e985a98bd	go1.10.2.src.tar.gz
-+sha256	1a67a4e688673fdff7ba41e73482b0e59ac5bd0f7acf703bc6d50cc775c5baba	go1.7.6.src.tar.gz
+-sha256	042fba357210816160341f1002440550e952eb12678f7c9e7e9d389437942550  go1.11.2.src.tar.gz
+-sha256	2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067  LICENSE
++sha256	1a67a4e688673fdff7ba41e73482b0e59ac5bd0f7acf703bc6d50cc775c5baba  go1.7.6.src.tar.gz
 diff --git a/package/go/go.mk b/package/go/go.mk
-index 73f14cc78f..111995f8dc 100644
+index 2e434f3bad..111995f8dc 100644
 --- a/package/go/go.mk
 +++ b/package/go/go.mk
 @@ -4,7 +4,7 @@
  #
  ################################################################################
  
--GO_VERSION = 1.10.2
+-GO_VERSION = 1.11.2
 +GO_VERSION = 1.7.6
  GO_SITE = https://storage.googleapis.com/golang
  GO_SOURCE = go$(GO_VERSION).src.tar.gz

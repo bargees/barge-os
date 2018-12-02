@@ -1,4 +1,4 @@
-From fc5a439d8db8c2a66b91926ecbe69afaa5dad29c Mon Sep 17 00:00:00 2001
+From e89603b7802179ccb7a99fd58c1abd61b53e1861 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 6 Nov 2017 15:19:04 -0800
 Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
@@ -48,7 +48,7 @@ index 0000000000..60c650f089
 +2.14.1
 +
 diff --git a/package/openssh/openssh.mk b/package/openssh/openssh.mk
-index 45a11ee65e..279d47d1e1 100644
+index 07f3e0d663..2efa68158d 100644
 --- a/package/openssh/openssh.mk
 +++ b/package/openssh/openssh.mk
 @@ -16,7 +16,8 @@ OPENSSH_CONF_OPTS = \

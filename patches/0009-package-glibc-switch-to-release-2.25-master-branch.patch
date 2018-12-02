@@ -1,27 +1,127 @@
-From 5b4c38d20b8c302dc4f5180fb613172f7f74b6e2 Mon Sep 17 00:00:00 2001
+From d324cb78ca8c8a6c74402b422b3eb37d9f7913d8 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Tue, 7 Nov 2017 13:52:44 -0800
 Subject: [PATCH] package/glibc: switch to release/2.25/master branch
 
 https://github.com/bminor/glibc/tree/release/2.25/master
 ---
- package/glibc/glibc.hash | 2 +-
- package/glibc/glibc.mk   | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ .../glibc.hash                                     |  2 +-
+ ...e754-soft-fp-ignore-maybe-uninitialized-w.patch | 88 ----------------------
+ package/glibc/glibc.mk                             |  4 +-
+ 3 files changed, 3 insertions(+), 91 deletions(-)
+ rename package/glibc/{glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa => 7118ba34931d27f538c71c1cd355866f8db83f4e}/glibc.hash (69%)
+ delete mode 100644 package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch
 
-diff --git a/package/glibc/glibc.hash b/package/glibc/glibc.hash
-index 81dd5ad5ed..2b20091875 100644
---- a/package/glibc/glibc.hash
-+++ b/package/glibc/glibc.hash
+diff --git a/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/glibc.hash b/package/glibc/7118ba34931d27f538c71c1cd355866f8db83f4e/glibc.hash
+similarity index 69%
+rename from package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/glibc.hash
+rename to package/glibc/7118ba34931d27f538c71c1cd355866f8db83f4e/glibc.hash
+index 7429ab3809..3741d8d725 100644
+--- a/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/glibc.hash
++++ b/package/glibc/7118ba34931d27f538c71c1cd355866f8db83f4e/glibc.hash
 @@ -1,5 +1,5 @@
  # Locally calculated (fetched from Github)
--sha256  33189b3f10c88730a1f686fac794bc01f31765f12ffd75bc5e8a0f2a690d217a     glibc-glibc-2.27-57-g6c99e37f6fb640a50a3113b2dbee5d5389843c1e.tar.gz
-+sha256  024b0db4ef1728a7bd49c7856a9d622f2842a729caeb14238ad1995dd780ec57     glibc-71616d59ec97fe798b69f749e7fb424bd6d2432b.tar.gz
- # Locally calculated (fetched from Github)
- sha256  e08ab67b2db2d0f0e8f3311d23c54fb8f6d4c1ef6fa0b4047fd5da400e3ce9de     glibc-arc-2018.03-release.tar.gz
+-sha256  b070f746f932cfce107bb9be2d59ded5b44b25ddafb480c9110c52b88cc2dec1  glibc-glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa.tar.gz
++sha256  ad34ac60df040dd70d8465d1feef58b258773ab17822c5da1c8df328e375b408  glibc-7118ba34931d27f538c71c1cd355866f8db83f4e.tar.gz
  
+ # Hashes for license files
+ sha256  8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  COPYING
+diff --git a/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch b/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch
+deleted file mode 100644
+index febcd36f79..0000000000
+--- a/package/glibc/glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa/0001-sysdeps-ieee754-soft-fp-ignore-maybe-uninitialized-w.patch
++++ /dev/null
+@@ -1,88 +0,0 @@
+-From 4a06ceea33ecc220bbfe264d8f1e74de2f04e90d Mon Sep 17 00:00:00 2001
+-From: Martin Jansa <Martin.Jansa@gmail.com>
+-Date: Tue, 2 Oct 2018 15:38:43 +0000
+-Subject: [PATCH] sysdeps/ieee754/soft-fp: ignore maybe-uninitialized with -O
+- [BZ #19444]
+-
+-* with -O, -O1, -Os it fails with:
+-
+-In file included from ../soft-fp/soft-fp.h:318,
+-                 from ../sysdeps/ieee754/soft-fp/s_fdiv.c:28:
+-../sysdeps/ieee754/soft-fp/s_fdiv.c: In function '__fdiv':
+-../soft-fp/op-2.h:98:25: error: 'R_f1' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+-        X##_f0 = (X##_f1 << (_FP_W_TYPE_SIZE - (N)) | X##_f0 >> (N) \
+-                         ^~
+-../sysdeps/ieee754/soft-fp/s_fdiv.c:38:14: note: 'R_f1' was declared here
+-   FP_DECL_D (R);
+-              ^
+-../soft-fp/op-2.h:37:36: note: in definition of macro '_FP_FRAC_DECL_2'
+-   _FP_W_TYPE X##_f0 _FP_ZERO_INIT, X##_f1 _FP_ZERO_INIT
+-                                    ^
+-../soft-fp/double.h:95:24: note: in expansion of macro '_FP_DECL'
+- # define FP_DECL_D(X)  _FP_DECL (2, X)
+-                        ^~~~~~~~
+-../sysdeps/ieee754/soft-fp/s_fdiv.c:38:3: note: in expansion of macro 'FP_DECL_D'
+-   FP_DECL_D (R);
+-   ^~~~~~~~~
+-../soft-fp/op-2.h:101:17: error: 'R_f0' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+-       : (X##_f0 << (_FP_W_TYPE_SIZE - (N))) != 0)); \
+-                 ^~
+-../sysdeps/ieee754/soft-fp/s_fdiv.c:38:14: note: 'R_f0' was declared here
+-   FP_DECL_D (R);
+-              ^
+-../soft-fp/op-2.h:37:14: note: in definition of macro '_FP_FRAC_DECL_2'
+-   _FP_W_TYPE X##_f0 _FP_ZERO_INIT, X##_f1 _FP_ZERO_INIT
+-              ^
+-../soft-fp/double.h:95:24: note: in expansion of macro '_FP_DECL'
+- # define FP_DECL_D(X)  _FP_DECL (2, X)
+-                        ^~~~~~~~
+-../sysdeps/ieee754/soft-fp/s_fdiv.c:38:3: note: in expansion of macro 'FP_DECL_D'
+-   FP_DECL_D (R);
+-   ^~~~~~~~~
+-
+-Build tested with Yocto for ARM, AARCH64, X86, X86_64, PPC, MIPS, MIPS64
+-with -O, -O1, -Os.
+-For AARCH64 it needs one more fix in locale for -Os.
+-
+-	[BZ #19444]
+-	* sysdeps/ieee754/soft-fp/s_fdiv.c: Include <libc-diag.h> and use
+-	DIAG_PUSH_NEEDS_COMMENT, DIAG_IGNORE_NEEDS_COMMENT and
+-	DIAG_POP_NEEDS_COMMENT to disable -Wmaybe-uninitialized.
+-
+-
+-Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+----
+- sysdeps/ieee754/soft-fp/s_fdiv.c | 12 ++++++++++++
+- 1 files changed, 12 insertions(+)
+-
+-diff --git a/sysdeps/ieee754/soft-fp/s_fdiv.c b/sysdeps/ieee754/soft-fp/s_fdiv.c
+-index 341339f5ed..7a15cbeee6 100644
+---- a/sysdeps/ieee754/soft-fp/s_fdiv.c
+-+++ b/sysdeps/ieee754/soft-fp/s_fdiv.c
+-@@ -25,6 +25,16 @@
+- #undef fdivl
+- 
+- #include <math-narrow.h>
+-+#include <libc-diag.h>
+-+
+-+/* R_f[01] are not set in cases where they are not used in packing,
+-+   but the compiler does not see that they are set in all cases where
+-+   they are used, resulting in warnings that they may be used
+-+   uninitialized.  The location of the warning differs in different
+-+   versions of GCC, it may be where R is defined using a macro or it
+-+   may be where the macro is defined.  This happens only with -O1.  */
+-+DIAG_PUSH_NEEDS_COMMENT;
+-+DIAG_IGNORE_NEEDS_COMMENT (8, "-Wmaybe-uninitialized");
+- #include <soft-fp.h>
+- #include <single.h>
+- #include <double.h>
+-@@ -53,4 +63,6 @@ __fdiv (double x, double y)
+-   CHECK_NARROW_DIV (ret, x, y);
+-   return ret;
+- }
+-+DIAG_POP_NEEDS_COMMENT;
+-+
+- libm_alias_float_double (div)
+--- 
+-2.17.0
+-
 diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
-index d34b42b831..db420f5c5f 100644
+index 88178d7eb9..1f08ea8be9 100644
 --- a/package/glibc/glibc.mk
 +++ b/package/glibc/glibc.mk
 @@ -9,8 +9,8 @@ GLIBC_VERSION =  arc-2018.03-release
@@ -29,9 +129,9 @@ index d34b42b831..db420f5c5f 100644
  else
  # Generate version string using:
 -#   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master
--GLIBC_VERSION = glibc-2.27-57-g6c99e37f6fb640a50a3113b2dbee5d5389843c1e
+-GLIBC_VERSION = glibc-2.28-50-gb8dd0f42780a3133c02f064a2c0c5c4e7ab61aaa
 +#   git describe --match 'glibc-*' --abbrev=40 origin/release/2.25/master
-+GLIBC_VERSION = 71616d59ec97fe798b69f749e7fb424bd6d2432b
++GLIBC_VERSION = 7118ba34931d27f538c71c1cd355866f8db83f4e
  # Upstream doesn't officially provide an https download link.
  # There is one (https://sourceware.org/git/glibc.git) but it's not reliable,
  # sometimes the connection times out. So use an unofficial github mirror.

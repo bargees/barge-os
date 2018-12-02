@@ -1,4 +1,4 @@
-From b40f35e6870e1e2743c785a54574684dcf45b37d Mon Sep 17 00:00:00 2001
+From e8507b4cfd44e1a7f43fa48c5f5e64e2414897ef Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 3 Aug 2017 19:13:58 -0700
 Subject: [PATCH] Revert "binutils: remove support for 2.26"
@@ -37,10 +37,10 @@ This reverts commit 0b5dc3192306409113adbb0dfbcaa62bbcdf4fb4.
  create mode 100644 package/binutils/2.26.1/0906-microblaze-pr21180.patch
 
 diff --git a/Config.in.legacy b/Config.in.legacy
-index 29d5b6adcc..03b5fc7c67 100644
+index a5e0c9fe4f..bf1c1970b5 100644
 --- a/Config.in.legacy
 +++ b/Config.in.legacy
-@@ -1260,14 +1260,6 @@ config BR2_PACKAGE_SIMICSFS
+@@ -1347,14 +1347,6 @@ config BR2_PACKAGE_SIMICSFS
  	  work. Users should move to the user mode Simics agent
  	  instead.
  
@@ -1147,10 +1147,10 @@ index 0000000000..8104db3462
 +       else
 +         {
 diff --git a/package/binutils/Config.in.host b/package/binutils/Config.in.host
-index 21dc84e498..6f21bbcbb8 100644
+index 59120f3138..757a4e65c7 100644
 --- a/package/binutils/Config.in.host
 +++ b/package/binutils/Config.in.host
-@@ -9,6 +9,9 @@ choice
+@@ -15,6 +15,9 @@ choice
  	help
  	  Select the version of binutils you wish to use.
  
@@ -1160,7 +1160,7 @@ index 21dc84e498..6f21bbcbb8 100644
  config BR2_BINUTILS_VERSION_2_28_X
  	bool "binutils 2.28.1"
  	depends on !BR2_arc
-@@ -30,6 +33,7 @@ endchoice
+@@ -38,6 +41,7 @@ endchoice
  config BR2_BINUTILS_VERSION
  	string
  	default "arc-2018.03"	if BR2_BINUTILS_VERSION_ARC
