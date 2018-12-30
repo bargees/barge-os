@@ -1,10 +1,10 @@
-From d1535d718a2a05eaa6f02e7f6ebee7074242a0e7 Mon Sep 17 00:00:00 2001
+From 50186c6af942812ba07c5e2f10f5ba87fa731867 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 27 May 2018 20:51:38 -0700
 Subject: [PATCH] package/dhcpcd: fix iconfig.mk to install hooks
 
 ---
- .../0001-fix-iconfig.mk-to-install-hooks.patch     | 25 ++++++++++++++++++++++
+ ...0001-fix-iconfig.mk-to-install-hooks.patch | 25 +++++++++++++++++++
  1 file changed, 25 insertions(+)
  create mode 100644 package/dhcpcd/0001-fix-iconfig.mk-to-install-hooks.patch
 
@@ -40,5 +40,5 @@ index 0000000000..5de38f5457
 +2.14.1
 +
 -- 
-2.14.1
+2.17.2 (Apple Git-113)
 

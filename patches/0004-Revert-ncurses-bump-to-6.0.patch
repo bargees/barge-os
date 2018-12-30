@@ -1,15 +1,15 @@
-From 435af7ba5eed218d4f16419d12de8ca119e3283f Mon Sep 17 00:00:00 2001
+From dda0928d06942d8526b12ea24bc097fbd75d3899 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 14 May 2017 15:57:09 -0700
 Subject: [PATCH] Revert "ncurses: bump to 6.0"
 
 This reverts commit b6b5d184b3df81166ac6bd41d10c702682fd80fe.
 ---
- .../ncurses/0001-fixup-pkg-config-handling.patch   | 89 ++++++++++++++++++++++
- ...Klib_gen.patch => 0002-gcc-5.x-MKlib_gen.patch} |  9 +--
- package/ncurses/0003-recognise-uclinux.patch       | 30 ++++++++
- package/ncurses/ncurses.hash                       |  2 +-
- package/ncurses/ncurses.mk                         |  7 +-
+ .../0001-fixup-pkg-config-handling.patch      | 89 +++++++++++++++++++
+ ...gen.patch => 0002-gcc-5.x-MKlib_gen.patch} |  9 +-
+ package/ncurses/0003-recognise-uclinux.patch  | 30 +++++++
+ package/ncurses/ncurses.hash                  |  2 +-
+ package/ncurses/ncurses.mk                    |  7 +-
  5 files changed, 129 insertions(+), 8 deletions(-)
  create mode 100644 package/ncurses/0001-fixup-pkg-config-handling.patch
  rename package/ncurses/{0001-gcc-5.x-MKlib_gen.patch => 0002-gcc-5.x-MKlib_gen.patch} (82%)
@@ -212,5 +212,5 @@ index e27598bd42..f105ae7bdb 100644
  
  ifneq ($(BR2_ENABLE_DEBUG),y)
 -- 
-2.14.1
+2.17.2 (Apple Git-113)
 

@@ -1,16 +1,16 @@
-From 2dde4f1a9f3c6e2eac07bca2508cbce8d0a98136 Mon Sep 17 00:00:00 2001
+From 531731bfc57e371b76da06423e1d44cd024a650a Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 8 May 2017 08:35:29 -0700
 Subject: [PATCH] docker-engine: use v1.10.3
 
 ---
  package/docker-engine/Config.in          |  5 -----
- package/docker-engine/docker-engine.hash |  2 +-
- package/docker-engine/docker-engine.mk   | 23 +++++++++++++----------
- 3 files changed, 14 insertions(+), 16 deletions(-)
+ package/docker-engine/docker-engine.hash |  3 +--
+ package/docker-engine/docker-engine.mk   | 25 +++++++++++++++++-------
+ 3 files changed, 19 insertions(+), 14 deletions(-)
 
 diff --git a/package/docker-engine/Config.in b/package/docker-engine/Config.in
-index 8feb11b48c..2ffd3f65fc 100644
+index 11f17820a7..edc40fdcfb 100644
 --- a/package/docker-engine/Config.in
 +++ b/package/docker-engine/Config.in
 @@ -14,11 +14,6 @@ if BR2_PACKAGE_DOCKER_ENGINE
@@ -26,24 +26,24 @@ index 8feb11b48c..2ffd3f65fc 100644
  	  Build the Docker system daemon.
  	  If not selected, will build client only.
 diff --git a/package/docker-engine/docker-engine.hash b/package/docker-engine/docker-engine.hash
-index 6c0ed338a5..515f697e86 100644
+index 1e3939f240..515f697e86 100644
 --- a/package/docker-engine/docker-engine.hash
 +++ b/package/docker-engine/docker-engine.hash
-@@ -1,2 +1,2 @@
+@@ -1,3 +1,2 @@
  # Locally calculated
--sha256	4716df117d867b82ddab2e82395cd40aa3d0925a689eedcec8919729e4c9f121	docker-engine-v17.05.0-ce.tar.gz
+-sha256	b5278b3f2b460ea61f47833abd2a844f348b4518e73f309294ad178c205a48e1  docker-engine-v18.09.0.tar.gz
+-sha256	2d81ea060825006fc8f3fe28aa5dc0ffeb80faf325b612c955229157b8c10dc0  LICENSE
 +sha256	668a571a2406024423f11b4cd150f97b4d7bc3ee39407a0ac7df6e5db1437385	docker-engine-1.10.3.tar.gz
 diff --git a/package/docker-engine/docker-engine.mk b/package/docker-engine/docker-engine.mk
-index ba84b4cf0a..eae7d372a3 100644
+index f19c1d995c..384603951b 100644
 --- a/package/docker-engine/docker-engine.mk
 +++ b/package/docker-engine/docker-engine.mk
-@@ -4,25 +4,29 @@
+@@ -4,8 +4,12 @@
  #
  ################################################################################
  
--DOCKER_ENGINE_VERSION = v17.05.0-ce
--DOCKER_ENGINE_COMMIT = 89658bed64c2a8fe05a978e5b87dbec409d57a0f
--DOCKER_ENGINE_SITE = $(call github,docker,docker,$(DOCKER_ENGINE_VERSION))
+-DOCKER_ENGINE_VERSION = v18.09.0
+-DOCKER_ENGINE_SITE = $(call github,docker,engine,$(DOCKER_ENGINE_VERSION))
 +DOCKER_ENGINE_VERSION = 1.10.3
 +DOCKER_ENGINE_GITCOMMIT = 20f81dd
 +DOCKER_ENGINE_SITE = $(call github,moby,moby,v$(DOCKER_ENGINE_VERSION))
@@ -53,8 +53,9 @@ index ba84b4cf0a..eae7d372a3 100644
  
  DOCKER_ENGINE_LICENSE = Apache-2.0
  DOCKER_ENGINE_LICENSE_FILES = LICENSE
- 
- DOCKER_ENGINE_DEPENDENCIES = host-go host-pkgconf
+@@ -13,12 +17,13 @@ DOCKER_ENGINE_LICENSE_FILES = LICENSE
+ DOCKER_ENGINE_DEPENDENCIES = host-pkgconf
+ DOCKER_ENGINE_SRC_SUBDIR = github.com/docker/docker
  
 -DOCKER_ENGINE_LDFLAGS = \
 -	-X main.GitCommit=$(DOCKER_ENGINE_VERSION) \
@@ -62,31 +63,30 @@ index ba84b4cf0a..eae7d372a3 100644
 +	-X main.GitCommit=$(DOCKER_ENGINE_GITCOMMIT) \
  	-X main.Version=$(DOCKER_ENGINE_VERSION)
  
- ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_STATIC_CLIENT),y)
- DOCKER_ENGINE_LDFLAGS += -extldflags '-static'
- endif
- 
 -DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs autogen
--DOCKER_ENGINE_BUILD_TARGETS = cmd/docker
+-DOCKER_ENGINE_BUILD_TARGETS = cmd/dockerd
 +DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs exclude_graphdriver_aufs autogen \
 +	sqlite_omit_load_extension
 +DOCKER_ENGINE_BUILD_TARGETS = docker
  
  ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
  DOCKER_ENGINE_TAGS += seccomp
-@@ -36,7 +40,6 @@ endif
- 
- ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_DAEMON),y)
- DOCKER_ENGINE_TAGS += daemon
--DOCKER_ENGINE_BUILD_TARGETS += cmd/dockerd
+@@ -29,6 +34,11 @@ ifeq ($(BR2_INIT_SYSTEMD),y)
+ DOCKER_ENGINE_DEPENDENCIES += systemd
+ DOCKER_ENGINE_TAGS += systemd journald
  endif
- 
++
++ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_DAEMON),y)
++DOCKER_ENGINE_TAGS += daemon
++endif
++
  ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_EXPERIMENTAL),y)
-@@ -65,9 +68,9 @@ DOCKER_ENGINE_INSTALL_BINS = $(notdir $(DOCKER_ENGINE_BUILD_TARGETS))
+ DOCKER_ENGINE_TAGS += experimental
+ endif
+@@ -55,8 +65,9 @@ DOCKER_ENGINE_INSTALL_BINS = $(notdir $(DOCKER_ENGINE_BUILD_TARGETS))
  
  define DOCKER_ENGINE_RUN_AUTOGEN
  	cd $(@D) && \
--		GITCOMMIT="$$(echo $(DOCKER_ENGINE_COMMIT) | head -c7)" \
 +		GITCOMMIT="$(DOCKER_ENGINE_GITCOMMIT)" \
  		BUILDTIME="$$(date)" \
 -		VERSION="$(patsubst v%,%,$(DOCKER_ENGINE_VERSION))" \
@@ -95,5 +95,5 @@ index ba84b4cf0a..eae7d372a3 100644
  		bash ./hack/make/.go-autogen
  endef
 -- 
-2.14.1
+2.17.2 (Apple Git-113)
 

@@ -1,4 +1,4 @@
-From 66ce5b184f69940f1e71b25244307dcfb2b48d86 Mon Sep 17 00:00:00 2001
+From d082854fa31ab345fda2e72dda74baa380b4451a Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 25 Oct 2018 18:20:16 -0700
 Subject: [PATCH] Revert "fs/common: allow custom user table to override
@@ -29,5 +29,5 @@ index e4a6a4897b..2462ca67e1 100644
  	cat $(ROOTFS_DEVICE_TABLES) > $(FULL_DEVICE_TABLE)
  ifeq ($(BR2_ROOTFS_DEVICE_CREATION_STATIC),y)
 -- 
-2.14.1
+2.17.2 (Apple Git-113)
 

@@ -1,4 +1,4 @@
-From c6e4a7cea8ddc5afab8f4152cd9e87cf36e08312 Mon Sep 17 00:00:00 2001
+From eb1752a3a4ff9859a2ac51c77e1a47ae19519c4b Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Fri, 4 May 2018 17:12:05 -0700
 Subject: [PATCH] package/haveged: bump version to 1.9.2
@@ -31,5 +31,5 @@ index a645557bc4..6a457c0627 100644
  HAVEGED_LICENSE = GPL-3.0+
  HAVEGED_LICENSE_FILES = COPYING
 -- 
-2.14.1
+2.17.2 (Apple Git-113)
 

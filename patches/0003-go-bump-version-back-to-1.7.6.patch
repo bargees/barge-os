@@ -1,12 +1,12 @@
-From a7077aa31a02a6508ac05553f9deaa9ef4988787 Mon Sep 17 00:00:00 2001
+From 5b67875b73d410bfa3e46077cc05f0e54c0d65e6 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 29 Dec 2016 15:37:26 -0800
 Subject: [PATCH] go: bump version back to 1.7.6
 
 ---
- ...d.go-explicit-option-for-crosscompilation.patch | 40 ----------------------
- package/go/go.hash                                 |  3 +-
- package/go/go.mk                                   |  2 +-
+ ...explicit-option-for-crosscompilation.patch | 40 -------------------
+ package/go/go.hash                            |  3 +-
+ package/go/go.mk                              |  2 +-
  3 files changed, 2 insertions(+), 43 deletions(-)
  delete mode 100644 package/go/0001-build.go-explicit-option-for-crosscompilation.patch
 
@@ -57,27 +57,27 @@ index f76c5b1d03..0000000000
 -2.7.4
 -
 diff --git a/package/go/go.hash b/package/go/go.hash
-index bd6af0358f..516a2398b2 100644
+index ee1c881e6a..516a2398b2 100644
 --- a/package/go/go.hash
 +++ b/package/go/go.hash
 @@ -1,3 +1,2 @@
  # From https://golang.org/dl/
--sha256	042fba357210816160341f1002440550e952eb12678f7c9e7e9d389437942550  go1.11.2.src.tar.gz
+-sha256	4cfd42720a6b1e79a8024895fa6607b69972e8e32446df76d6ce79801bbadb15  go1.11.4.src.tar.gz
 -sha256	2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067  LICENSE
 +sha256	1a67a4e688673fdff7ba41e73482b0e59ac5bd0f7acf703bc6d50cc775c5baba  go1.7.6.src.tar.gz
 diff --git a/package/go/go.mk b/package/go/go.mk
-index 2e434f3bad..111995f8dc 100644
+index 0d7b961dda..111995f8dc 100644
 --- a/package/go/go.mk
 +++ b/package/go/go.mk
 @@ -4,7 +4,7 @@
  #
  ################################################################################
  
--GO_VERSION = 1.11.2
+-GO_VERSION = 1.11.4
 +GO_VERSION = 1.7.6
  GO_SITE = https://storage.googleapis.com/golang
  GO_SOURCE = go$(GO_VERSION).src.tar.gz
  
 -- 
-2.14.1
+2.17.2 (Apple Git-113)
 

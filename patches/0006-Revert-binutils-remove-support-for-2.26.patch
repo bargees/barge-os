@@ -1,26 +1,26 @@
-From e8507b4cfd44e1a7f43fa48c5f5e64e2414897ef Mon Sep 17 00:00:00 2001
+From 8b0bb287e0dba421185d91efc12f9a58a0203d2b Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 3 Aug 2017 19:13:58 -0700
 Subject: [PATCH] Revert "binutils: remove support for 2.26"
 
 This reverts commit 0b5dc3192306409113adbb0dfbcaa62bbcdf4fb4.
 ---
- Config.in.legacy                                   |   8 -
- package/binutils/2.26.1/0120-sh-conf.patch         |  46 ++++
- package/binutils/2.26.1/0300-ld-makefile.patch     |  41 +++
- .../2.26.1/0301-check-ldrunpath-length.patch       |  36 +++
- .../0500-add-sysroot-fix-from-bug-3049.patch       |  52 ++++
- .../2.26.1/0600-poison-system-directories.patch    | 306 +++++++++++++++++++++
- package/binutils/2.26.1/0800-microblaze-musl.patch |  23 ++
- ...900-Correct-nios2-_gp-address-computation.patch | 108 ++++++++
- ...on-reduce-number-of-messages-about-FDE-en.patch |  67 +++++
- ...-xtensa-fix-signedness-of-gas-relocations.patch | 101 +++++++
- ...03-xtensa-fix-.init-.fini-literals-moving.patch | 149 ++++++++++
- .../binutils/2.26.1/0904-bfin-fdpic-upstream.patch |  30 ++
- .../binutils/2.26.1/0905-bfin-rofixup-bug.patch    |  21 ++
- .../binutils/2.26.1/0906-microblaze-pr21180.patch  |  33 +++
- package/binutils/Config.in.host                    |   4 +
- package/binutils/binutils.hash                     |   1 +
+ Config.in.legacy                              |   8 -
+ package/binutils/2.26.1/0120-sh-conf.patch    |  46 +++
+ .../binutils/2.26.1/0300-ld-makefile.patch    |  41 +++
+ .../2.26.1/0301-check-ldrunpath-length.patch  |  36 +++
+ .../0500-add-sysroot-fix-from-bug-3049.patch  |  52 +++
+ .../0600-poison-system-directories.patch      | 306 ++++++++++++++++++
+ .../2.26.1/0800-microblaze-musl.patch         |  23 ++
+ ...orrect-nios2-_gp-address-computation.patch | 108 +++++++
+ ...duce-number-of-messages-about-FDE-en.patch |  67 ++++
+ ...sa-fix-signedness-of-gas-relocations.patch | 101 ++++++
+ ...ensa-fix-.init-.fini-literals-moving.patch | 149 +++++++++
+ .../2.26.1/0904-bfin-fdpic-upstream.patch     |  30 ++
+ .../2.26.1/0905-bfin-rofixup-bug.patch        |  21 ++
+ .../2.26.1/0906-microblaze-pr21180.patch      |  33 ++
+ package/binutils/Config.in.host               |   4 +
+ package/binutils/binutils.hash                |   1 +
  16 files changed, 1018 insertions(+), 8 deletions(-)
  create mode 100644 package/binutils/2.26.1/0120-sh-conf.patch
  create mode 100644 package/binutils/2.26.1/0300-ld-makefile.patch
@@ -37,10 +37,10 @@ This reverts commit 0b5dc3192306409113adbb0dfbcaa62bbcdf4fb4.
  create mode 100644 package/binutils/2.26.1/0906-microblaze-pr21180.patch
 
 diff --git a/Config.in.legacy b/Config.in.legacy
-index a5e0c9fe4f..bf1c1970b5 100644
+index 02321c88ae..92d6c423d8 100644
 --- a/Config.in.legacy
 +++ b/Config.in.legacy
-@@ -1347,14 +1347,6 @@ config BR2_PACKAGE_SIMICSFS
+@@ -1356,14 +1356,6 @@ config BR2_PACKAGE_SIMICSFS
  	  work. Users should move to the user mode Simics agent
  	  instead.
  
@@ -1179,5 +1179,5 @@ index d97f55da8a..92aaf39d33 100644
  sha512  d748d22306477d60d921078804d21943248c23fca0707aac9b016a352c01c75ca69e82624ae37fb0bbd03af3b17088a94f60dfe1a86a7ff82e18ece3c24f0fd0  binutils-2.29.1.tar.xz
  sha512  e747ea20d8d79fcd21b9d9f6695059caa7189d60f19256da398e34b789fea9a133c32b192e9693b5828d27683739b0198431bf8b3e39fb3b04884cf89d9aa839  binutils-2.30.tar.xz
 -- 
-2.14.1
+2.17.2 (Apple Git-113)
 

@@ -1,4 +1,4 @@
-From 55851d557f6501a7b67d1fd07b2daf3326882448 Mon Sep 17 00:00:00 2001
+From d14a0ec4d4b72d44e1d91e2b0f77ddf50e081c33 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 1 Sep 2016 16:56:43 -0700
 Subject: [PATCH] =?UTF-8?q?Add=20a=20patch=20=E2=80=9CIgnore=20invalid=20h?=
@@ -8,7 +8,7 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 ---
- .../0001-Ignore-invalid-host-header.patch          | 131 +++++++++++++++++++++
+ .../0001-Ignore-invalid-host-header.patch     | 131 ++++++++++++++++++
  1 file changed, 131 insertions(+)
  create mode 100644 package/docker-engine/0001-Ignore-invalid-host-header.patch
 
@@ -150,5 +150,5 @@ index 0000000000..1a1cfaee8e
 +2.5.4 (Apple Git-61)
 +
 -- 
-2.14.1
+2.17.2 (Apple Git-113)
 
