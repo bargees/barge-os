@@ -39,7 +39,7 @@ RUN mkdir -p usr/share/bash-completion/completions && \
 
 # Add Docker bash-completion
 ENV DOCKER_VERSION 1.10.3
-RUN wget -qO usr/share/bash-completion/completions/docker https://raw.githubusercontent.com/docker/docker/v${DOCKER_VERSION}/contrib/completion/bash/docker
+RUN wget -qO usr/share/bash-completion/completions/docker https://raw.githubusercontent.com/moby/moby/v${DOCKER_VERSION}/contrib/completion/bash/docker
 
 # Add dumb-init
 ENV DINIT_VERSION 1.2.2
