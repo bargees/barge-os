@@ -1,4 +1,4 @@
-From 2b532cfb145adafe13c4851554d95756b431663a Mon Sep 17 00:00:00 2001
+From 96542ba81af48281e08f7ef9001b8f2a535b9d93 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 3 May 2018 23:47:55 -0700
 Subject: [PATCH] Fix "random: fix crng_ready() test" patch
@@ -30,5 +30,5 @@ index ea4dbfa30657..37c366a0a951 100644
  		return;
  	}
 -- 
-2.14.1
+2.17.2 (Apple Git-113)
 

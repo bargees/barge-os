@@ -15,8 +15,7 @@ It's inspired by the following projects.
 - [DhyveOS](https://github.com/nlf/dhyve-os)
 
 ## Features
-
-- Built with Buildroot 2018.11.1 with Linux kernel v4.14.85 and glibc.
+- Built with Buildroot 2018.11.1 with Linux kernel v4.14.91 and glibc.
 - Strip down the Linux kernel modules and drivers
 - Busybox + the following utilities from Buildroot
 	- sudo, bash, wget, xz, sntp, logrotate
