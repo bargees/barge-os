@@ -1,0 +1,32 @@
+From 3c4bad3b444fdb54ae5a285fb2b60e33a86642e3 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Sun, 30 Dec 2018 10:41:24 -0800
+Subject: [PATCH] Revert "x86/Kconfig: Select SCHED_SMT if SMP enabled"
+
+This reverts commit dbe733642e01dd108f71436aaea7b328cb28fd87.
+---
+ arch/x86/Kconfig | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 4f393eb9745f..026c2f2ac702 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -955,7 +955,13 @@ config NR_CPUS
+ 	  approximately eight kilobytes to the kernel image.
+ 
+ config SCHED_SMT
+-	def_bool y if SMP
++	bool "SMT (Hyperthreading) scheduler support"
++	depends on SMP
++	---help---
++	  SMT scheduler support improves the CPU scheduler's decision making
++	  when dealing with Intel Pentium 4 chips with HyperThreading at a
++	  cost of slightly increased overhead in some places. If unsure say
++	  N here.
+ 
+ config SCHED_MC
+ 	def_bool y
+-- 
+2.17.2 (Apple Git-113)
+
