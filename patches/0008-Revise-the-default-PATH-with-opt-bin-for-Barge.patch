@@ -1,4 +1,4 @@
-From 6b616760201de9be4c72a364ffdf0d5f6f151233 Mon Sep 17 00:00:00 2001
+From c9a5e54601777c7e41a7e88e0f066c4b74347126 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 6 Nov 2017 15:19:04 -0800
 Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
