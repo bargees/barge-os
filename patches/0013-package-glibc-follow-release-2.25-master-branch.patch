@@ -1,0 +1,42 @@
+From eede5dd131b2667912f76a580a9975738aa0f8e4 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Mon, 4 Feb 2019 18:50:25 -0800
+Subject: [PATCH] package/glibc: follow release/2.25/master branch
+
+https://github.com/bminor/glibc/tree/release/2.25/master
+---
+ .../glibc.hash                                                  | 2 +-
+ package/glibc/glibc.mk                                          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+ rename package/glibc/{6b95c49d8e2b0bea8b2edcf13827e37e477fb19e => 2ad78b78d382c5e4bd805334617ac17f35ecff7e}/glibc.hash (71%)
+
+diff --git a/package/glibc/6b95c49d8e2b0bea8b2edcf13827e37e477fb19e/glibc.hash b/package/glibc/2ad78b78d382c5e4bd805334617ac17f35ecff7e/glibc.hash
+similarity index 71%
+rename from package/glibc/6b95c49d8e2b0bea8b2edcf13827e37e477fb19e/glibc.hash
+rename to package/glibc/2ad78b78d382c5e4bd805334617ac17f35ecff7e/glibc.hash
+index 074c7a139c..58d30ecce1 100644
+--- a/package/glibc/6b95c49d8e2b0bea8b2edcf13827e37e477fb19e/glibc.hash
++++ b/package/glibc/2ad78b78d382c5e4bd805334617ac17f35ecff7e/glibc.hash
+@@ -1,5 +1,5 @@
+ # Locally calculated (fetched from Github)
+-sha256  d6e5a704e19589f112065c8cab3db55e2c60673607dda0fc1a11c359ff70d060  glibc-6b95c49d8e2b0bea8b2edcf13827e37e477fb19e.tar.gz
++sha256  0ff2c45102adc685ca092c7005c0afef9617650d7de7249b7fc8141595b3bb1a  glibc-2ad78b78d382c5e4bd805334617ac17f35ecff7e.tar.gz
+ 
+ # Hashes for license files
+ sha256  8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  COPYING
+diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
+index 995f816116..e13d028c46 100644
+--- a/package/glibc/glibc.mk
++++ b/package/glibc/glibc.mk
+@@ -10,7 +10,7 @@ GLIBC_SITE = $(call github,foss-for-synopsys-dwc-arc-processors,glibc,$(GLIBC_VE
+ else
+ # Generate version string using:
+ #   git describe --match 'glibc-*' --abbrev=40 origin/release/2.25/master
+-GLIBC_VERSION = 6b95c49d8e2b0bea8b2edcf13827e37e477fb19e
++GLIBC_VERSION = 2ad78b78d382c5e4bd805334617ac17f35ecff7e
+ # Upstream doesn't officially provide an https download link.
+ # There is one (https://sourceware.org/git/glibc.git) but it's not reliable,
+ # sometimes the connection times out. So use an unofficial github mirror.
+-- 
+2.17.2 (Apple Git-113)
+
