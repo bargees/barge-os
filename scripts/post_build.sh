@@ -120,7 +120,7 @@ if ! grep -q "^ca_certificate =" ${ROOTFS}/etc/wgetrc; then
   echo "ca_certificate = /etc/ssl/certs/ca-certificates.crt" >> ${ROOTFS}/etc/wgetrc
 fi
 
-STAGING_DIR=${ROOTFS}/../staging
+STAGING_DIR=${ROOTFS}/../host/${GNU_TARGET_NAME}/sysroot
 
 # Install locale command
 install -m 0755 -D ${STAGING_DIR}/usr/bin/locale ${ROOTFS}/usr/bin/locale
