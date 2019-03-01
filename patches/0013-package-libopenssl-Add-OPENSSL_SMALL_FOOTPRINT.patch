@@ -1,4 +1,4 @@
-From 3a7731c229b3f5e3bbff377eae90ffa9d9c4db36 Mon Sep 17 00:00:00 2001
+From 543630576ec570c8c6f77310361485479a488a6b Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Tue, 19 Feb 2019 17:04:30 -0800
 Subject: [PATCH] package/libopenssl: Add OPENSSL_SMALL_FOOTPRINT
