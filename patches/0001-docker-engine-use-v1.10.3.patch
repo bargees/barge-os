@@ -1,14 +1,14 @@
-From b413fb4df06aefd5f3347a7103d072ee78229f67 Mon Sep 17 00:00:00 2001
+From 6eeb02a6f33c5e11586f293afbf38c05bc09d2d4 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 8 May 2017 08:35:29 -0700
 Subject: [PATCH] docker-engine: use v1.10.3
 
 ---
  ...ix-faulty-runc-version-commit-scrape.patch | 45 -------------------
- package/docker-engine/Config.in               |  7 ---
+ package/docker-engine/Config.in               |  8 ----
  package/docker-engine/docker-engine.hash      |  3 +-
  package/docker-engine/docker-engine.mk        | 18 +++++---
- 4 files changed, 12 insertions(+), 61 deletions(-)
+ 4 files changed, 12 insertions(+), 62 deletions(-)
  delete mode 100644 package/docker-engine/0001-Fix-faulty-runc-version-commit-scrape.patch
 
 diff --git a/package/docker-engine/0001-Fix-faulty-runc-version-commit-scrape.patch b/package/docker-engine/0001-Fix-faulty-runc-version-commit-scrape.patch
@@ -63,15 +63,16 @@ index dc47a8f9ef..0000000000
 -2.18.1
 -
 diff --git a/package/docker-engine/Config.in b/package/docker-engine/Config.in
-index cd878880ae..b5abb94cfa 100644
+index 08f30e434a..940352355e 100644
 --- a/package/docker-engine/Config.in
 +++ b/package/docker-engine/Config.in
-@@ -3,13 +3,6 @@ config BR2_PACKAGE_DOCKER_ENGINE
+@@ -3,14 +3,6 @@ config BR2_PACKAGE_DOCKER_ENGINE
  	depends on BR2_PACKAGE_HOST_GO_ARCH_SUPPORTS
  	depends on BR2_PACKAGE_HOST_GO_CGO_LINKING_SUPPORTS
  	depends on BR2_TOOLCHAIN_HAS_THREADS
 -	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_11 # docker-containerd -> runc
 -	depends on !BR2_TOOLCHAIN_USES_UCLIBC # docker-containerd -> runc
+-	depends on !BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_ARM # docker-containerd -> runc
 -	depends on BR2_USE_MMU # docker-containerd
 -	select BR2_PACKAGE_DOCKER_CONTAINERD # runtime dependency
 -	select BR2_PACKAGE_DOCKER_PROXY # runtime dependency
