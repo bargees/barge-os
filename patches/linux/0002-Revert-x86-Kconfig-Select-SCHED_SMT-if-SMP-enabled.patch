@@ -1,4 +1,4 @@
-From e547603c6fde05eaa09df7345a959d456f21f9f4 Mon Sep 17 00:00:00 2001
+From 9828c1bd6d7d1d3879a751e10dfca476a115afa9 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 30 Dec 2018 10:41:24 -0800
 Subject: [PATCH] Revert "x86/Kconfig: Select SCHED_SMT if SMP enabled"
