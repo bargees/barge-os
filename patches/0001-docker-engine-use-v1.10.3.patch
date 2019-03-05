@@ -1,61 +1,115 @@
-From c2396f2b79b7fcb5d69913ae6b6cd1abe8e6ac50 Mon Sep 17 00:00:00 2001
+From 6eeb02a6f33c5e11586f293afbf38c05bc09d2d4 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 8 May 2017 08:35:29 -0700
 Subject: [PATCH] docker-engine: use v1.10.3
 
 ---
- package/docker-engine/Config.in          |  5 -----
- package/docker-engine/docker-engine.hash |  3 +--
- package/docker-engine/docker-engine.mk   | 25 +++++++++++++++++-------
- 3 files changed, 19 insertions(+), 14 deletions(-)
+ ...ix-faulty-runc-version-commit-scrape.patch | 45 -------------------
+ package/docker-engine/Config.in               |  8 ----
+ package/docker-engine/docker-engine.hash      |  3 +-
+ package/docker-engine/docker-engine.mk        | 18 +++++---
+ 4 files changed, 12 insertions(+), 62 deletions(-)
+ delete mode 100644 package/docker-engine/0001-Fix-faulty-runc-version-commit-scrape.patch
 
+diff --git a/package/docker-engine/0001-Fix-faulty-runc-version-commit-scrape.patch b/package/docker-engine/0001-Fix-faulty-runc-version-commit-scrape.patch
+deleted file mode 100644
+index dc47a8f9ef..0000000000
+--- a/package/docker-engine/0001-Fix-faulty-runc-version-commit-scrape.patch
++++ /dev/null
+@@ -1,45 +0,0 @@
+-From 324e7be4b252c13002bca6a9d82e7b2e43664634 Mon Sep 17 00:00:00 2001
+-From: Christian Stewart <christian@paral.in>
+-Date: Mon, 26 Nov 2018 22:59:32 -0800
+-Subject: [PATCH] Fix faulty runc version commit scrape
+-
+-This commit replaces faulty logic to determine the runc version commit hash.
+-
+-The original logic takes the second line of the output of "runc --version" and
+-does not work if there are a different number of lines printed from the command
+-than expected. The buildroot version of runc outputs two lines instead of the
+-expected three, causing the error:
+-
+-unknown output format: runc version commit: ...
+-
+-This patch replaces this logic with a simple scan of the "runc --version"
+-output, searching for the "runc version commit" prefixed line.
+-
+-Signed-off-by: Christian Stewart <christian@paral.in>
+----
+- daemon/info_unix.go | 9 +++++----
+- 1 file changed, 5 insertions(+), 4 deletions(-)
+-
+-diff --git a/daemon/info_unix.go b/daemon/info_unix.go
+-index 60b2f99870..688a510796 100644
+---- a/daemon/info_unix.go
+-+++ b/daemon/info_unix.go
+-@@ -32,10 +32,11 @@ func (daemon *Daemon) fillPlatformInfo(v *types.Info, sysInfo *sysinfo.SysInfo)
+- 	defaultRuntimeBinary := daemon.configStore.GetRuntime(v.DefaultRuntime).Path
+- 	if rv, err := exec.Command(defaultRuntimeBinary, "--version").Output(); err == nil {
+- 		parts := strings.Split(strings.TrimSpace(string(rv)), "\n")
+--		if len(parts) == 3 {
+--			parts = strings.Split(parts[1], ": ")
+--			if len(parts) == 2 {
+--				v.RuncCommit.ID = strings.TrimSpace(parts[1])
+-+		for _, pt := range parts {
+-+			ptKv := strings.Split(pt, ":")
+-+			if strings.HasSuffix(strings.TrimSpace(ptKv[0]), "commit") {
+-+				v.RuncCommit.ID = strings.TrimSpace(ptKv[1])
+-+				break
+- 			}
+- 		}
+- 
+--- 
+-2.18.1
+-
 diff --git a/package/docker-engine/Config.in b/package/docker-engine/Config.in
-index 11f17820a7..edc40fdcfb 100644
+index 08f30e434a..940352355e 100644
 --- a/package/docker-engine/Config.in
 +++ b/package/docker-engine/Config.in
-@@ -14,11 +14,6 @@ if BR2_PACKAGE_DOCKER_ENGINE
- config BR2_PACKAGE_DOCKER_ENGINE_DAEMON
- 	bool "docker daemon"
- 	default y
+@@ -3,14 +3,6 @@ config BR2_PACKAGE_DOCKER_ENGINE
+ 	depends on BR2_PACKAGE_HOST_GO_ARCH_SUPPORTS
+ 	depends on BR2_PACKAGE_HOST_GO_CGO_LINKING_SUPPORTS
+ 	depends on BR2_TOOLCHAIN_HAS_THREADS
+-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_11 # docker-containerd -> runc
+-	depends on !BR2_TOOLCHAIN_USES_UCLIBC # docker-containerd -> runc
+-	depends on !BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_ARM # docker-containerd -> runc
 -	depends on BR2_USE_MMU # docker-containerd
 -	select BR2_PACKAGE_DOCKER_CONTAINERD # runtime dependency
 -	select BR2_PACKAGE_DOCKER_PROXY # runtime dependency
 -	select BR2_PACKAGE_IPTABLES # runtime dependency
 -	select BR2_PACKAGE_SQLITE # runtime dependency
  	help
- 	  Build the Docker system daemon.
- 	  If not selected, will build client only.
+ 	  Docker is a platform to build, ship,
+ 	  and run applications as lightweight containers.
 diff --git a/package/docker-engine/docker-engine.hash b/package/docker-engine/docker-engine.hash
-index 1e3939f240..515f697e86 100644
+index fe7b0d3b94..27606f0fa9 100644
 --- a/package/docker-engine/docker-engine.hash
 +++ b/package/docker-engine/docker-engine.hash
 @@ -1,3 +1,2 @@
  # Locally calculated
--sha256	b5278b3f2b460ea61f47833abd2a844f348b4518e73f309294ad178c205a48e1  docker-engine-v18.09.0.tar.gz
+-sha256	4babbcbc3e1d7750c61a1e5bee29bd206256948961feaac5b44cabb0c70a50a6  docker-engine-v18.09.2.tar.gz
 -sha256	2d81ea060825006fc8f3fe28aa5dc0ffeb80faf325b612c955229157b8c10dc0  LICENSE
-+sha256	668a571a2406024423f11b4cd150f97b4d7bc3ee39407a0ac7df6e5db1437385	docker-engine-1.10.3.tar.gz
++sha256	015cde54604a81e8270f08d83ef8e6052cd634e80e0a53d02d7f4f093bf75f2c	docker-engine-1.10.3.tar.gz
 diff --git a/package/docker-engine/docker-engine.mk b/package/docker-engine/docker-engine.mk
-index f19c1d995c..384603951b 100644
+index e2f59666df..ff9af6c4f9 100644
 --- a/package/docker-engine/docker-engine.mk
 +++ b/package/docker-engine/docker-engine.mk
-@@ -4,8 +4,12 @@
+@@ -4,21 +4,24 @@
  #
  ################################################################################
  
--DOCKER_ENGINE_VERSION = v18.09.0
+-DOCKER_ENGINE_VERSION = v18.09.2
 -DOCKER_ENGINE_SITE = $(call github,docker,engine,$(DOCKER_ENGINE_VERSION))
 +DOCKER_ENGINE_VERSION = 1.10.3
 +DOCKER_ENGINE_GITCOMMIT = 20f81dd
-+DOCKER_ENGINE_SITE = $(call github,moby,moby,v$(DOCKER_ENGINE_VERSION))
-+
-+DOCKER_ENGINE_SRC_SUBDIR = github.com/docker/docker
-+DOCKER_ENGINE_WORKSPACE = vendor
++DOCKER_ENGINE_SITE = $(call github,docker,engine,v$(DOCKER_ENGINE_VERSION))
  
  DOCKER_ENGINE_LICENSE = Apache-2.0
  DOCKER_ENGINE_LICENSE_FILES = LICENSE
-@@ -13,12 +17,13 @@ DOCKER_ENGINE_LICENSE_FILES = LICENSE
+ 
  DOCKER_ENGINE_DEPENDENCIES = host-pkgconf
  DOCKER_ENGINE_SRC_SUBDIR = github.com/docker/docker
++DOCKER_ENGINE_WORKSPACE = vendor
  
 -DOCKER_ENGINE_LDFLAGS = \
 -	-X main.GitCommit=$(DOCKER_ENGINE_VERSION) \
@@ -66,24 +120,12 @@ index f19c1d995c..384603951b 100644
 -DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs autogen
 -DOCKER_ENGINE_BUILD_TARGETS = cmd/dockerd
 +DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs exclude_graphdriver_aufs autogen \
-+	sqlite_omit_load_extension
++	sqlite_omit_load_extension daemon
 +DOCKER_ENGINE_BUILD_TARGETS = docker
  
  ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
  DOCKER_ENGINE_TAGS += seccomp
-@@ -29,6 +34,11 @@ ifeq ($(BR2_INIT_SYSTEMD),y)
- DOCKER_ENGINE_DEPENDENCIES += systemd
- DOCKER_ENGINE_TAGS += systemd journald
- endif
-+
-+ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_DAEMON),y)
-+DOCKER_ENGINE_TAGS += daemon
-+endif
-+
- ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_EXPERIMENTAL),y)
- DOCKER_ENGINE_TAGS += experimental
- endif
-@@ -55,8 +65,9 @@ DOCKER_ENGINE_INSTALL_BINS = $(notdir $(DOCKER_ENGINE_BUILD_TARGETS))
+@@ -55,8 +58,9 @@ DOCKER_ENGINE_INSTALL_BINS = $(notdir $(DOCKER_ENGINE_BUILD_TARGETS))
  
  define DOCKER_ENGINE_RUN_AUTOGEN
  	cd $(@D) && \

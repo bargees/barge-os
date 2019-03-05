@@ -1,4 +1,4 @@
-From b810b0519a4c82ceb202c2ea0d8a0fdd194f07f8 Mon Sep 17 00:00:00 2001
+From 9847e51eab86e05ce0ad2bd840b8cbe3d3022b59 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 29 Dec 2016 15:37:26 -0800
 Subject: [PATCH] go: bump version back to 1.7.6
@@ -66,7 +66,7 @@ index 29891399c3..516a2398b2 100644
 -sha256	2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067  LICENSE
 +sha256	1a67a4e688673fdff7ba41e73482b0e59ac5bd0f7acf703bc6d50cc775c5baba  go1.7.6.src.tar.gz
 diff --git a/package/go/go.mk b/package/go/go.mk
-index 7755a3f785..111995f8dc 100644
+index 1558b55e21..9d70616212 100644
 --- a/package/go/go.mk
 +++ b/package/go/go.mk
 @@ -4,7 +4,7 @@

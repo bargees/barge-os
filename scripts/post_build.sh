@@ -52,19 +52,24 @@ rm -f usr/lib/libmenu.so*
 rm -f usr/lib/libpanel.so*
 rm -f usr/lib/libss.so*
 
-# Remove unnecessary binaries from e2fsprogs
+# Remove unnecessary files from e2fsprogs
 rm -f bin/chattr
+rm -f bin/compile_et
 rm -f bin/lsattr
+rm -f bin/mk_cmds
 rm -f sbin/badblocks
 rm -f sbin/dumpe2fs
 rm -f sbin/e2freefrag
 rm -f sbin/e2label
+rm -f sbin/e2mmpstatus
 rm -f sbin/e2undo
 rm -f sbin/e4crypt
 rm -f sbin/filefrag
 rm -f sbin/logsave
 rm -f sbin/mklost+found
 rm -f sbin/tune2fs
+rm -rf usr/share/et
+rm -rf usr/share/ss
 
 # Initialize directories without linking to /tmp
 rm -rf run
@@ -120,7 +125,7 @@ if ! grep -q "^ca_certificate =" ${ROOTFS}/etc/wgetrc; then
   echo "ca_certificate = /etc/ssl/certs/ca-certificates.crt" >> ${ROOTFS}/etc/wgetrc
 fi
 
-STAGING_DIR=${ROOTFS}/../staging
+STAGING_DIR=${ROOTFS}/../host/${GNU_TARGET_NAME}/sysroot
 
 # Install locale command
 install -m 0755 -D ${STAGING_DIR}/usr/bin/locale ${ROOTFS}/usr/bin/locale

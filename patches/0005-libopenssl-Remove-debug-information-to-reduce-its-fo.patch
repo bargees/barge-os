@@ -1,4 +1,4 @@
-From 735ff3b6e4119027c70ce36ec7b226cf93fedb87 Mon Sep 17 00:00:00 2001
+From b02705be12149f77c5f296a42e8b5648f83af262 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 15 May 2017 15:52:29 -0700
 Subject: [PATCH] libopenssl: Remove debug information to reduce its footprint
@@ -8,18 +8,18 @@ Subject: [PATCH] libopenssl: Remove debug information to reduce its footprint
  1 file changed, 2 insertions(+)
 
 diff --git a/package/libopenssl/libopenssl.mk b/package/libopenssl/libopenssl.mk
-index dc15abf66a..d5bd781e7a 100644
+index a845f1da53..a6b97a0957 100644
 --- a/package/libopenssl/libopenssl.mk
 +++ b/package/libopenssl/libopenssl.mk
-@@ -89,6 +89,8 @@ define LIBOPENSSL_CONFIGURE_CMDS
- 			enable-tlsext \
+@@ -108,6 +108,8 @@ define LIBOPENSSL_CONFIGURE_CMDS
+ 			no-fuzz-afl \
  			$(if $(BR2_STATIC_LIBS),zlib,zlib-dynamic) \
  			$(if $(BR2_STATIC_LIBS),no-dso) \
 +			no-err \
 +			no-filenames \
  	)
  	$(SED) "s#-march=[-a-z0-9] ##" -e "s#-mcpu=[-a-z0-9] ##g" $(@D)/Makefile
- 	$(SED) "s#-O[0-9]#$(LIBOPENSSL_CFLAGS)#" $(@D)/Makefile
+ 	$(SED) "s#-O[0-9s]#$(LIBOPENSSL_CFLAGS)#" $(@D)/Makefile
 -- 
 2.17.2 (Apple Git-113)
 

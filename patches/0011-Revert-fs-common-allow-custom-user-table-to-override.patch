@@ -1,0 +1,32 @@
+From 255ff7e6002b2ef0c32f2afad19d9a621de036c8 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Thu, 25 Oct 2018 18:20:16 -0700
+Subject: [PATCH] Revert "fs/common: allow custom user table to override
+ package-defined users"
+
+This reverts commit f814dbf52270d50693bb9bbbcbfb700754efc771.
+
+It would assign the different ID to the primary user, like bargee.
+---
+ fs/common.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/common.mk b/fs/common.mk
+index a560417c6c..1c7b23332b 100644
+--- a/fs/common.mk
++++ b/fs/common.mk
+@@ -53,10 +53,10 @@ rootfs-common: $(ROOTFS_COMMON_DEPENDENCIES) target-finalize
+ 	rm -rf $(FS_DIR)
+ 	mkdir -p $(FS_DIR)
+ 
+-	$(call PRINTF,$(PACKAGES_USERS)) >> $(ROOTFS_FULL_USERS_TABLE)
+ ifneq ($(ROOTFS_USERS_TABLES),)
+ 	cat $(ROOTFS_USERS_TABLES) >> $(ROOTFS_FULL_USERS_TABLE)
+ endif
++	$(call PRINTF,$(PACKAGES_USERS)) >> $(ROOTFS_FULL_USERS_TABLE)
+ 
+ 	$(call PRINTF,$(PACKAGES_PERMISSIONS_TABLE)) > $(ROOTFS_FULL_DEVICES_TABLE)
+ ifneq ($(ROOTFS_DEVICE_TABLES),)
+-- 
+2.17.2 (Apple Git-113)
+
