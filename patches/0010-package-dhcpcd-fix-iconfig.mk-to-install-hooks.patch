@@ -1,4 +1,4 @@
-From 97cf138387152ddb00cd086565669b7df74427b4 Mon Sep 17 00:00:00 2001
+From 4726a59a6b03480323d9e302d9b5b94556ba1673 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 27 May 2018 20:51:38 -0700
 Subject: [PATCH] package/dhcpcd: fix iconfig.mk to install hooks
@@ -40,5 +40,5 @@ index 0000000000..5de38f5457
 +2.14.1
 +
 -- 
-2.17.2 (Apple Git-113)
+2.20.1 (Apple Git-117)
 

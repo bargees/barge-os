@@ -1,4 +1,4 @@
-From 255ff7e6002b2ef0c32f2afad19d9a621de036c8 Mon Sep 17 00:00:00 2001
+From 5f872865ee468c4ae4c945bc833f802300087973 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 25 Oct 2018 18:20:16 -0700
 Subject: [PATCH] Revert "fs/common: allow custom user table to override
@@ -28,5 +28,5 @@ index a560417c6c..1c7b23332b 100644
  	$(call PRINTF,$(PACKAGES_PERMISSIONS_TABLE)) > $(ROOTFS_FULL_DEVICES_TABLE)
  ifneq ($(ROOTFS_DEVICE_TABLES),)
 -- 
-2.17.2 (Apple Git-113)
+2.20.1 (Apple Git-117)
 
