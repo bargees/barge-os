@@ -1,4 +1,4 @@
-From 9828c1bd6d7d1d3879a751e10dfca476a115afa9 Mon Sep 17 00:00:00 2001
+From fdac1fef1e8cda0940fe71f3bdaaec8c217ca9a9 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 30 Dec 2018 10:41:24 -0800
 Subject: [PATCH] Revert "x86/Kconfig: Select SCHED_SMT if SMP enabled"
@@ -9,7 +9,7 @@ This reverts commit dbe733642e01dd108f71436aaea7b328cb28fd87.
  1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 4f393eb9745f..026c2f2ac702 100644
+index 8fec1585ac7a..8bc489931715 100644
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
 @@ -955,7 +955,13 @@ config NR_CPUS
@@ -28,5 +28,5 @@ index 4f393eb9745f..026c2f2ac702 100644
  config SCHED_MC
  	def_bool y
 -- 
-2.17.2 (Apple Git-113)
+2.20.1 (Apple Git-117)
 
