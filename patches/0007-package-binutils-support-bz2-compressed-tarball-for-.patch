@@ -1,4 +1,4 @@
-From c90bc27d758a141c87b1e286130b60f5d47e33be Mon Sep 17 00:00:00 2001
+From 987f79a0ca7ff05de7649768d99fdcd46b29f7ff Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sat, 10 Feb 2018 11:48:42 +0900
 Subject: [PATCH] package/binutils: support bz2-compressed tarball for 2.26.1
@@ -29,5 +29,5 @@ index 4531b8d9c8..c1bfe19d32 100644
  BINUTILS_INSTALL_STAGING = YES
  BINUTILS_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES)
 -- 
-2.17.2 (Apple Git-113)
+2.20.1 (Apple Git-117)
 

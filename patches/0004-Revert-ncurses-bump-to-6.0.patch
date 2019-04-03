@@ -1,4 +1,4 @@
-From 7a5e834099d62ec5106266314682149771b3b1f0 Mon Sep 17 00:00:00 2001
+From fc6ee852944b3276044d8f9598c2af5e22cbdc63 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 14 May 2017 15:57:09 -0700
 Subject: [PATCH] Revert "ncurses: bump to 6.0"
@@ -212,5 +212,5 @@ index e27598bd42..f105ae7bdb 100644
  
  ifneq ($(BR2_ENABLE_DEBUG),y)
 -- 
-2.17.2 (Apple Git-113)
+2.20.1 (Apple Git-117)
 
