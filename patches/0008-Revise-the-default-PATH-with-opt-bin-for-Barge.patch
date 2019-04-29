@@ -1,4 +1,4 @@
-From 03385edd8a8c61276d70ee8fa80092c7d8611a52 Mon Sep 17 00:00:00 2001
+From 09a75a901661c5e4d691acb783bc38a489590247 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 18 Feb 2019 16:05:36 -0800
 Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
@@ -6,13 +6,13 @@ Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
 ---
  ...-default-PATH-with-opt-bin-for-Barge.patch | 32 +++++++++++++++++++
  1 file changed, 32 insertions(+)
- create mode 100644 package/busybox/0004-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
+ create mode 100644 package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
 
-diff --git a/package/busybox/0004-Revise-the-default-PATH-with-opt-bin-for-Barge.patch b/package/busybox/0004-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
+diff --git a/package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch b/package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
 new file mode 100644
 index 0000000000..60c650f089
 --- /dev/null
-+++ b/package/busybox/0004-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
++++ b/package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
 @@ -0,0 +1,32 @@
 +From e08bac165ab6403c22189cde1ba3dfe4a692fdbf Mon Sep 17 00:00:00 2001
 +From: "A.I" <ailis@paw.zone>

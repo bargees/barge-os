@@ -1,14 +1,14 @@
-From 882cbd85af6e1c7715ee1cc61d525a303e6f431c Mon Sep 17 00:00:00 2001
+From 2843173bdb9089aea1b1dbac041fd6c6698ac105 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 8 May 2017 08:35:29 -0700
 Subject: [PATCH] docker-engine: use v1.10.3
 
 ---
  ...ix-faulty-runc-version-commit-scrape.patch | 45 -------------------
- package/docker-engine/Config.in               |  8 ----
+ package/docker-engine/Config.in               |  6 ---
  package/docker-engine/docker-engine.hash      |  3 +-
  package/docker-engine/docker-engine.mk        | 18 +++++---
- 4 files changed, 12 insertions(+), 62 deletions(-)
+ 4 files changed, 12 insertions(+), 60 deletions(-)
  delete mode 100644 package/docker-engine/0001-Fix-faulty-runc-version-commit-scrape.patch
 
 diff --git a/package/docker-engine/0001-Fix-faulty-runc-version-commit-scrape.patch b/package/docker-engine/0001-Fix-faulty-runc-version-commit-scrape.patch
@@ -63,16 +63,14 @@ index dc47a8f9ef..0000000000
 -2.18.1
 -
 diff --git a/package/docker-engine/Config.in b/package/docker-engine/Config.in
-index 08f30e434a..940352355e 100644
+index 3c97310484..e9190f77a0 100644
 --- a/package/docker-engine/Config.in
 +++ b/package/docker-engine/Config.in
-@@ -3,14 +3,6 @@ config BR2_PACKAGE_DOCKER_ENGINE
+@@ -3,12 +3,6 @@ config BR2_PACKAGE_DOCKER_ENGINE
  	depends on BR2_PACKAGE_HOST_GO_ARCH_SUPPORTS
  	depends on BR2_PACKAGE_HOST_GO_CGO_LINKING_SUPPORTS
  	depends on BR2_TOOLCHAIN_HAS_THREADS
--	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_11 # docker-containerd -> runc
 -	depends on !BR2_TOOLCHAIN_USES_UCLIBC # docker-containerd -> runc
--	depends on !BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_ARM # docker-containerd -> runc
 -	depends on BR2_USE_MMU # docker-containerd
 -	select BR2_PACKAGE_DOCKER_CONTAINERD # runtime dependency
 -	select BR2_PACKAGE_DOCKER_PROXY # runtime dependency
@@ -82,23 +80,23 @@ index 08f30e434a..940352355e 100644
  	  Docker is a platform to build, ship,
  	  and run applications as lightweight containers.
 diff --git a/package/docker-engine/docker-engine.hash b/package/docker-engine/docker-engine.hash
-index fe7b0d3b94..27606f0fa9 100644
+index b268b7f330..27606f0fa9 100644
 --- a/package/docker-engine/docker-engine.hash
 +++ b/package/docker-engine/docker-engine.hash
 @@ -1,3 +1,2 @@
  # Locally calculated
--sha256	4babbcbc3e1d7750c61a1e5bee29bd206256948961feaac5b44cabb0c70a50a6  docker-engine-v18.09.2.tar.gz
+-sha256	1f4bd15d799420b587024fe3c6d7bd4eb584e509d30c8193db31411579780f2a  docker-engine-v18.09.4.tar.gz
 -sha256	2d81ea060825006fc8f3fe28aa5dc0ffeb80faf325b612c955229157b8c10dc0  LICENSE
 +sha256	015cde54604a81e8270f08d83ef8e6052cd634e80e0a53d02d7f4f093bf75f2c	docker-engine-1.10.3.tar.gz
 diff --git a/package/docker-engine/docker-engine.mk b/package/docker-engine/docker-engine.mk
-index e2f59666df..ff9af6c4f9 100644
+index 92e364e60d..ff9af6c4f9 100644
 --- a/package/docker-engine/docker-engine.mk
 +++ b/package/docker-engine/docker-engine.mk
 @@ -4,21 +4,24 @@
  #
  ################################################################################
  
--DOCKER_ENGINE_VERSION = v18.09.2
+-DOCKER_ENGINE_VERSION = v18.09.4
 -DOCKER_ENGINE_SITE = $(call github,docker,engine,$(DOCKER_ENGINE_VERSION))
 +DOCKER_ENGINE_VERSION = 1.10.3
 +DOCKER_ENGINE_GITCOMMIT = 20f81dd
