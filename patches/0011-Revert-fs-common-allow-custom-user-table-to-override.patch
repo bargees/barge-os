@@ -1,4 +1,4 @@
-From 5f872865ee468c4ae4c945bc833f802300087973 Mon Sep 17 00:00:00 2001
+From 101d962ffa34c939911ac1a958c17cafaa4289e5 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 25 Oct 2018 18:20:16 -0700
 Subject: [PATCH] Revert "fs/common: allow custom user table to override
@@ -12,7 +12,7 @@ It would assign the different ID to the primary user, like bargee.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/common.mk b/fs/common.mk
-index a560417c6c..1c7b23332b 100644
+index b361ecce25..8ab85f5de9 100644
 --- a/fs/common.mk
 +++ b/fs/common.mk
 @@ -53,10 +53,10 @@ rootfs-common: $(ROOTFS_COMMON_DEPENDENCIES) target-finalize
