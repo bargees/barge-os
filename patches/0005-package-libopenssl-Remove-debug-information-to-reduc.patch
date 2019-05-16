@@ -1,4 +1,4 @@
-From 744d87cb3fe064beb5f390348f8823ba9329b185 Mon Sep 17 00:00:00 2001
+From 34bc407bc82317ef8db936f2bbbe1b9b5712fbb4 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 15 May 2017 15:52:29 -0700
 Subject: [PATCH] package/libopenssl: Remove debug information to reduce its
@@ -10,7 +10,7 @@ and add OPENSSL_SMALL_FOOTPRINT
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/package/libopenssl/libopenssl.mk b/package/libopenssl/libopenssl.mk
-index a845f1da53..783569e28b 100644
+index b7eff06c80..d81383e36b 100644
 --- a/package/libopenssl/libopenssl.mk
 +++ b/package/libopenssl/libopenssl.mk
 @@ -20,8 +20,9 @@ ifeq ($(BR2_m68k_cf),y)
