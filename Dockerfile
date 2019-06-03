@@ -1,11 +1,11 @@
-FROM ailispaw/ubuntu-essential:14.04-nodoc
+FROM ailispaw/ubuntu-essential:18.04-nodoc
 
 ENV TERM xterm
 
 RUN apt-get -q update && \
     apt-get -q -y install --no-install-recommends ca-certificates \
       bc build-essential cpio file git python unzip rsync wget \
-      syslinux xorriso dosfstools mtools && \
+      syslinux syslinux-common isolinux xorriso dosfstools mtools && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Setup environment
