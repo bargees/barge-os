@@ -1,20 +1,20 @@
-From 09a75a901661c5e4d691acb783bc38a489590247 Mon Sep 17 00:00:00 2001
+From 87f460f333743197da55f9bf47b5ca299f5fb32c Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
-Date: Mon, 18 Feb 2019 16:05:36 -0800
+Date: Wed, 15 May 2019 17:23:10 -0700
 Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
 
 ---
  ...-default-PATH-with-opt-bin-for-Barge.patch | 32 +++++++++++++++++++
  1 file changed, 32 insertions(+)
- create mode 100644 package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
+ create mode 100644 package/busybox/0004-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
 
-diff --git a/package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch b/package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
+diff --git a/package/busybox/0004-Revise-the-default-PATH-with-opt-bin-for-Barge.patch b/package/busybox/0004-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
 new file mode 100644
-index 0000000000..60c650f089
+index 0000000000..2bd7c6fd15
 --- /dev/null
-+++ b/package/busybox/0006-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
++++ b/package/busybox/0004-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
 @@ -0,0 +1,32 @@
-+From e08bac165ab6403c22189cde1ba3dfe4a692fdbf Mon Sep 17 00:00:00 2001
++From 0c15430af0cbf1bbbcb3f85b535b8323d83668b3 Mon Sep 17 00:00:00 2001
 +From: "A.I" <ailis@paw.zone>
 +Date: Fri, 11 May 2018 12:28:55 -0700
 +Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
@@ -24,10 +24,10 @@ index 0000000000..60c650f089
 + 1 file changed, 2 insertions(+), 2 deletions(-)
 +
 +diff --git a/include/libbb.h b/include/libbb.h
-+index d4ba031df..ad86bac64 100644
++index daa96728b..d7887bdc3 100644
 +--- a/include/libbb.h
 ++++ b/include/libbb.h
-+@@ -2027,13 +2027,13 @@ extern const char bb_busybox_exec_path[] ALIGN1;
++@@ -2070,13 +2070,13 @@ extern const char bb_busybox_exec_path[] ALIGN1;
 + #ifndef BB_ADDITIONAL_PATH
 + #define BB_ADDITIONAL_PATH ""
 + #endif
@@ -44,7 +44,7 @@ index 0000000000..60c650f089
 + extern const int const_int_0;
 + //extern const int const_int_1;
 +-- 
-+2.14.1
++2.20.1 (Apple Git-117)
 +
 -- 
 2.20.1 (Apple Git-117)

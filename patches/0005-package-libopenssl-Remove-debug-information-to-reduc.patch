@@ -1,4 +1,4 @@
-From 744d87cb3fe064beb5f390348f8823ba9329b185 Mon Sep 17 00:00:00 2001
+From df450f307d99214484b0224cf063b258a8aed583 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 15 May 2017 15:52:29 -0700
 Subject: [PATCH] package/libopenssl: Remove debug information to reduce its
@@ -10,7 +10,7 @@ and add OPENSSL_SMALL_FOOTPRINT
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/package/libopenssl/libopenssl.mk b/package/libopenssl/libopenssl.mk
-index a845f1da53..783569e28b 100644
+index 2a7514d590..fd6c308673 100644
 --- a/package/libopenssl/libopenssl.mk
 +++ b/package/libopenssl/libopenssl.mk
 @@ -20,8 +20,9 @@ ifeq ($(BR2_m68k_cf),y)
@@ -22,12 +22,12 @@ index a845f1da53..783569e28b 100644
  endif
 +LIBOPENSSL_CFLAGS += -DOPENSSL_SMALL_FOOTPRINT
  
- ifeq ($(BR2_USE_MMU),)
- LIBOPENSSL_CFLAGS += -DHAVE_FORK=0 -DOPENSSL_NO_MADVISE
-@@ -108,6 +109,8 @@ define LIBOPENSSL_CONFIGURE_CMDS
+ ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+ LIBOPENSSL_CFLAGS += -DOPENSSL_THREADS
+@@ -116,6 +117,8 @@ define LIBOPENSSL_CONFIGURE_CMDS
+ 			no-fuzz-libfuzzer \
  			no-fuzz-afl \
  			$(if $(BR2_STATIC_LIBS),zlib,zlib-dynamic) \
- 			$(if $(BR2_STATIC_LIBS),no-dso) \
 +			no-err \
 +			no-filenames \
  	)
