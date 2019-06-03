@@ -44,7 +44,7 @@ SIZE=$(du -s ${ISO} | awk '{print $1}')
 
 dd if=/dev/zero of=${IMAGE} bs=1024 count=$((${SIZE}+68+${SIZE}%2))
 losetup /dev/loop1 ${IMAGE}
-(echo c; echo n; echo p; echo 1; echo; echo; echo t; echo 4; echo a; echo 1; echo w;) | fdisk /dev/loop1 || true
+(echo c; echo n; echo p; echo 1; echo; echo; echo t; echo 4; echo a; echo w;) | fdisk /dev/loop1 || true
 
 losetup -o 32256 /dev/loop2 ${IMAGE}
 mkfs -t vfat -F 16 /dev/loop2
