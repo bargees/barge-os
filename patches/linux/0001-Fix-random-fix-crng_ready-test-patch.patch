@@ -1,4 +1,4 @@
-From 8403a04803750896aa5a49ee4c94f31f8a992693 Mon Sep 17 00:00:00 2001
+From 53ad1cc79a9ecc7931ed39f57ff28ccbbc81a1a3 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 3 May 2018 23:47:55 -0700
 Subject: [PATCH] Fix "random: fix crng_ready() test" patch
@@ -8,7 +8,7 @@ Subject: [PATCH] Fix "random: fix crng_ready() test" patch
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/char/random.c b/drivers/char/random.c
-index ea4dbfa30657..37c366a0a951 100644
+index e6efa07e9f9e..f08193779c9c 100644
 --- a/drivers/char/random.c
 +++ b/drivers/char/random.c
 @@ -1247,7 +1247,7 @@ void add_interrupt_randomness(int irq, int irq_flags)
@@ -20,7 +20,7 @@ index ea4dbfa30657..37c366a0a951 100644
  		if ((fast_pool->count >= 64) &&
  		    crng_fast_load((char *) fast_pool->pool,
  				   sizeof(fast_pool->pool))) {
-@@ -2324,7 +2324,7 @@ void add_hwgenerator_randomness(const char *buffer, size_t count,
+@@ -2326,7 +2326,7 @@ void add_hwgenerator_randomness(const char *buffer, size_t count,
  {
  	struct entropy_store *poolp = &input_pool;
  
