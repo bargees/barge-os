@@ -1,4 +1,4 @@
-From e7038d5ab8d37d1aa3f1861a6b52a7fff88a50f3 Mon Sep 17 00:00:00 2001
+From ccbcd77b950ff49ce52ff02e5efcaae39ce0f9cb Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 3 Aug 2017 19:13:58 -0700
 Subject: [PATCH] Revert "binutils: remove support for 2.26"
@@ -37,10 +37,10 @@ This reverts commit 0b5dc3192306409113adbb0dfbcaa62bbcdf4fb4.
  create mode 100644 package/binutils/2.26.1/0906-microblaze-pr21180.patch
 
 diff --git a/Config.in.legacy b/Config.in.legacy
-index a32cbcb6f2..dd326b7d83 100644
+index de05b07c97..95bf79bea9 100644
 --- a/Config.in.legacy
 +++ b/Config.in.legacy
-@@ -1608,14 +1608,6 @@ config BR2_PACKAGE_SIMICSFS
+@@ -1670,14 +1670,6 @@ config BR2_PACKAGE_SIMICSFS
  	  work. Users should move to the user mode Simics agent
  	  instead.
  
@@ -1147,10 +1147,10 @@ index 0000000000..8104db3462
 +       else
 +         {
 diff --git a/package/binutils/Config.in.host b/package/binutils/Config.in.host
-index c3c3beb420..e6966f8047 100644
+index c5daee7f95..b68855c36d 100644
 --- a/package/binutils/Config.in.host
 +++ b/package/binutils/Config.in.host
-@@ -12,6 +12,9 @@ choice
+@@ -13,6 +13,9 @@ choice
  	help
  	  Select the version of binutils you wish to use.
  
@@ -1159,17 +1159,17 @@ index c3c3beb420..e6966f8047 100644
 +
  config BR2_BINUTILS_VERSION_2_30_X
  	bool "binutils 2.30"
- 
-@@ -29,6 +32,7 @@ endchoice
- config BR2_BINUTILS_VERSION
+ 	depends on !BR2_csky
+@@ -39,6 +42,7 @@ config BR2_BINUTILS_VERSION
  	string
- 	default "arc-2018.09-release"	if BR2_BINUTILS_VERSION_ARC
+ 	default "arc-2019.03-release"	if BR2_BINUTILS_VERSION_ARC
+ 	default "c66d8bbcebfddf713b2b436e1b135e6b125a55a5" if BR2_BINUTILS_VERSION_CSKY
 +	default "2.26.1"	if BR2_BINUTILS_VERSION_2_26_X
  	default "2.30"		if BR2_BINUTILS_VERSION_2_30_X
  	default "2.31.1"	if BR2_BINUTILS_VERSION_2_31_X
  	default "2.32"		if BR2_BINUTILS_VERSION_2_32_X
 diff --git a/package/binutils/binutils.hash b/package/binutils/binutils.hash
-index 039e3682f6..4f7a0b638c 100644
+index 4b747fc2b0..b4680f0ea9 100644
 --- a/package/binutils/binutils.hash
 +++ b/package/binutils/binutils.hash
 @@ -1,4 +1,5 @@
