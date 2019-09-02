@@ -22,7 +22,7 @@ ENV SRC_DIR=/build \
     BR_ROOT=/build/buildroot
 RUN mkdir -p ${SRC_DIR} ${OVERLAY}
 
-ENV BR_VERSION 2019.08-rc2
+ENV BR_VERSION 2019.08
 RUN wget -qO- https://buildroot.org/downloads/buildroot-${BR_VERSION}.tar.bz2 | tar xj && \
     mv buildroot-${BR_VERSION} ${BR_ROOT}
 
