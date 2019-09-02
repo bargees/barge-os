@@ -1,0 +1,43 @@
+From cd16ee8879a18d6f6316a7d9af6dccc74fa31d7e Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Wed, 15 May 2019 17:29:40 -0700
+Subject: [PATCH] package/glibc: switch to release/2.25/master branch
+
+https://github.com/bminor/glibc/tree/release/2.25/master
+---
+ .../60bc81ba47915817fb89bc2b80b0176ac1eeba07/glibc.hash    | 7 +++++++
+ package/glibc/glibc.mk                                     | 4 ++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+ create mode 100644 package/glibc/60bc81ba47915817fb89bc2b80b0176ac1eeba07/glibc.hash
+
+diff --git a/package/glibc/60bc81ba47915817fb89bc2b80b0176ac1eeba07/glibc.hash b/package/glibc/60bc81ba47915817fb89bc2b80b0176ac1eeba07/glibc.hash
+new file mode 100644
+index 0000000000..d019b06e90
+--- /dev/null
++++ b/package/glibc/60bc81ba47915817fb89bc2b80b0176ac1eeba07/glibc.hash
+@@ -0,0 +1,7 @@
++# Locally calculated (fetched from Github)
++sha256  f4856d1e5bd30d40eea358a41eaaa4b639e4076508c109a8603ac22f0f369a28  glibc-60bc81ba47915817fb89bc2b80b0176ac1eeba07.tar.gz
++
++# Hashes for license files
++sha256  8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643  COPYING
++sha256  dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551  COPYING.LIB
++sha256  35bdb41dc0bcb10702ddacbd51ec4c0fe6fb3129f734e8c85fc02e4d3eb0ce3f  LICENSES
+diff --git a/package/glibc/glibc.mk b/package/glibc/glibc.mk
+index 68c6670007..9173842500 100644
+--- a/package/glibc/glibc.mk
++++ b/package/glibc/glibc.mk
+@@ -15,8 +15,8 @@ GLIBC_VERSION = 7630ed2fa60caea98f500e4a7a51b88f9bf1e176
+ GLIBC_SITE = $(call github,c-sky,glibc,$(GLIBC_VERSION))
+ else
+ # Generate version string using:
+-#   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master | cut -d '-' -f 2-
+-GLIBC_VERSION = 2.29-30-g2d3fefd7ce64ac1015701c96916fffacc073a877
++#   git describe --match 'glibc-*' --abbrev=40 origin/release/2.25/master | cut -d '-' -f 2-
++GLIBC_VERSION = 60bc81ba47915817fb89bc2b80b0176ac1eeba07
+ # Upstream doesn't officially provide an https download link.
+ # There is one (https://sourceware.org/git/glibc.git) but it's not reliable,
+ # sometimes the connection times out. So use an unofficial github mirror.
+-- 
+2.20.1 (Apple Git-117)
+

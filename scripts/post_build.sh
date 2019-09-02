@@ -62,6 +62,8 @@ rm -f sbin/dumpe2fs
 rm -f sbin/e2freefrag
 rm -f sbin/e2label
 rm -f sbin/e2mmpstatus
+rm -f sbin/e2scrub
+rm -f sbin/e2scrub_all
 rm -f sbin/e2undo
 rm -f sbin/e4crypt
 rm -f sbin/filefrag

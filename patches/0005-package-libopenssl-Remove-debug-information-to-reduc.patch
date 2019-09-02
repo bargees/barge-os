@@ -1,4 +1,4 @@
-From df450f307d99214484b0224cf063b258a8aed583 Mon Sep 17 00:00:00 2001
+From b680ba1530bea3d8627b3a91f3804aebcf3d55f0 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 15 May 2017 15:52:29 -0700
 Subject: [PATCH] package/libopenssl: Remove debug information to reduce its

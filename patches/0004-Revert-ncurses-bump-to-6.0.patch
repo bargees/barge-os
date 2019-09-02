@@ -1,4 +1,4 @@
-From b0232b670f98c2b05797924c8be7c3948ba4b028 Mon Sep 17 00:00:00 2001
+From 8b9897ef62afaa3d6732f2b39dd95c3eff2ac0f6 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Sun, 14 May 2017 15:57:09 -0700
 Subject: [PATCH] Revert "ncurses: bump to 6.0"
@@ -8,9 +8,9 @@ This reverts commit b6b5d184b3df81166ac6bd41d10c702682fd80fe.
  .../0001-fixup-pkg-config-handling.patch      | 89 +++++++++++++++++++
  ...gen.patch => 0002-gcc-5.x-MKlib_gen.patch} |  9 +-
  package/ncurses/0003-recognise-uclinux.patch  | 30 +++++++
- package/ncurses/ncurses.hash                  |  2 +-
+ package/ncurses/ncurses.hash                  |  4 +-
  package/ncurses/ncurses.mk                    |  7 +-
- 5 files changed, 129 insertions(+), 8 deletions(-)
+ 5 files changed, 129 insertions(+), 10 deletions(-)
  create mode 100644 package/ncurses/0001-fixup-pkg-config-handling.patch
  rename package/ncurses/{0001-gcc-5.x-MKlib_gen.patch => 0002-gcc-5.x-MKlib_gen.patch} (82%)
  create mode 100644 package/ncurses/0003-recognise-uclinux.patch
@@ -170,12 +170,14 @@ index 0000000000..e86546cc54
 + echo "$as_me:6996: checking if we must define _GNU_SOURCE" >&5
 + echo $ECHO_N "checking if we must define _GNU_SOURCE... $ECHO_C" >&6
 diff --git a/package/ncurses/ncurses.hash b/package/ncurses/ncurses.hash
-index 045625ae3b..482b2d4853 100644
+index cb6ef6b863..482b2d4853 100644
 --- a/package/ncurses/ncurses.hash
 +++ b/package/ncurses/ncurses.hash
-@@ -1,2 +1,2 @@
+@@ -1,4 +1,2 @@
  # Locally calculated after checking pgp signature
 -sha256	aa057eeeb4a14d470101eff4597d5833dcef5965331be3528c08d99cebaa0d17	ncurses-6.1.tar.gz
+-# Locally computed
+-sha256 3c7bc1dd475a5e5dcc7bdf13268a0313ff69e3765689444eb95b5893f61b3d1e  README
 +sha256	9046298fb440324c9d4135ecea7879ffed8546dd1b58e59430ea07a4633f563b	ncurses-5.9.tar.gz
 diff --git a/package/ncurses/ncurses.mk b/package/ncurses/ncurses.mk
 index e27598bd42..f105ae7bdb 100644
