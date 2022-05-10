@@ -22,8 +22,8 @@ ENV SRC_DIR=/build \
     BR_ROOT=/build/buildroot
 RUN mkdir -p ${SRC_DIR} ${OVERLAY}
 
-ENV BR_VERSION 2019.08
-RUN wget -qO- https://buildroot.org/downloads/buildroot-${BR_VERSION}.tar.bz2 | tar xj && \
+ENV BR_VERSION 2022.02
+RUN wget -qO- https://buildroot.org/downloads/buildroot-${BR_VERSION}.tar.xz | tar xJ && \
     mv buildroot-${BR_VERSION} ${BR_ROOT}
 
 # Apply patches
@@ -46,8 +46,8 @@ RUN mkdir -p usr/share/bash-completion/completions && \
     chmod +x usr/share/bash-completion/bash_completion
 
 # Add Docker bash-completion
-ENV DOCKER_VERSION 1.10.3
-RUN wget -qO usr/share/bash-completion/completions/docker https://raw.githubusercontent.com/moby/moby/v${DOCKER_VERSION}/contrib/completion/bash/docker
+ENV DOCKER_VERSION 20.10.12
+RUN wget -qO usr/share/bash-completion/completions/docker https://raw.githubusercontent.com/docker/cli/v${DOCKER_VERSION}/contrib/completion/bash/docker
 
 # Add dumb-init
 ENV DINIT_VERSION 1.2.2
