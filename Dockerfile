@@ -50,9 +50,9 @@ ENV DOCKER_VERSION 1.10.3
 RUN wget -qO usr/share/bash-completion/completions/docker https://raw.githubusercontent.com/moby/moby/v${DOCKER_VERSION}/contrib/completion/bash/docker
 
 # Add dumb-init
-ENV DINIT_VERSION 1.2.2
+ENV DINIT_VERSION 1.2.5
 RUN mkdir -p usr/bin && \
-    wget -qO usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DINIT_VERSION}/dumb-init_${DINIT_VERSION}_amd64 && \
+    wget -qO usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DINIT_VERSION}/dumb-init_${DINIT_VERSION}_x86_64 && \
     chmod +x usr/bin/dumb-init
 
 ENV VERSION 2.15.0-dev
