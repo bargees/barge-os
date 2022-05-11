@@ -50,9 +50,9 @@ ENV DOCKER_VERSION 20.10.12
 RUN wget -qO usr/share/bash-completion/completions/docker https://raw.githubusercontent.com/docker/cli/v${DOCKER_VERSION}/contrib/completion/bash/docker
 
 # Add dumb-init
-ENV DINIT_VERSION 1.2.2
+ENV DINIT_VERSION 1.2.5
 RUN mkdir -p usr/bin && \
-    wget -qO usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DINIT_VERSION}/dumb-init_${DINIT_VERSION}_amd64 && \
+    wget -qO usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DINIT_VERSION}/dumb-init_${DINIT_VERSION}_x86_64 && \
     chmod +x usr/bin/dumb-init
 
 ENV VERSION 3.0.0-dev
