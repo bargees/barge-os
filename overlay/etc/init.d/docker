@@ -8,15 +8,14 @@ fi
 
 source /etc/os-release
 
-DOCKER_DAEMON="docker"
-DOCKER_DAEMON_COMMAND="daemon"
-if [ -f "/opt/bin/dockerd" ]; then
-  DOCKER_DAEMON="dockerd"
-  DOCKER_DAEMON_COMMAND=""
-fi
 DOCKER="/opt/bin/docker"
+DOCKER_DAEMON="dockerd"
 DOCKERD="/opt/bin/${DOCKER_DAEMON}"
 DOCKER_BIN_DIR="/usr/bin"
+if [ ! -f "${DOCKER}" ]; then
+  mkdir -p /opt/bin
+  ln -s "${DOCKER_BIN_DIR}/docker" "${DOCKER}"
+fi
 if [ ! -f "${DOCKERD}" ]; then
   mkdir -p /opt/bin
   ln -s "${DOCKER_BIN_DIR}/${DOCKER_DAEMON}" "${DOCKERD}"
@@ -48,17 +47,6 @@ start() {
     echo "$(${DOCKERD} -v) is running." >&2
     exit 1
   fi
-
-  mkdir -p /sys/fs/cgroup
-  if ! mountpoint -q /sys/fs/cgroup; then
-    mount -t tmpfs cgroup /sys/fs/cgroup
-  fi
-  for i in $(awk '!/^#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
-    mkdir -p /sys/fs/cgroup/$i
-    if ! mountpoint -q /sys/fs/cgroup/$i; then
-      mount -t cgroup -o $i cgroup /sys/fs/cgroup/$i
-    fi
-  done
 
   mkdir -p /var/lib/docker
   mkdir -p /var/log/docker
@@ -132,9 +120,9 @@ EOF
   logger -s -p user.info -t "docker[$$]" "Starting Docker daemon ${params}"
   echo "Starting Docker daemon ${params}" >> "${DOCKER_LOGFILE}"
   if [ "$$" == "1" ]; then
-    eval "exec ${DOCKERD} ${DOCKER_DAEMON_COMMAND} ${params} >> \"${DOCKER_LOGFILE}\" 2>&1"
+    eval "exec ${DOCKERD} ${params} >> \"${DOCKER_LOGFILE}\" 2>&1"
   else
-    eval "${DOCKERD} ${DOCKER_DAEMON_COMMAND} ${params} >> \"${DOCKER_LOGFILE}\" 2>&1 &"
+    eval "${DOCKERD} ${params} >> \"${DOCKER_LOGFILE}\" 2>&1 &"
   fi
 }
 
@@ -159,11 +147,6 @@ stop() {
       while [ $(( timeout-- )) -gt 0 ] && check; do
         sleep 1
       done
-
-      for i in $(awk '!/^#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
-        umount /sys/fs/cgroup/$i
-      done
-      umount /sys/fs/cgroup
     fi
   fi
 }
@@ -196,21 +179,13 @@ switch() {
   local docker_repo="moby/moby"
   local completion="contrib/completion/bash/docker"
 
-  DOCKER_DAEMON="docker"
-  DOCKER_DAEMON_COMMAND="daemon"
-  DOCKERD="/opt/bin/${DOCKER_DAEMON}"
-
   if [ "${version}" = "default" ]; then
     DOCKER_BIN_DIR="/usr/bin"
     DOCKER_SWITCHING=true
     return
   elif [ "${version}" = "latest" ]; then
-    version=$(wget -qO- https://api.github.com/repos/docker/docker-ce/releases/latest \
+    version=$(wget -qO- https://api.github.com/repos/moby/moby/releases/latest \
       | awk -F'"' '/tag_name/ { print $4 }')
-    if [ "${version}" = "" ]; then
-      version=$(wget -qO- https://api.github.com/repos/moby/moby/releases/latest \
-        | awk -F'"' '/tag_name/ { print $4 }')
-    fi
   fi
 
   version="${version/#v/}"
@@ -225,22 +200,22 @@ switch() {
   local versions=($(echo ${version} | tr -s '.' ' '))
   if [[ ${versions[0]} -lt 1 ]]; then
     echo "Docker v${version} is too old." >&2 && exit 1
-  elif [[ (${versions[0]} -eq 1) && (${versions[1]#0} -lt 8) ]]; then
-    echo "Docker v${version} is too old." >&2 && exit 1
   elif [[ (${versions[0]} -eq 1) && (${versions[1]#0} -lt 12) ]]; then
-    :
+    echo "Docker v${version} is too old." >&2 && exit 1
   else
-    echo -n "[38;5;1m" >&2
-    echo "WARNING: Possible Forward-Incompatibility of libnetwork" >&2
-    echo "Once you upgrade Docker to v1.12 or newer, if you downgrade back," >&2
-    echo "you may need to initialize ${DOCKER_DIR}/network/files/local-kv.db." >&2
-    echo -n "[39m" >&2
-    DOCKER_DAEMON="dockerd"
-    DOCKER_DAEMON_COMMAND=""
-    DOCKERD="/opt/bin/${DOCKER_DAEMON}"
-
     local patches=($(echo ${versions[2]} | tr -s '-' ' '))
-    if [[ (${versions[0]} -eq 17) && (${versions[1]#0} -eq 3) && (${patches[0]} -eq 0) \
+    if [[ ${versions[0]} -ge 20 ]]; then
+      local channel="stable"
+      if [[ "${version}" == *"-rc"* ]]; then
+        channel="test"
+      fi
+      if [[ "${version}" == *"-beta"* ]]; then
+        channel="test"
+      fi
+      base_url="https://download.docker.com/linux/static/${channel}/x86_64"
+      docker_repo="docker/cli"
+      completion="contrib/completion/bash/docker"
+    elif [[ (${versions[0]} -eq 17) && (${versions[1]#0} -eq 3) && (${patches[0]} -eq 0) \
       && ("${version}" == *"-rc"*) ]]; then
       :
     elif [[ ${versions[0]} -ge 17 ]]; then
