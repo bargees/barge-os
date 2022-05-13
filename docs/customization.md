@@ -27,7 +27,7 @@ You can customize the behavior of the Docker daemon through `/etc/default/docker
 
 ### Defaults
 
-- DOCKER_STORAGE="overlay"
+- DOCKER_STORAGE="overlay2"
 - DOCKER_DIR="/var/lib/docker"
 - DOCKER_HOST="-H unix://"
 - DOCKER_EXTRA_ARGS="--userland-proxy=false"
