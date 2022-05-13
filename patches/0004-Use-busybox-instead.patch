@@ -1,0 +1,27 @@
+From 002d2c16be84963df9c1400216611bab45b962c2 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Thu, 12 May 2022 21:19:01 -0700
+Subject: [PATCH 4/4] Use busybox instead
+
+---
+ package/containerd/Config.in | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/package/containerd/Config.in b/package/containerd/Config.in
+index 0e3a55ef39..675f5d12f1 100644
+--- a/package/containerd/Config.in
++++ b/package/containerd/Config.in
+@@ -7,10 +7,6 @@ config BR2_PACKAGE_CONTAINERD
+ 	depends on BR2_USE_MMU # util-linux
+ 	select BR2_PACKAGE_RUNC # runtime dependency
+ 	select BR2_PACKAGE_UTIL_LINUX # runtime dependency
+-	select BR2_PACKAGE_UTIL_LINUX_BINARIES
+-	select BR2_PACKAGE_UTIL_LINUX_PIVOT_ROOT
+-	select BR2_PACKAGE_UTIL_LINUX_MOUNTPOINT
+-	select BR2_PACKAGE_UTIL_LINUX_MOUNT
+ 	help
+ 	  containerd is a daemon to control runC.
+ 
+-- 
+2.32.0 (Apple Git-132)
+
