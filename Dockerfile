@@ -45,8 +45,13 @@ RUN mkdir -p usr/share/bash-completion/completions && \
     wget -qO usr/share/bash-completion/bash_completion https://raw.githubusercontent.com/scop/bash-completion/master/bash_completion && \
     chmod +x usr/share/bash-completion/bash_completion
 
-# Add Docker bash-completion
+# Add Docker
 ENV DOCKER_VERSION 1.10.3
+ENV DOCKER_REVISION barge.1
+RUN mkdir -p usr/bin && \
+    wget -qO- https://github.com/bargees/moby/releases/download/v${DOCKER_VERSION}-${DOCKER_REVISION}/docker-${DOCKER_VERSION}-${DOCKER_REVISION}.tar.xz | tar xJ -C usr/bin
+
+# Add Docker bash-completion
 RUN wget -qO usr/share/bash-completion/completions/docker https://raw.githubusercontent.com/moby/moby/v${DOCKER_VERSION}/contrib/completion/bash/docker
 
 # Add dumb-init
@@ -68,8 +73,7 @@ RUN mkdir -p etc && \
     echo "BUG_REPORT_URL=\"https://github.com/bargees/barge-os/issues\"" >> etc/os-release
 
 # Add Package Installer
-RUN mkdir -p usr/bin && \
-    wget -qO usr/bin/pkg https://raw.githubusercontent.com/bargees/barge-pkg/master/pkg && \
+RUN wget -qO usr/bin/pkg https://raw.githubusercontent.com/bargees/barge-pkg/master/pkg && \
     chmod +x usr/bin/pkg
 
 # Copy config files
