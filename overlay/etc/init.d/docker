@@ -229,8 +229,8 @@ switch() {
   else
     echo -n "[38;5;1m" >&2
     echo "WARNING: Possible Forward-Incompatibility of libnetwork" >&2
-    echo "Once you upgrade Docker to v1.12 or newer, if you downgrade back," >&2
-    echo "you may need to initialize ${DOCKER_DIR}/network/files/local-kv.db." >&2
+    echo "Once you upgrade Docker to v1.12 or newer, when you downgrade back," >&2
+    echo "you may need to initialize ${DOCKER_DIR}/network and iptables." >&2
     echo -n "[39m" >&2
     DOCKER_DAEMON="dockerd"
     DOCKER_DAEMON_COMMAND=""
