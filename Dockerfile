@@ -47,7 +47,7 @@ RUN mkdir -p usr/share/bash-completion/completions && \
 
 # Add Docker
 ENV DOCKER_VERSION 1.10.3
-ENV DOCKER_REVISION barge.1
+ENV DOCKER_REVISION barge.2
 RUN mkdir -p usr/bin && \
     wget -qO- https://github.com/bargees/moby/releases/download/v${DOCKER_VERSION}-${DOCKER_REVISION}/docker-${DOCKER_VERSION}-${DOCKER_REVISION}.tar.xz | tar xJ -C usr/bin
 
