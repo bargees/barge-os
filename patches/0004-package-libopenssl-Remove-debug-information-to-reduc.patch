@@ -1,7 +1,7 @@
-From 5621f8ed9a06f4ba1837b00bac1f8bd45772859e Mon Sep 17 00:00:00 2001
+From 5c7e2c241a22f0828b2a625e57389464f3ec257f Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 15 May 2017 15:52:29 -0700
-Subject: [PATCH 4/6] package/libopenssl: Remove debug information to reduce
+Subject: [PATCH 4/4] package/libopenssl: Remove debug information to reduce
  its footprint
 
 and add OPENSSL_SMALL_FOOTPRINT

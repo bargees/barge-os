@@ -1,7 +1,7 @@
-From c7268c457dcf54dbf1d1b449663a4a0f09f1b80c Mon Sep 17 00:00:00 2001
+From 7fc7ab134c9290e781364b03177b9d431038ae67 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Wed, 11 May 2022 09:04:16 -0700
-Subject: [PATCH 3/6] Enable ifupdown scripts back for Barge
+Subject: [PATCH 3/4] Enable ifupdown scripts back for Barge
 
 ---
  package/ifupdown-scripts/ifupdown-scripts.mk | 3 +++

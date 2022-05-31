@@ -1,7 +1,7 @@
-From 24d0810cd65fd78690e364d0e753cb8f1293f0c7 Mon Sep 17 00:00:00 2001
+From 3560af3e44213a9395c2e65312dcd83c6262085f Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Thu, 25 Oct 2018 18:20:16 -0700
-Subject: [PATCH 2/6] Revert "fs/common: allow custom user table to override
+Subject: [PATCH 2/4] Revert "fs/common: allow custom user table to override
  package-defined users"
 
 This reverts commit f814dbf52270d50693bb9bbbcbfb700754efc771.
