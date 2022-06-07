@@ -1,7 +1,7 @@
-From 1c9acbfe6626aa53e03a4005528b93267bac5e0f Mon Sep 17 00:00:00 2001
+From d438912e50b785171afd43230ef480ee9887f232 Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
-Date: Thu, 15 Aug 2019 16:00:34 -0700
-Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
+Date: Tue, 10 May 2022 15:24:49 -0700
+Subject: [PATCH 1/4] Revise the default PATH with /opt/bin for Barge
 
 ---
  ...-default-PATH-with-opt-bin-for-Barge.patch | 32 +++++++++++++++++++
@@ -10,13 +10,13 @@ Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
 
 diff --git a/package/busybox/0003-Revise-the-default-PATH-with-opt-bin-for-Barge.patch b/package/busybox/0003-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
 new file mode 100644
-index 0000000000..28c96108b6
+index 0000000000..7d772b1618
 --- /dev/null
 +++ b/package/busybox/0003-Revise-the-default-PATH-with-opt-bin-for-Barge.patch
 @@ -0,0 +1,32 @@
-+From 586da88620416dc52105ac44de80789c326a940e Mon Sep 17 00:00:00 2001
++From 60bec16502fd4be6e86e03d8e4d2530277809bad Mon Sep 17 00:00:00 2001
 +From: "A.I" <ailis@paw.zone>
-+Date: Fri, 11 May 2018 12:28:55 -0700
++Date: Tue, 10 May 2022 15:06:55 -0700
 +Subject: [PATCH] Revise the default PATH with /opt/bin for Barge
 +
 +---
@@ -24,10 +24,10 @@ index 0000000000..28c96108b6
 + 1 file changed, 2 insertions(+), 2 deletions(-)
 +
 +diff --git a/include/libbb.h b/include/libbb.h
-+index 021100db1..049c80e24 100644
++index a48782832..635d4b0f8 100644
 +--- a/include/libbb.h
 ++++ b/include/libbb.h
-+@@ -2092,13 +2092,13 @@ extern const char bb_busybox_exec_path[] ALIGN1;
++@@ -2263,13 +2263,13 @@ extern const char bb_busybox_exec_path[] ALIGN1;
 + #ifndef BB_ADDITIONAL_PATH
 + #define BB_ADDITIONAL_PATH ""
 + #endif
@@ -44,8 +44,8 @@ index 0000000000..28c96108b6
 + extern const int const_int_0;
 + //extern const int const_int_1;
 +-- 
-+2.20.1 (Apple Git-117)
++2.32.0 (Apple Git-132)
 +
 -- 
-2.20.1 (Apple Git-117)
+2.32.1 (Apple Git-133)
 

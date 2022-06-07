@@ -1,0 +1,26 @@
+From 7fc7ab134c9290e781364b03177b9d431038ae67 Mon Sep 17 00:00:00 2001
+From: "A.I" <ailis@paw.zone>
+Date: Wed, 11 May 2022 09:04:16 -0700
+Subject: [PATCH 3/4] Enable ifupdown scripts back for Barge
+
+---
+ package/ifupdown-scripts/ifupdown-scripts.mk | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/package/ifupdown-scripts/ifupdown-scripts.mk b/package/ifupdown-scripts/ifupdown-scripts.mk
+index 5ef032142c..faf4cd5d7a 100644
+--- a/package/ifupdown-scripts/ifupdown-scripts.mk
++++ b/package/ifupdown-scripts/ifupdown-scripts.mk
+@@ -42,6 +42,9 @@ define IFUPDOWN_SCRIPTS_INSTALL_TARGET_CMDS
+ 	$(INSTALL) -m 0755 -D $(IFUPDOWN_SCRIPTS_PKGDIR)/nfs_check \
+ 		$(TARGET_DIR)/etc/network/nfs_check
+ 	$(call SYSTEM_RSYNC,$(IFUPDOWN_SCRIPTS_PKGDIR)/network,$(TARGET_DIR)/etc/network)
++	$(IFUPDOWN_SCRIPTS_PREAMBLE)
++	$(IFUPDOWN_SCRIPTS_LOCALHOST)
++	$(IFUPDOWN_SCRIPTS_DHCP)
+ endef
+ 
+ define IFUPDOWN_SCRIPTS_INSTALL_INIT_OPENRC
+-- 
+2.32.1 (Apple Git-133)
+

@@ -1,8 +1,8 @@
-From b680ba1530bea3d8627b3a91f3804aebcf3d55f0 Mon Sep 17 00:00:00 2001
+From 5c7e2c241a22f0828b2a625e57389464f3ec257f Mon Sep 17 00:00:00 2001
 From: "A.I" <ailis@paw.zone>
 Date: Mon, 15 May 2017 15:52:29 -0700
-Subject: [PATCH] package/libopenssl: Remove debug information to reduce its
- footprint
+Subject: [PATCH 4/4] package/libopenssl: Remove debug information to reduce
+ its footprint
 
 and add OPENSSL_SMALL_FOOTPRINT
 ---
@@ -10,10 +10,10 @@ and add OPENSSL_SMALL_FOOTPRINT
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/package/libopenssl/libopenssl.mk b/package/libopenssl/libopenssl.mk
-index 2a7514d590..fd6c308673 100644
+index 0c039dc7d6..22c0475466 100644
 --- a/package/libopenssl/libopenssl.mk
 +++ b/package/libopenssl/libopenssl.mk
-@@ -20,8 +20,9 @@ ifeq ($(BR2_m68k_cf),y)
+@@ -22,8 +22,9 @@ ifeq ($(BR2_m68k_cf),y)
  # relocation truncated to fit: R_68K_GOT16O
  LIBOPENSSL_CFLAGS += -mxgot
  # resolves an assembler "out of range error" with blake2 and sha512 algorithms
@@ -22,17 +22,17 @@ index 2a7514d590..fd6c308673 100644
  endif
 +LIBOPENSSL_CFLAGS += -DOPENSSL_SMALL_FOOTPRINT
  
- ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
- LIBOPENSSL_CFLAGS += -DOPENSSL_THREADS
-@@ -116,6 +117,8 @@ define LIBOPENSSL_CONFIGURE_CMDS
- 			no-fuzz-libfuzzer \
- 			no-fuzz-afl \
+ ifeq ($(BR2_USE_MMU),)
+ LIBOPENSSL_CFLAGS += -DHAVE_FORK=0 -DOPENSSL_NO_MADVISE
+@@ -109,6 +110,8 @@ define LIBOPENSSL_CONFIGURE_CMDS
+ 			$(if $(BR2_PACKAGE_LIBOPENSSL_ENABLE_COMP),,no-comp) \
  			$(if $(BR2_STATIC_LIBS),zlib,zlib-dynamic) \
+ 			$(if $(BR2_STATIC_LIBS),no-dso) \
 +			no-err \
 +			no-filenames \
  	)
  	$(SED) "s#-march=[-a-z0-9] ##" -e "s#-mcpu=[-a-z0-9] ##g" $(@D)/Makefile
- 	$(SED) "s#-O[0-9s]#$(LIBOPENSSL_CFLAGS)#" $(@D)/Makefile
+ 	$(SED) "s#-O[0-9sg]#$(LIBOPENSSL_CFLAGS)#" $(@D)/Makefile
 -- 
-2.20.1 (Apple Git-117)
+2.32.1 (Apple Git-133)
 

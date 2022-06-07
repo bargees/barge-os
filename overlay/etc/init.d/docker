@@ -112,7 +112,8 @@ EOF
 
   if ${DOCKER_SWITCHING} ; then
     for i in docker docker-containerd docker-containerd-ctr docker-containerd-shim docker-init \
-      docker-proxy docker-runc dockerd containerd ctr containerd-shim runc ; do
+      docker-proxy docker-runc dockerd containerd ctr containerd-shim runc \
+      containerd-shim-runc-v1 containerd-shim-runc-v2 ; do
       rm -f "/opt/bin/$i"
       if [ -f "${DOCKER_BIN_DIR}/$i" ]; then
         ln -s "${DOCKER_BIN_DIR}/$i" "/opt/bin/$i"
@@ -205,12 +206,8 @@ switch() {
     DOCKER_SWITCHING=true
     return
   elif [ "${version}" = "latest" ]; then
-    version=$(wget -qO- https://api.github.com/repos/docker/docker-ce/releases/latest \
+    version=$(wget -qO- https://api.github.com/repos/moby/moby/releases/latest \
       | awk -F'"' '/tag_name/ { print $4 }')
-    if [ "${version}" = "" ]; then
-      version=$(wget -qO- https://api.github.com/repos/moby/moby/releases/latest \
-        | awk -F'"' '/tag_name/ { print $4 }')
-    fi
   fi
 
   version="${version/#v/}"
@@ -232,15 +229,26 @@ switch() {
   else
     echo -n "[38;5;1m" >&2
     echo "WARNING: Possible Forward-Incompatibility of libnetwork" >&2
-    echo "Once you upgrade Docker to v1.12 or newer, if you downgrade back," >&2
-    echo "you may need to initialize ${DOCKER_DIR}/network/files/local-kv.db." >&2
+    echo "Once you upgrade Docker to v1.12 or newer, when you downgrade back," >&2
+    echo "you may need to initialize ${DOCKER_DIR}/network and iptables." >&2
     echo -n "[39m" >&2
     DOCKER_DAEMON="dockerd"
     DOCKER_DAEMON_COMMAND=""
     DOCKERD="/opt/bin/${DOCKER_DAEMON}"
 
     local patches=($(echo ${versions[2]} | tr -s '-' ' '))
-    if [[ (${versions[0]} -eq 17) && (${versions[1]#0} -eq 3) && (${patches[0]} -eq 0) \
+    if [[ ${versions[0]} -ge 20 ]]; then
+      local channel="stable"
+      if [[ "${version}" == *"-rc"* ]]; then
+        channel="test"
+      fi
+      if [[ "${version}" == *"-beta"* ]]; then
+        channel="test"
+      fi
+      base_url="https://download.docker.com/linux/static/${channel}/x86_64"
+      docker_repo="docker/cli"
+      completion="contrib/completion/bash/docker"
+    elif [[ (${versions[0]} -eq 17) && (${versions[1]#0} -eq 3) && (${patches[0]} -eq 0) \
       && ("${version}" == *"-rc"*) ]]; then
       :
     elif [[ ${versions[0]} -ge 17 ]]; then

@@ -22,8 +22,8 @@ ENV SRC_DIR=/build \
     BR_ROOT=/build/buildroot
 RUN mkdir -p ${SRC_DIR} ${OVERLAY}
 
-ENV BR_VERSION 2019.08
-RUN wget -qO- https://buildroot.org/downloads/buildroot-${BR_VERSION}.tar.bz2 | tar xj && \
+ENV BR_VERSION 2022.05
+RUN wget -qO- https://buildroot.org/downloads/buildroot-${BR_VERSION}.tar.xz | tar xJ && \
     mv buildroot-${BR_VERSION} ${BR_ROOT}
 
 # Apply patches
@@ -45,17 +45,22 @@ RUN mkdir -p usr/share/bash-completion/completions && \
     wget -qO usr/share/bash-completion/bash_completion https://raw.githubusercontent.com/scop/bash-completion/master/bash_completion && \
     chmod +x usr/share/bash-completion/bash_completion
 
-# Add Docker bash-completion
+# Add Docker
 ENV DOCKER_VERSION 1.10.3
+ENV DOCKER_REVISION barge.2
+RUN mkdir -p usr/bin && \
+    wget -qO- https://github.com/bargees/moby/releases/download/v${DOCKER_VERSION}-${DOCKER_REVISION}/docker-${DOCKER_VERSION}-${DOCKER_REVISION}.tar.xz | tar xJ -C usr/bin
+
+# Add Docker bash-completion
 RUN wget -qO usr/share/bash-completion/completions/docker https://raw.githubusercontent.com/moby/moby/v${DOCKER_VERSION}/contrib/completion/bash/docker
 
 # Add dumb-init
-ENV DINIT_VERSION 1.2.2
+ENV DINIT_VERSION 1.2.5
 RUN mkdir -p usr/bin && \
-    wget -qO usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DINIT_VERSION}/dumb-init_${DINIT_VERSION}_amd64 && \
+    wget -qO usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v${DINIT_VERSION}/dumb-init_${DINIT_VERSION}_x86_64 && \
     chmod +x usr/bin/dumb-init
 
-ENV VERSION 2.14.0-rc2
+ENV VERSION 2.15.0-rc2
 RUN mkdir -p etc && \
     echo "Welcome to Barge ${VERSION}, Docker version ${DOCKER_VERSION}" > etc/motd && \
     echo "NAME=\"Barge\"" > etc/os-release && \
@@ -68,8 +73,7 @@ RUN mkdir -p etc && \
     echo "BUG_REPORT_URL=\"https://github.com/bargees/barge-os/issues\"" >> etc/os-release
 
 # Add Package Installer
-RUN mkdir -p usr/bin && \
-    wget -qO usr/bin/pkg https://raw.githubusercontent.com/bargees/barge-pkg/master/pkg && \
+RUN wget -qO usr/bin/pkg https://raw.githubusercontent.com/bargees/barge-pkg/master/pkg && \
     chmod +x usr/bin/pkg
 
 # Copy config files
