@@ -52,6 +52,7 @@ It's inspired by the following projects.
 
 - [How to build Barge](./docs/build.md)
 - [Customization of Barge](./docs/customization.md)
+- [Use BargeOS on DigitalOcean VPS](./docs/bargeos_on_digitalocean.md)
 
 ## License
 
